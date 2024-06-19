@@ -1,6 +1,6 @@
 import os
 import re
-from comment_extraction import extract_title, extract_abstract, extract_comments, extract_authors
+from tools import extract_title, extract_abstract, extract_comments, extract_authors
 
 dir_path = "paper/"
 
