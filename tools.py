@@ -35,22 +35,24 @@ def extract_abstract(file_path):
     return abstract.strip()
 
 def extract_comments(path):
-    comments = []
+    comments = {}
     current_comment = []
-    
+    current_index = 0
+
     with open(path, "r", encoding="utf-8") as file:
         for line in file:
-            line = line.strip()
             if line.startswith('%'):
-                current_comment.append(line[1:].strip())
-            else: 
+                if not current_comment:
+                    start_index = current_index + line.find('%')
+                current_comment.append(stripped_line[1:].strip())
+            else:
                 if current_comment:
-                    comments.append(" ".join(current_comment))
+                    comments[start_index] = " ".join(current_comment)
                     current_comment = []
-    if current_comment:
-        comments.append(" ".join(current_comment))
-        current_comment = []
-    
+            current_index += len(line) + 1  # +1 for the newline character
+        if current_comment:
+            comments[start_index] = " ".join(current_comment)
+
     return comments
 
 def extract_authors(file_path):
