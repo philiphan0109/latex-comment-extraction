@@ -1,5 +1,10 @@
 import os
 import re
+import nltk
+from nltk.tokenize import word_tokenize
+
+# Download NLTK data files (only need to do this once)
+nltk.download('punkt')
 
 dir_path = "paper/"
 
@@ -31,20 +36,35 @@ def extract_comments(path):
                 comments[comment_start_index] = current_comment
                 current_comment = []
                 
-                
         current_index += len(line) + 1
     
     # one last save
     if current_comment: 
-                comments[comment_start_index] = current_comment
-                current_comment = []
+        comments[comment_start_index] = current_comment
+        current_comment = []
     
     return comments
 
-def extract_comment_length(path):
+def extract_comment_statistics(path):
     comments = extract_comments(path)
-    comment_lengths = {index: len(" ".join(comment)) for index, comment in comments.items()}
-    return comment_lengths
+    comment_statistics = {}
+
+    for index, comment in comments.items():
+        # Join the comment lines into a single string
+        comment_text = " ".join(comment)
+        # Calculate character length
+        char_length = len(comment_text)
+        # Tokenize the comment text into words
+        words = word_tokenize(comment_text)
+        # Calculate word count
+        word_count = len(words)
+        # Store both statistics in a dictionary
+        comment_statistics[index] = {
+            'char_length': char_length,
+            'word_count': word_count
+        }
+    
+    return comment_statistics
 
 all_comments = {}
 for filename in os.listdir(dir_path):
@@ -57,20 +77,15 @@ for file, comments in all_comments.items():
     for char, comment in comments.items():
         print(f"{char}: {comment}")
     print("\n")
-    
-# To test your code, uncomment (with command + /) and run this
-# This should work... if not it shouldn't be easy to fix :D
 
-comment_lengths = {}
+comment_statistics = {}
 for filename in os.listdir(dir_path):
     if filename.endswith(".tex"):
         file_path = os.path.join(dir_path, filename)
-        comment_lengths[filename] = extract_comment_length(file_path)
+        comment_statistics[filename] = extract_comment_statistics(file_path)
 
-for file, comments in comment_lengths.items():
-    print(f"Comments from {file}")
-    for char, length in comments.items():
-        print(f"{char}: {length}")
+for file, statistics in comment_statistics.items():
+    print(f"Statistics from {file}")
+    for char, stats in statistics.items():
+        print(f"{char}: {stats}")
     print("\n")
-
-    
