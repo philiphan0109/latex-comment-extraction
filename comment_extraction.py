@@ -15,20 +15,30 @@ def extract_comments(path):
     
     lines = full_paper.split("\n")
     for line in lines:
-        stripped_line = line
-        
-        if line.startswith('%'):
+        if line.startswith('%'): # This means that the line is a full line comment
             if not current_comment:
                 comment_start_index = current_index
             current_comment.append(line.strip())
-        else: 
-            if current_comment:
+        else: # If it's not a full line comment, it can mean two things
+            
+            # 1) there is a comment at the END of the line (this excludes any \%s)
+            end_of_line_comment = re.search(r'(?<!\\)%.*$', line)
+            if end_of_line_comment:
+                comment_start_index = current_index + end_of_line_comment.start()
+                comments[comment_start_index] = [end_of_line_comment.group()]
+            
+            if current_comment: # 2) this line is not a part of a block comment anymore, so save the previous block comment to the dictionary
                 comments[comment_start_index] = current_comment
                 current_comment = []
                 
                 
         current_index += len(line) + 1
-        
+    
+    # one last save
+    if current_comment: 
+                comments[comment_start_index] = current_comment
+                current_comment = []
+    
     return comments
 
 all_comments = {}
