@@ -96,8 +96,12 @@ def extract_comment_statistics(path):
     
     comment_statistics = {}
     for index, comment in comments.items():
-        char_length = len(comment)
-        words = word_tokenize(comment)
+        for i in range(len(comment)):
+            comment[i] = comment[i][1:].strip()
+        comment_text = " ".join(comment)
+        print(comment_text)
+        char_length = len(comment_text)
+        words = word_tokenize(comment_text)
         words = [word for word in words if word.isalnum()]
         word_count = len(words)
         comment_statistics[index] = {
