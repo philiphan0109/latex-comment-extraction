@@ -80,8 +80,7 @@ def extract_comment_indices(path):
         comment_indices.append((comment_start_index, comment_end_index))
         current_comment = False
         
-    return comment_indices
-    
+    return comment_indices  
 
 def extract_comment_statistics(path):
     comment_indices = extract_comment_indices(path)
@@ -92,13 +91,16 @@ def extract_comment_statistics(path):
     
     for start, end in comment_indices:
         comment = full_paper[start: end]
+        comment = comment.split("\n")
         comments[start] = comment
     
     comment_statistics = {}
     for index, comment in comments.items():
-        print(comment)
-        char_length = len(comment)
-        words = word_tokenize(comment)
+        for i in range(len(comment)):
+            comment[i] = comment[i][1:].strip()
+        comment_text = " ".join(comment)
+        char_length = len(comment_text)
+        words = word_tokenize(comment_text)
         words = [word for word in words if word.isalnum()]
         word_count = len(words)
         comment_statistics[index] = {
@@ -107,8 +109,6 @@ def extract_comment_statistics(path):
         }
     
     return comment_statistics
-
-
 
 # all_comment_indices = {}
 # for filename in os.listdir(dir_path):
