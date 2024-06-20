@@ -56,6 +56,7 @@ def extract_comment_statistics(path):
         print(comment_text)
         char_length = len(comment_text)
         words = word_tokenize(comment_text)
+        words = [word for word in words if word.isalnum()]
         word_count = len(words)
         comment_statistics[index] = {
             'char_length': char_length,
