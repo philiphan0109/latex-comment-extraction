@@ -50,15 +50,13 @@ def extract_comment_statistics(path):
     comment_statistics = {}
 
     for index, comment in comments.items():
-        # Join the comment lines into a single string
+        for i in range(len(comment)):
+            comment[i] = comment[i][1:].strip()
         comment_text = " ".join(comment)
-        # Calculate character length
+        print(comment_text)
         char_length = len(comment_text)
-        # Tokenize the comment text into words
         words = word_tokenize(comment_text)
-        # Calculate word count
         word_count = len(words)
-        # Store both statistics in a dictionary
         comment_statistics[index] = {
             'char_length': char_length,
             'word_count': word_count
