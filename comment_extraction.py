@@ -2,13 +2,16 @@ import os
 import re
 import nltk
 from nltk.tokenize import word_tokenize
+import cProfile
+import pstats
+import io
 
 # Download NLTK data files (only need to do this once)
 nltk.download('punkt')
 
 dir_path = "paper/"
 
-def extract_comments(path):
+def extract_comment_text(path):
     comments = {}
 
     with open(path, "r", encoding="utf-8") as file:
@@ -37,7 +40,6 @@ def extract_comments(path):
                 current_comment = []
                 
         current_index += len(line) + 1
-    
     # one last save
     if current_comment: 
         comments[comment_start_index] = current_comment
@@ -45,17 +47,58 @@ def extract_comments(path):
     
     return comments
 
-def extract_comment_statistics(path):
-    comments = extract_comments(path)
-    comment_statistics = {}
+def extract_comment_indices(path):
+    comment_indices = []
 
+    with open(path, "r", encoding="utf-8") as file:
+        full_paper = file.read()
+    
+    current_index = 0
+    comment_start_index = -1
+    comment_end_index = -1
+    current_comment = False
+    
+    lines = full_paper.split("\n")
+    for line in lines:
+        if line.startswith("%"):
+            if not current_comment:
+                comment_start_index = current_index
+                current_comment = True
+            comment_end_index = current_index + len(line)
+        else:
+            end_of_line_comment = re.search(r'(?<!\\)%.*$', line)
+            if end_of_line_comment:
+                comment_start_index = current_index + end_of_line_comment.start()
+                comment_end_index = current_index + len(line)
+                comment_indices.append((comment_start_index, comment_end_index))
+            if current_comment:
+                comment_indices.append((comment_start_index, comment_end_index))
+                current_comment = False
+        current_index += len(line) + 1
+    
+    if current_comment: 
+        comment_indices.append((comment_start_index, comment_end_index))
+        current_comment = False
+        
+    return comment_indices
+    
+
+def extract_comment_statistics(path):
+    comment_indices = extract_comment_indices(path)
+    comments = {}
+    
+    with open(path, "r", encoding="utf-8") as file:
+        full_paper = file.read()
+    
+    for start, end in comment_indices:
+        comment = full_paper[start: end]
+        comments[start] = comment
+    
+    comment_statistics = {}
     for index, comment in comments.items():
-        for i in range(len(comment)):
-            comment[i] = comment[i][1:].strip()
-        comment_text = " ".join(comment)
-        print(comment_text)
-        char_length = len(comment_text)
-        words = word_tokenize(comment_text)
+        char_length = len(comment)
+        words = word_tokenize(comment)
+        words = [word for word in words if word.isalnum()]
         word_count = len(words)
         comment_statistics[index] = {
             'char_length': char_length,
@@ -64,26 +107,43 @@ def extract_comment_statistics(path):
     
     return comment_statistics
 
-all_comments = {}
-for filename in os.listdir(dir_path):
-    if filename.endswith(".tex"):
-        file_path = os.path.join(dir_path, filename)
-        all_comments[filename] = extract_comments(file_path)
 
-for file, comments in all_comments.items():
-    print(f"Comments from {file}")
-    for char, comment in comments.items():
-        print(f"{char}: {comment}")
-    print("\n")
 
-comment_statistics = {}
-for filename in os.listdir(dir_path):
-    if filename.endswith(".tex"):
-        file_path = os.path.join(dir_path, filename)
-        comment_statistics[filename] = extract_comment_statistics(file_path)
+# all_comment_indices = {}
+# for filename in os.listdir(dir_path):
+#     if filename.endswith(".tex"):
+#         file_path = os.path.join(dir_path, filename)
+#         all_comment_indices[filename] = extract_comment_indices(file_path)
 
-for file, statistics in comment_statistics.items():
-    print(f"Statistics from {file}")
-    for char, stats in statistics.items():
-        print(f"{char}: {stats}")
-    print("\n")
+# for file, comment_indices in all_comment_indices.items():
+#     print(f"Comments from {file}")
+#     for comment in comment_indices:
+#         print(f"start: {comment[0]} | stop: {comment[1]}")
+#     print("\n")
+
+def main():
+    comment_statistics = {}
+    for filename in os.listdir(dir_path):
+        if filename.endswith(".tex"):
+            file_path = os.path.join(dir_path, filename)
+            comment_statistics[filename] = extract_comment_statistics(file_path)
+
+    for file, statistics in comment_statistics.items():
+        print(f"Statistics from {file}")
+        for char, stats in statistics.items():
+            print(f"{char}: {stats}")
+        print("\n")
+
+
+if __name__ == "__main__":
+    pr = cProfile.Profile()
+    pr.enable()
+
+    main()
+
+    pr.disable()
+    s = io.StringIO()
+    sortby = 'cumulative'
+    ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+    ps.print_stats()
+    print(s.getvalue())
