@@ -41,6 +41,10 @@ def extract_comments(path):
     
     return comments
 
+def extract_comment_length(path):
+    # use the extract_comment() function, and just modify the dictionary or create a new one
+    pass
+
 all_comments = {}
 for filename in os.listdir(dir_path):
     if filename.endswith(".tex"):
@@ -52,3 +56,18 @@ for file, comments in all_comments.items():
     for char, comment in comments.items():
         print(f"{char}: {comment}")
     print("\n")
+    
+# To test your code, uncomment (with command + /) and run this
+# This should work... if not it shouldn't be easy to fix :D
+
+# comment_lengths = {}
+# for filename in os.listdir(dir_path):
+#     if filename.endswith(".tex"):
+#         file_path = os.path.join(dir_path, filename)
+#         comment_lengths[filename] = extract_comment_length(file_path)
+
+# for file, comments in comment_lengths.items():
+#     print(f"Comments from {file}")
+#     for char, length in comments.items():
+#         print(f"{char}: {length}")
+#     print("\n")
