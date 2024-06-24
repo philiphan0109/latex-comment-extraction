@@ -39,7 +39,7 @@ def extract_comment_indices(path):
                 comment_indices.append((comment_start_index, comment_end_index))
                 current_comment = False
         current_index += len(line) + 1
-    
+        
     if current_comment: 
         comment_indices.append((comment_start_index, comment_end_index))
         current_comment = False
