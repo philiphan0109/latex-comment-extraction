@@ -44,7 +44,7 @@ def extract_comment_indices(path):
         comment_indices.append((comment_start_index, comment_end_index))
         current_comment = False
         
-    return comment_indices  
+    return comment_indices
 
 def extract_comment_statistics(path):
     comment_indices = extract_comment_indices(path)
