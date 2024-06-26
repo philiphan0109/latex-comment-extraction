@@ -122,8 +122,23 @@ def extract_comment_statistics(path):
 
 if __name__ == "__main__":
     path_to_main_tex = "paper/main.tex"
+    output_path = "paper/a.txt"
+    
     results = extract_comments(path_to_main_tex)
-    for section, comments in results.items():
-        print(f"Section: {section}")
-        for comment in comments:
-            print(f"  Comment: {comment}")
+    
+    with open(output_path, "w", encoding="utf-8") as file:
+        for section, comments in results.items():
+            file.write(f"Section: {section}\n")
+            print(f"Section: {section}")
+            for start_idx, end_idx in comments:
+                # Extract the actual comment text from the document
+                with open(path_to_main_tex, "r", encoding="utf-8") as text_file:
+                    text_file.seek(start_idx)
+                    comment_text = text_file.read(end_idx - start_idx)
+                
+                file.write(f"  Comment Indices: ({start_idx}, {end_idx})\n")
+                file.write(f"  Comment Text: {comment_text.strip()}\n\n")
+                
+                # Print to console as well
+                print(f"  Comment Indices: ({start_idx}, {end_idx})")
+                print(f"  Comment Text: {comment_text.strip()}\n")
