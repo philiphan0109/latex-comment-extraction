@@ -19,13 +19,14 @@ def extract_comments(path):
     comment_end_index = -1
     current_comment = False
     current_section = "Other"
+    comments_by_section[current_section] = []
     
     lines = full_paper.split("\n")
     for line in lines:
         if line.startswith("\\section{"):
             current_section = line.strip()[9:-1]
-            if current_comment not in comments_by_section:
-                comments_by_section[current_comment] = []
+            if current_section not in comments_by_section:
+                comments_by_section[current_section] = []
             
         if "\\begin{abstract}" in line:
             current_section = "Abstract"
@@ -119,3 +120,10 @@ def extract_comment_statistics(path):
     
     return comment_statistics
 
+if __name__ == "__main__":
+    path_to_main_tex = "paper/main.tex"
+    results = extract_comments(path_to_main_tex)
+    for section, comments in results.items():
+        print(f"Section: {section}")
+        for comment in comments:
+            print(f"  Comment: {comment}")
