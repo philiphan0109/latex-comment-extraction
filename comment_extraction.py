@@ -19,39 +19,49 @@ def extract_comments(path):
     current_index = 0
     current_section = "Other"
     comments_by_section[current_section] = []
+    current_comment = False
+    comment_start_index = 0
 
     lines = full_paper.split("\n")
     for line in lines:
-        # Handle section titles
+        # Find Section
         section_match = re.match(r'\\section{(.+?)}', line)
         if section_match:
             current_section = section_match.group(1)
             if current_section not in comments_by_section:
                 comments_by_section[current_section] = []
-
-        # Handle abstract
+            current_comment = False
         if "\\begin{abstract}" in line:
             current_section = "Abstract"
             if current_section not in comments_by_section:
                 comments_by_section[current_section] = []
+            current_comment = False
         elif "\\end{abstract}" in line:
             current_section = "Other"
+            current_comment = False
 
-        # Handle comments
+        # Find Comment
         if line.lstrip().startswith("%"):
-            comment_start_index = current_index
+            if not current_comment:
+                comment_start_index = current_index
+                current_comment = True
             comment_end_index = current_index + len(line)
-            comments_by_section[current_section].append((comment_start_index, comment_end_index))
         else:
             end_of_line_comment = re.search(r'(?<!\\)%.*$', line)
             if end_of_line_comment:
                 comment_start_index = current_index + end_of_line_comment.start()
                 comment_end_index = current_index + len(line)
                 comments_by_section[current_section].append((comment_start_index, comment_end_index))
-
+            if current_comment:
+                comments_by_section[current_section].append((comment_start_index, comment_end_index))
+                current_comment = False
         current_index += len(line) + 1
 
+    if current_comment:
+        comments_by_section[current_section].append((comment_start_index, comment_end_index))
+
     return comments_by_section
+
 
 def extract_comment_indices(path):
     comment_indices = []

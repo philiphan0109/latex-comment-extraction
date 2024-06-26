@@ -7,21 +7,15 @@ Section: Other
   Comment Text: 
  % For LaTeX2e
 
-  Comment Indices: (75, 92)
+  Comment Indices: (75, 171)
   Comment Text: 
  %\usepackage{rlc}
+% If accepted, instead use the following line for the camera-ready submission:
 
-  Comment Indices: (93, 171)
-  Comment Text: 
- % If accepted, instead use the following line for the camera-ready submission:
-
-  Comment Indices: (199, 318)
+  Comment Indices: (199, 347)
   Comment Text: 
  % To de-anonymize and remove mentions to RLC (for example, for posting to preprint servers), instead use the following:
-
-  Comment Indices: (319, 347)
-  Comment Text: 
- % \usepackage[preprint]{rlc}
+% \usepackage[preprint]{rlc}
 
   Comment Indices: (371, 396)
   Comment Text: 
@@ -43,101 +37,35 @@ Section: Other
   Comment Text: 
  %
 
-  Comment Indices: (1369, 1442)
+  Comment Indices: (1369, 2253)
   Comment Text: 
  % Authors must not appear in the submitted version. They should be hidden
+% as long as the tmlr package is used without the [accepted] or [preprint] options.
+% Non-anonymous submissions will be rejected without review.
+% \author{Johan Obando-Ceron\footnotemark[1]\\%\thanks{Equal contribution}
+%       jobando0730@gmail.com \\
+%       Mila - Québec AI Institute \\
+%       Universit\'e de Montr\'eal \\
+%       Google DeepMind
+%       \And
+%       João G.M. Araújo \thanks{Equal contribution}\\%\printfnsymbol{1}\\
+%       joaogui@google.com \\
+%       Google DeepMind
+%       \And
+%       Aaron Courville \\
+%       aaron.courville@umontreal.ca \\
+%       Mila - Québec AI Institute, Universit\'e de Montr\'eal \\
+%       \And
+%       Pablo Samuel Castro\\
+%       psc@google.com\\
+%       Google DeepMind\\
+%       Mila - Québec AI Institute, Universit\'e de Montr\'eal \\
+%       }
 
-  Comment Indices: (1443, 1526)
+  Comment Indices: (2507, 2629)
   Comment Text: 
- % as long as the tmlr package is used without the [accepted] or [preprint] options.
-
-  Comment Indices: (1527, 1587)
-  Comment Text: 
- % Non-anonymous submissions will be rejected without review.
-
-  Comment Indices: (1588, 1662)
-  Comment Text: 
- % \author{Johan Obando-Ceron\footnotemark[1]\\%\thanks{Equal contribution}
-
-  Comment Indices: (1663, 1695)
-  Comment Text: 
- %       jobando0730@gmail.com \\
-
-  Comment Indices: (1696, 1733)
-  Comment Text: 
- %       Mila - Québec AI Institute \\
-
-  Comment Indices: (1734, 1771)
-  Comment Text: 
- %       Universit\'e de Montr\'eal \\
-
-  Comment Indices: (1772, 1795)
-  Comment Text: 
- %       Google DeepMind
-
-  Comment Indices: (1796, 1808)
-  Comment Text: 
- %       \And
-
-  Comment Indices: (1809, 1883)
-  Comment Text: 
- %       João G.M. Araújo \thanks{Equal contribution}\\%\printfnsymbol{1}\\
-
-  Comment Indices: (1884, 1913)
-  Comment Text: 
- %       joaogui@google.com \\
-
-  Comment Indices: (1914, 1937)
-  Comment Text: 
- %       Google DeepMind
-
-  Comment Indices: (1938, 1950)
-  Comment Text: 
- %       \And
-
-  Comment Indices: (1951, 1977)
-  Comment Text: 
- %       Aaron Courville \\
-
-  Comment Indices: (1978, 2017)
-  Comment Text: 
- %       aaron.courville@umontreal.ca \\
-
-  Comment Indices: (2018, 2083)
-  Comment Text: 
- %       Mila - Québec AI Institute, Universit\'e de Montr\'eal \\
-
-  Comment Indices: (2084, 2096)
-  Comment Text: 
- %       \And
-
-  Comment Indices: (2097, 2126)
-  Comment Text: 
- %       Pablo Samuel Castro\\
-
-  Comment Indices: (2127, 2151)
-  Comment Text: 
- %       psc@google.com\\
-
-  Comment Indices: (2152, 2177)
-  Comment Text: 
- %       Google DeepMind\\
-
-  Comment Indices: (2178, 2243)
-  Comment Text: 
- %       Mila - Québec AI Institute, Universit\'e de Montr\'eal \\
-
-  Comment Indices: (2244, 2253)
-  Comment Text: 
- %       }
-
-  Comment Indices: (2507, 2570)
-  Comment Text: 
- % The \author macro works with any number of authors. Use \AND
-
-  Comment Indices: (2571, 2629)
-  Comment Text: 
- % to separate the names and addresses of multiple authors.
+ % The \author macro works with any number of authors. Use \AND 
+% to separate the names and addresses of multiple authors.
 
   Comment Indices: (2720, 2767)
   Comment Text: 
@@ -201,34 +129,6 @@ Section: A web-based appendix
   Comment Indices: (36540, 36541)
   Comment Text: 
  %
-
-  Comment Indices: (36573, 36606)
-  Comment Text: 
- % sections/environment_properties
-
-  Comment Indices: (36607, 36641)
-  Comment Text: 
- % \section{Environment properties}
-
-  Comment Indices: (36642, 36678)
-  Comment Text: 
- % \label{sec:environment_properties}
-
-  Comment Indices: (36679, 36681)
-  Comment Text: 
- %
-
-  Comment Indices: (36682, 37293)
-  Comment Text: 
- % The Arcade Learning Environment (ALE) is a platform designed for evaluating and comparing the performance of reinforcement learning algorithms on classic arcade games. ALE has emerged as the benchmark for evaluating the capabilities of reinforcement learning (RL) algorithms in tackling intricate discrete control tasks. Since its release in 2013 \citep{bellemare2012ale}, the benchmark has gained thousands of citations and almost all state-of-the-art RL algorithms have featured it in their work. However, results generated from the full benchmark have typically been limited to a few large research groups.
-
-  Comment Indices: (37294, 37296)
-  Comment Text: 
- %
-
-  Comment Indices: (37297, 37733)
-  Comment Text: 
- % The cost of producing evaluations on the full dataset is not feasible for many researchers and not necessary if you want to evaluate some specific algorithm capabilities, like long context games. Therefore, here we provide some key properties of the environments based on our previous findings which will allow the RL community select a small but representative subsets of environments when evaluating specific algorithm capabilities.
 
 Section: Related work
   Comment Indices: (39954, 40629)
