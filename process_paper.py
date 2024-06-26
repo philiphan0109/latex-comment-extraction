@@ -1,11 +1,6 @@
 import os
-import re
-import nltk
-from nltk.tokenize import word_tokenize
-import cProfile
-import pstats
-import io
 from stitch import stitch_tex_files
+from comment_extraction import extract_comment_indices
 
 # given a directory of .tex files this function will:
 # 1) generate a new .tex file named FULL_PAPER.tex
