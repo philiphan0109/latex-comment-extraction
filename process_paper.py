@@ -28,7 +28,6 @@ def process_paper(path):
                 # print(f"  Comment Indices: ({start_idx}, {end_idx})")
                 # print(f"  Comment Text: {comment_text.strip()}\n")
 
-if __name__ == "__main__":
-    path = "paper/"
-    print("hello")
-    process_paper(path)
+path = "paper/"
+print(path)
+process_paper(path)

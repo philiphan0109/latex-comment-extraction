@@ -59,4 +59,3 @@ def stitch_tex_files(path):
     
     return main_content
 
-

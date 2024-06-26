@@ -121,6 +121,7 @@ def extract_comment_statistics(path):
     return comment_statistics
 
 if __name__ == "__main__":
+    print("hello")
     path_to_main_tex = "paper/main.tex"
     output_path = "paper/a.txt"
     

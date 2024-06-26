@@ -1,0 +1,156 @@
+Section: Other
+  Comment Indices: (0, 29)
+  Comment Text: % RLC main.tex Version 2024.4
+
+  Comment Indices: (61, 74)
+  Comment Text: % For LaTeX2e
+
+  Comment Indices: (75, 171)
+  Comment Text: %\usepackage{rlc}
+% If accepted, instead use the following line for the camera-ready submission:
+
+  Comment Indices: (199, 347)
+  Comment Text: % To de-anonymize and remove mentions to RLC (for example, for posting to preprint servers), instead use the following:
+% \usepackage[preprint]{rlc}
+
+  Comment Indices: (371, 396)
+  Comment Text: % for professional tables
+
+  Comment Indices: (446, 520)
+  Comment Text: % Optional math commands from https://github.com/goodfeli/dlbook_notation.
+
+  Comment Indices: (573, 574)
+  Comment Text: %
+
+  Comment Indices: (631, 632)
+  Comment Text: %
+
+  Comment Indices: (662, 663)
+  Comment Text: %
+
+  Comment Indices: (1369, 2253)
+  Comment Text: % Authors must not appear in the submitted version. They should be hidden
+% as long as the tmlr package is used without the [accepted] or [preprint] options.
+% Non-anonymous submissions will be rejected without review.
+% \author{Johan Obando-Ceron\footnotemark[1]\\%\thanks{Equal contribution}
+%       jobando0730@gmail.com \\
+%       Mila - Québec AI Institute \\
+%       Universit\'e de Montr\'eal \\
+%       Google DeepMind
+%       \And
+%       João G.M. Araújo \thanks{Equal contribution}\\%\printfnsymbol{1}\\
+%       joaogui@google.com \\
+%       Google DeepMind
+%       \And
+%       Aaron Courville \\
+%       aaron.courville@umontreal.ca \\
+%       Mila - Québec AI Institute, Universit\'e de Montr\'eal \\
+%       \And
+%       Pablo Samuel Castro\\
+%       psc@google.com\\
+%       Google DeepMind\\
+%       Mila - Québec AI Institute, Universit\'e de Montr\'eal \\
+%       }
+
+  Comment Indices: (2507, 2629)
+  Comment Text: \\
+}
+
+
+% The \author macro works with any number of authors. Use \AND 
+% to separate the names and addresses of multiple
+
+  Comment Indices: (2720, 2767)
+  Comment Text: {June}  % Insert correct month for camera-ready
+
+  Comment Indices: (2784, 2830)
+  Comment Text: r{2024} % Insert correct year for camera-ready
+
+  Comment Indices: (2895, 2955)
+  Comment Text: vwoZB}} % Insert correct link to OpenReview for camera-ready
+
+Section: Abstract
+Section: Introduction
+Section: Background
+  Comment Indices: (11156, 11325)
+  Comment Text: c:brackground}
+
+% We cover the necessary background in a little more detail than is traditionally done, so as to be able to draw a direct connection to the hyper-paramet
+
+  Comment Indices: (12929, 13094)
+  Comment Text: } V^{\pi}(x')$. %This admits a simple algorithm for defining a new policy $\pi^\prime$ that is at least as good as $\pi$: $\pi^\prime(x) = \arg\max_{a\in\mathcal{A}}
+
+  Comment Indices: (15778, 15804)
+  Comment Text: 17averageddqn} 
+%and \cite
+
+Section: THC Score
+Section: Hyper-parameters considered
+  Comment Indices: (28654, 28655)
+  Comment Text: s
+
+  Comment Indices: (29119, 29120)
+  Comment Text: :
+
+  Comment Indices: (29126, 29127)
+  Comment Text: c
+
+Section: Experimental results
+  Comment Indices: (32250, 32251)
+  Comment Text: E
+
+  Comment Indices: (34052, 34053)
+  Comment Text: i
+
+  Comment Indices: (34089, 34090)
+  Comment Text: e
+
+Section: A web-based appendix
+  Comment Indices: (36514, 36515)
+  Comment Text: e
+
+  Comment Indices: (36540, 36541)
+  Comment Text: e
+
+Section: Related work
+  Comment Indices: (36573, 37733)
+  Comment Text: m}
+\end{figure}
+% sections/environment_properties
+% \section{Environment properties}
+% \label{sec:environment_properties}
+% 
+% The Arcade Learning Environment (ALE) is a platform designed for evaluating and comparing the performance of reinforcement learning algorithms on classic arcade games. ALE has emerged as the benchmark for evaluating the capabilities of reinforcement learning (RL) algorithms in tackling intricate discrete control tasks. Since its release in 2013 \citep{bellemare2012ale}, the benchmark has gained thousands of citations and almost all state-of-the-art RL algorithms have featured it in their work. However, results generated from the full benchmark have typically been limited to a few large research groups.
+% 
+% The cost of producing evaluations on the full dataset is not feasible for many researchers and not necessary if you want to evaluate some specific algorithm capabilities, like long context games. Therefore, here we provide some key properties of the environments based on our previous findings which will allow the RL community select a small but representative subsets of environments when evaluating specific algorit
+
+  Comment Indices: (39954, 40629)
+  Comment Text: performance.
+
+
+% Despite all the efforts, there are still some mysteries that have been not understood yet. Many of these new and unexpected discoveries have remained concealed due to limited parameter exploration caused by the substantial computational resources they demand. Investigate the impact of design choices and hyper-parameter in deep RL algorithms with large state environments is very challenging and almost impossible to explore on academic labs. Therefore, we decide to focus on exploring the relationship between hyparparemeters and  value-based methods, as opposed to the greater focus in Actor-Critic and Policy-based of the previous works \citep{andrychow
+
+Section: Discussion
+Section: Computing Tuning Hyperparameter Consistency (THC)
+Section: Finer-grained experimental discussion
+Section: Hyper-parameters list
+  Comment Indices: (53882, 53891)
+  Comment Text: {@{} ccc
+
+  Comment Indices: (54987, 54996)
+  Comment Text: }{@{} cc
+
+  Comment Indices: (55014, 55051)
+  Comment Text: \toprule
+    %\cmidrule(lr){1-2}\c
+
+Section: Interesting Miscellaneous Findings
+  Comment Indices: (57109, 57110)
+  Comment Text: e
+
+  Comment Indices: (58002, 58003)
+  Comment Text: E
+
+  Comment Indices: (60136, 60137)
+  Comment Text: o
+
