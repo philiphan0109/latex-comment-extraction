@@ -15,22 +15,23 @@ def find_commented_includes(tex_content):
     pattern = r'(%.*\\(input|include){([^}]+)})'
     return re.findall(pattern, tex_content)
 
-def find_main_tex_file(directory):
-    for root, _, files in os.walk(directory):
-        for file in files:
-            if file.endswith('.tex'):
-                file_path = os.path.join(root, file)
-                content = read_tex_file(file_path)
-                if '\\begin{document}' in content:
-                    return file_path
-    raise FileNotFoundError("Main .tex file not found in the directory")
-
 def convert_to_comment(content):
     lines = content.splitlines()
     commented_content = '\n'.join([f'% {line}' for line in lines])
     return commented_content
 
-def stitch_tex_files(main_file_path):
+def stitch_tex_files(path):
+    main_file_path = None
+    for root, _, files in os.walk(path):
+        for file in files:
+            if file.endswith('.tex'):
+                file_path = os.path.join(root, file)
+                content = read_tex_file(file_path)
+                if '\\begin{document}' in content:
+                    main_file_path = file_path
+    if not main_file_path:
+        raise FileNotFoundError("Main .tex file not found in the directory")
+    
     main_content = read_tex_file(main_file_path)
     includes = find_includes(main_content)
     commented_includes = find_commented_includes(main_content)
@@ -58,9 +59,4 @@ def stitch_tex_files(main_file_path):
     
     return main_content
 
-if __name__ == "__main__":
-    main_tex_path = find_main_tex_file(dir_path)
-    stitched_content = stitch_tex_files(main_tex_path)
-    
-    with open(os.path.join(dir_path, 'stitched_output.tex'), 'w') as output_file:
-        output_file.write(stitched_content)
+
