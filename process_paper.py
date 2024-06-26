@@ -30,4 +30,5 @@ def process_paper(path):
 
 if __name__ == "__main__":
     path = "paper/"
+    print("hello")
     process_paper(path)
