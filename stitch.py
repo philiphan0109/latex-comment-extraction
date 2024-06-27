@@ -39,7 +39,7 @@ def stitch_tex_files(path):
     for command, include_file in includes:
         if not include_file.endswith('.tex'):
             include_file += '.tex'
-        include_path = os.path.join(dir_path, include_file)
+        include_path = os.path.join(path, include_file)
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
@@ -49,7 +49,7 @@ def stitch_tex_files(path):
     for comment, command, include_file in commented_includes:
         if not include_file.endswith('.tex'):
             include_file += '.tex'
-        include_path = os.path.join(dir_path, include_file)
+        include_path = os.path.join(path, include_file)
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             commented_content = convert_to_comment(include_content)
