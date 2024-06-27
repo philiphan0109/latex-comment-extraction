@@ -45,6 +45,7 @@ def stitch_tex_files(path):
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
         else:
             print(f"File not found: {include_path}")
+            
     
     for comment, command, include_file in commented_includes:
         if not include_file.endswith('.tex'):
