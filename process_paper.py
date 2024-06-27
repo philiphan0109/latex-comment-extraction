@@ -6,7 +6,7 @@ from comment_extraction import extract_comments
 # 1) generate a new .tex file named FULL_PAPER.tex
 # 2) extract the comments from the full paper
 
-path = "paper3/"
+path = "paper4/"
 
 def process_paper(path):
     full_paper = stitch_tex_files(path)
