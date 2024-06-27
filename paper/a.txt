@@ -1,0 +1,298 @@
+Section: Other
+  Comment Indices: (165, 185)
+  Comment Text: 
+ % DO NOT CHANGE THIS
+
+  Comment Indices: (527, 545)
+  Comment Text: 
+ %\usepackage{soul}
+
+  Comment Indices: (674, 679)
+  Comment Text: 
+ %TIKZ
+
+  Comment Indices: (697, 789)
+  Comment Text: 
+ %\usetikzlibrary{external}
+%\tikzexternalize[prefix=tikz/,optimize command away=\includepdf]
+
+  Comment Indices: (1315, 1336)
+  Comment Text: 
+ % \begin{frontmatter}
+
+  Comment Indices: (2987, 3005)
+  Comment Text: 
+ %\end{frontmatter}
+
+Section: Abstract
+Section: Introduction
+  Comment Indices: (3554, 3556)
+  Comment Text: 
+ %%
+
+  Comment Indices: (3714, 3716)
+  Comment Text: 
+ %%
+
+  Comment Indices: (4114, 4116)
+  Comment Text: 
+ %%
+
+  Comment Indices: (4336, 4338)
+  Comment Text: 
+ %%
+
+  Comment Indices: (8618, 8719)
+  Comment Text: 
+ %====================================================================================================
+
+Section: Related Work
+Section: Method
+Section: Evaluation
+  Comment Indices: (25006, 25008)
+  Comment Text: 
+ %%
+
+  Comment Indices: (25206, 25208)
+  Comment Text: 
+ %%
+
+  Comment Indices: (25423, 25425)
+  Comment Text: 
+ %%
+
+  Comment Indices: (25508, 25510)
+  Comment Text: 
+ %%
+
+  Comment Indices: (25590, 25592)
+  Comment Text: 
+ %%
+
+  Comment Indices: (25658, 25660)
+  Comment Text: 
+ %%
+
+  Comment Indices: (26397, 26410)
+  Comment Text: 
+ %%
+    %%
+
+  Comment Indices: (26908, 26914)
+  Comment Text: 
+ %%
+
+  Comment Indices: (27126, 27132)
+  Comment Text: 
+ %%
+
+  Comment Indices: (27217, 27223)
+  Comment Text: 
+ %%
+
+  Comment Indices: (27541, 27547)
+  Comment Text: 
+ %%
+
+  Comment Indices: (27735, 27741)
+  Comment Text: 
+ %%
+
+  Comment Indices: (27929, 27935)
+  Comment Text: 
+ %%
+
+  Comment Indices: (28447, 28449)
+  Comment Text: 
+ %%
+
+  Comment Indices: (28602, 28604)
+  Comment Text: 
+ %%
+
+  Comment Indices: (28999, 29001)
+  Comment Text: 
+ %%
+
+  Comment Indices: (29165, 29167)
+  Comment Text: 
+ %%
+
+  Comment Indices: (29302, 29304)
+  Comment Text: 
+ %%
+
+  Comment Indices: (29491, 29493)
+  Comment Text: 
+ %%
+
+  Comment Indices: (29637, 29639)
+  Comment Text: 
+ %%
+
+  Comment Indices: (29788, 29790)
+  Comment Text: 
+ %%
+
+  Comment Indices: (29876, 29878)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30055, 30057)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30207, 30209)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30425, 30427)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30581, 30583)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30664, 30666)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30760, 30762)
+  Comment Text: 
+ %%
+
+  Comment Indices: (30871, 30873)
+  Comment Text: 
+ %%
+
+  Comment Indices: (31123, 31125)
+  Comment Text: 
+ %%
+
+  Comment Indices: (31194, 31196)
+  Comment Text: 
+ %%
+
+  Comment Indices: (31311, 31313)
+  Comment Text: 
+ %%
+
+  Comment Indices: (31666, 31693)
+  Comment Text: 
+ %Continuing this analysis,
+
+  Comment Indices: (31866, 31868)
+  Comment Text: 
+ %%
+
+  Comment Indices: (32069, 32071)
+  Comment Text: 
+ %%
+
+  Comment Indices: (32290, 32292)
+  Comment Text: 
+ %%
+
+  Comment Indices: (32727, 32729)
+  Comment Text: 
+ %%
+
+  Comment Indices: (32882, 32884)
+  Comment Text: 
+ %%
+
+  Comment Indices: (32989, 32991)
+  Comment Text: 
+ %%
+
+  Comment Indices: (33082, 33084)
+  Comment Text: 
+ %%
+
+  Comment Indices: (33155, 33157)
+  Comment Text: 
+ %%
+
+  Comment Indices: (33553, 33559)
+  Comment Text: 
+ %%
+
+  Comment Indices: (33966, 33997)
+  Comment Text: 
+ %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+
+  Comment Indices: (34198, 34204)
+  Comment Text: 
+ %%
+
+  Comment Indices: (35307, 35309)
+  Comment Text: 
+ %%
+
+  Comment Indices: (35834, 35836)
+  Comment Text: 
+ %%
+
+  Comment Indices: (35990, 35992)
+  Comment Text: 
+ %%
+
+  Comment Indices: (36102, 36104)
+  Comment Text: 
+ %%
+
+  Comment Indices: (36305, 36307)
+  Comment Text: 
+ %%
+
+  Comment Indices: (36605, 36607)
+  Comment Text: 
+ %%
+
+  Comment Indices: (36958, 36960)
+  Comment Text: 
+ %%
+
+  Comment Indices: (37092, 37094)
+  Comment Text: 
+ %%
+
+  Comment Indices: (37260, 37262)
+  Comment Text: 
+ %%
+
+  Comment Indices: (37497, 37499)
+  Comment Text: 
+ %%
+
+  Comment Indices: (37698, 37700)
+  Comment Text: 
+ %%
+
+  Comment Indices: (37964, 38003)
+  Comment Text: 
+ %\subsection{Discussions}
+%\lipsum[1-2]
+
+Section: Discussion
+Section: Extentions
+  Comment Indices: (39038, 39091)
+  Comment Text: 
+ % for ourselves, will be commented out for submission
+
+Section: Conclusions and Future Work
+  Comment Indices: (40730, 40963)
+  Comment Text: 
+ %By leveraging LLMs for automatic parsing of user requests into planning problem formulations and utilizing planners for explicit optimization, our method ensures the generation of valid and preference-aligned travel plans.
+%\newpage
+
+Section: Disclaimer
+  Comment Indices: (41840, 41867)
+  Comment Text: 
+ %\bibliographystyle{aaai24}
+
+
+Potential Supplemental Files:
+paper/other.tex

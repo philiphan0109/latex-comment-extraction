@@ -1,0 +1,498 @@
+\documentclass[letterpaper]{article}
+\usepackage{aaai24}
+
+\usepackage{natbib}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[hyphens]{url}  % DO NOT CHANGE THIS
+\usepackage{lipsum} 
+\usepackage{xspace}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usetikzlibrary{pgfplots.statistics}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\usepackage{subcaption}
+\usepackage{verbatim}
+\usetikzlibrary{decorations.pathreplacing,calc}
+%\usepackage{soul}
+\frenchspacing
+\usetikzlibrary{decorations.pathreplacing,calc}
+\usetikzlibrary{intersections}
+\usepackage{soul}
+\frenchspacing
+
+%TIKZ
+\usepackage{pgf}
+%\usetikzlibrary{external}
+%\tikzexternalize[prefix=tikz/,optimize command away=\includepdf]
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{shapes.arrows}
+\usetikzlibrary{shapes,arrows,automata,positioning,fit,arrows.meta,calc}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{patterns}
+\usetikzlibrary{3d}
+\usetikzlibrary{quotes,matrix}
+
+
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=newest, 
+	tick label style={font=\scriptsize},
+	label style={font=\scriptsize},
+	legend style={font=\scriptsize}}
+
+
+\newcommand{\gpt}{{\sc GPT-4}\xspace}
+\newcommand{\approach}{\ensuremath{\textsc{TRIP-PAL}}\xspace}
+
+% \begin{frontmatter}
+\title{\approach: Travel Planning with Guarantees by Combining Large Language Models and Automated Planners}
+\author{Tomás de la Rosa, Sriram Gopalakrishnan, Alberto Pozanco, Zhen Zeng,  Daniel Borrajo\thanks{On leave from Universidad Carlos III de Madrid}}
+\affiliations{J.P. Morgan AI Research}        
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Travel planning is a complex task that involves generating a sequence of actions related to visiting places subject to constraints and maximizing some user satisfaction criteria. 
+Traditional approaches rely on problem formulation in a given formal language, extracting relevant travel information from web sources, and use an adequate problem solver to generate a valid solution. As an alternative, recent Large Language Model (LLM) based approaches directly output plans from user requests using language. Although LLMs possess extensive travel domain knowledge and provide high-level information like points of interest and potential routes, current state-of-the-art models often generate plans that lack coherence, fail to satisfy constraints fully, and do not guarantee the generation of high-quality solutions.
+We propose \approach, a hybrid method that combines the strengths of LLMs and automated planners, where (i) LLMs get and translate travel information and user information into data structures that can be fed into planners; and (ii) automated planners generate travel plans that guarantee constraint satisfaction and optimize for users' utility.
+Our experiments across various travel scenarios show that  \approach outperforms an LLM when generating  travel plans. 
+\end{abstract}
+%\end{frontmatter}
+
+\section{Introduction}
+
+Travel planning is a complex process that involves finding places or points of interest (POIs), incorporating real-world constraints such as visiting and travel times, as well as scheduling the POIs into a coherent trip that maximizes a given utility function.
+
+Traditional computer-aided solutions for travel planning based on Automated Planning~\cite{HTN_temporal_travel_plan}, and Mixed-Integer Programming~\cite{MIP_travel_planner} heavily rely on manual problem formulations to represent and formalize this knowledge.
+%%
+Using formal representations, different solvers can be used to generate travel plans that maximize the users' utility while satisfying the hard constraints.
+%%
+Although these approaches guarantee valid travel itineraries, the formalization step can be tedious and time consuming even for domain experts.
+
+Recent advances in LLMs such as \gpt~\cite{gpt4_tech_report} have shown promising results in tasks requiring public domain knowledge available on the internet~\cite{suri2024use_llm_knowledge_tasks,gpt4_tech_report}, where these systems are trained on.
+%%
+Travel planning is one of such tasks, and LLMs seem to be good candidates as tools to generate travel itineraries due to their extensive knowledge about travel destinations, POIs and previous itineraries shared online.
+%%
+However, LLMs have been shown to be bad reasoners especially in tasks that involve sequential decision making~\cite{rao_cannot_plan}; travel planning is one such type of domain. To counter this, LLMs like \gpt would have had access to many travel plans in their training data, and it can be argued that \gpt might be capable of doing a form of case-based planning(CBP)~\cite{case_based_planning_survey} for travel planning. Given a case library (set of past pairs $\langle$ problem, plan$\rangle$) and a new problem, CBP retrieves a subset of the previous plans that are most similar to the new problem, adapts them to create a new solution, that is evaluated and stored in the case library. In the context of travel planning, that could mean combining past successful travel plans in a city to make a new plan for a user's utility, and satisfy real world constraints. With the plethora of data (cases), it is feasible for an LLM to generate good travel plans; this is one of the reasons we focus on travel planning with LLMs.
+
+
+In this paper we propose \approach (Travel Itinerary Planning with Planners and Language models), a hybrid method that goes beyond just using LLMs, that leverages the strengths of both LLMs and automated planners for travel planning. In a similar spirit to the work by Liu et al.~\cite{liu2023llm+} and Rao et al.~\cite{LLM_modul_plan_Rao}, our approach utilizes LLMs to parse or extract information based on user goals, such as finding POIs and time to spend at each POI. This information is then used to formulate a planning problem that captures the user's goals and general preferences. In this paper, we assume that the general preference of visiting each POI extracted by the LLM is a proxy of the user satisfaction of visiting those POIs. The formulated planning problem is then solved using an automated planner, which takes into account the real-world constraints and generates an optimal travel plan. The planner considers factors such as commute times, time to spend at a POI, and general preferences to create a plan that maximizes user satisfaction or utility while being feasible. By explicitly representing the planning problem and using an optimal planner, we ensure that the generated plans are sound (valid), comply with constraints, and are optimal. 
+
+In this paper, we study two planning characteristics that were not covered by previous work on the relation between LLMs reasoning capabilities and planning: over-subscription and optimality. Planning under over-subscription deals with tasks where there is no possible plan that achieves all goals given as input. For instance, let us assume we give a planner 50 POIs to visit in Paris\footnote{We can easily see that this number is already a lower bound of all relevant places to visit in Paris.} in one day. There is no reasonable travel plan that can achieve all those goals under that time constraint. Therefore, a valid/optimal solution will consider the plan that achieves the subset of goals that maximize user satisfaction or utility under the given constraints.
+
+To evaluate the effectiveness of \approach, we conduct experiments on a diverse set of travel scenarios to generate single-day travel plans.
+We compare  \approach against \gpt to assess its performance in terms of plan quality and feasibility. The experiments reveal that, as the travel planning problem involves more POIs or longer travel time, \gpt tends to generate travel plans with much lower user utility than the ones generated by \approach. Specifically, \approach robustly generates valid plans that maximize user utility.
+
+Our main contributions are as follows:
+\begin{itemize}
+   
+    \item We investigate the use of LLMs (\gpt) for the oversubscription planning problem in the travel domain, considering real-world constraints.
+    
+    \item We propose a hybrid approach that combines LLMs and automated planners for the travel planning task that is an end-to-end solution with guarantees including constraint satisfaction and optimization of the utility of the travel plans. 
+    
+    \item We demonstrate the effectiveness of our hybrid approach through extensive experiments, showing its advantages over using only \gpt for travel plans in terms of plan utility and validity.
+\end{itemize}
+
+%====================================================================================================
+\section{Related Work}
+
+\subsection{Traditional Travel Planning}
+Travel recommendation and itinerary planning have been extensively studied in the literature. Numerous works have explored various algorithmic approaches to find exact or approximate optimal itineraries given points of interest (POIs) and certain constraints~\cite{berka2004designing, expertsystems08-samap, moreno2013sigtur, CitytripPlanner_ExpertSystems2011, rodriguez2013gat, ETourism_Sebastia_IJAIT09, IEEETrans_itineraryplanning, HTN_temporal_travel_plan, MIP_travel_planner}. Gavalas et al.~\cite{gavalas2014survey} provided a comprehensive survey of the research landscape in Tourist Trip Design Problems (TTDPs). They defined TTDP as the route-planning problem for tourists interested in visiting multiple POIs while accounting for constraints. The survey highlighted that TTDPs are often solved using classical optimization approaches or stochastic local search techniques. These methods aim to generate personalized and efficient travel plans catering to users' specific preferences and constraints.
+
+To further enhance the user experience, recent works have focused on incorporating personalization techniques by harnessing crowdsourcing and social networks~\cite{DBLP:conf/aaai/ManikondaCDTK14, lucas2012hybrid, eswa-ondroad, IEEETrans_itineraryplanning, DBLP:journals/ipm/BrilhanteMNPR15, majid2014system}, as well as case-based reasoning~\cite{ricci2006case}. These methods leverage the collective knowledge and experiences of other travelers to provide more tailored and relevant itinerary recommendations. In addition, Tenemaza et al.~\cite{tenemaza2020improving} employed genetic algorithms to refine and improve proposed travel plans.
+
+A common limitation of the aforementioned approaches is the need for manual formulation of the optimization or planning problem. More recent works use deep learning techniques for POIs and travel recommendations~\cite{halder2024survey}, lifting the requirement for manual formulation of the planning problem. However, these deep learning models do not account for optimality from a planning perspective. In contrast, our work addresses this challenge by utilizing LLMs to automatically parse user travel queries into planning problems. By adopting the method proposed by Keyder et al.~\cite{keyder2009soft} for compiling away soft goals, we can effectively solve the oversubscription problem and find the optimal travel plan without requiring manual problem formulation.
+
+\subsection{Travel Planning with LLMs}
+In recent years, a few works have explored the use of LLMs for travel planning. An early probe of LLMs such as ChatGPT on automatic travel decision-making~\cite{GPT_travel_plan_wong2023autonomous} showed LLMs' capability to improve tourists' experience in the pre-trip, en-route, and post-trip stages. However, when quantitatively benchmarked LLM agents on travel planning, it revealed that the problem is still too difficult for LLM agents, with even \gpt achieving only a low success rate~\cite{xie2024travelplanner}. To address this issue,~\citeauthor{gundawar2024robust}~(\citeyear{gundawar2024robust}) adopted the LLM-Modulo framework~\cite{kambhampati2024can} in travel planning, which iteratively improves the generated travel plan through interactions between a travel plan generation LLM and a suite of external verifiers. However, this approach does not involve formal planning or optimization tools, thus providing no guarantee of meeting all travel constraints, especially as the constraints increase~\cite{zheng2024natural}. To provide guarantees,~\citeauthor{hao2024large}~(\citeyear{hao2024large}) proposed to use LLMs to formulate the travel planning problem as a satisfiability modulo theory (SMT) problem, followed by using an SMT solver. Their methodology led to promising travel planning results where user constraints are satisfied. However, their method assumes visiting all given POIs, rather than automatically trading-off, which is the most realistic scenario, and selecting the optimal subset of POIs as in the oversubscription setting. Additionally, \approach maximizes the user's utility on top of satisfying constraints. To accommodate both constraint satisfaction and utility maximization which was not included in~\cite{xie2024travelplanner}, we created a new benchmark dataset as discussed in our experiments.
+
+LLMs could be a valuable source of POI recommendations given their extensive knowledge, providing results similar to those acquired from public sources~\cite{DBLP:journals/ipm/BrilhanteMNPR15, majid2014system} such as Flickr and Wikipedia. However, for numeric information, such as commute time or distances between places, especially for less populated areas~\cite{roberts2023gpt4geo}, web services like Google Places API~\cite{google_places_api} are a more accurate source. 
+
+
+\subsection{LLMs and Planning}
+When we extend the scope from travel planning to general planning, there are many more recent papers leveraging LLMs in the general planning domain. Recent works have tried using LLMs to solve planning tasks directly through prompting~\cite{valmeekam2022large,silver2024generalized}. These works conducted extensive evaluations on standard planning benchmarks and showed that LLMs perform poorly at generating valid plans. This highlights the limitations of using LLMs alone for complex planning tasks and the need for more advanced approaches.
+
+To address this issue, researchers have explored ways to bridge LLMs and planners, such that LLMs are responsible of formulating the planning problem in standard planning languages, such as Planning Domain Definition Language (PDDL)~\cite{PDDL21-JAIR03}, while planners are in charge of solving the formulated planning problems~\cite{guan2023leveraging,liu2023llm+}. Specifically, LLMs have been shown to generate PDDL problems reasonably well~\cite{oswald2024large,pallagani2024prospects}. By leveraging the strengths of both LLMs and planners, these hybrid approaches improved the overall performance and efficiency of planning systems.
+
+However, the aforementioned works primarily evaluated LLMs in classical planning domains such as blocksworld, which may not have had sufficient relevant data during the training stage of these LLMs. In contrast, the travel planning domain is a domain that LLMs possess extensive knowledge of, as evident in~\cite{GPT_travel_plan_wong2023autonomous}. Therefore, it is crucial to benchmark how well \gpt readily addresses the travel planning problem from both constraints and utility perspectives. To the best of our knowledge, we are the first to 1) introduce the hybrid approach of LLMs and planners to the travel planning domain and benchmark its effectiveness; 2) solve oversubscription planning tasks using such hybrid approach; and 3) benchmark the suboptimality of the travel plans generated by \gpt.
+    
+
+\section{Method}
+In this section, we describe how we extract the travel information, and how that information is used to generate plans by \gpt and \approach. The components used are illustrated in Figure~\ref{fig:architecture}.
+
+
+\begin{figure*}
+\centering
+\includegraphics[width=0.78\textwidth]{figures/arquitecture_LLM+planner.pdf}
+    \caption{Components used in travel planning for \gpt and \approach.}
+    \label{fig:architecture}
+\end{figure*}
+
+\subsection{Retrieval of Travel Information}
+
+The inputs to each planning episode are: the desired city, $C$; the number of POIs to consider, $N$; and the maximum number of hours the travel plan should take, $H$. The first step in our travel planning process is to extract the corresponding information to those requirements: a set of size $N$ of POIs in the city $C$ with associated relevant information. \approach uses a sequence of prompts to \gpt, that return the data it requires to compose a travel plan (excerpts from these prompts are in Figure~\ref{fig:architecture}). The result of each prompt is included in the context of the next call. The summary of steps goes as follows:
+\begin{itemize}
+    \item For a given \textit{city} $C$, \approach asks \gpt to return a set $P$ of $N$ tourist points of interest (POIs). Each POI $p\in P$ will become a goal of the planning problem as visit($p$).
+    \item For each POI provided before, \approach gets the rating or utility of the POI by asking \gpt for the popularity expressed in a utility value between 1 and 10, with 10 as the maximum utility. It uses this value as the POI's utility, utility($p, u$). The sum of utilities of POIs in any plan will provide the total plan utility or plan value. Since we are dealing with oversubscription planning, not all POIs will necessarily be visited in the plans. 
+    \item Then, \approach asks for the time one should spend in each location; this information is asked to be returned in units of 15 minutes, and will define the visit-time($p, t$) property.  
+\end{itemize}
+
+With the set of POIs returned by \gpt, \approach can query a service to get the travel time between POIs such as the google places API~\cite{google_places_api}. For this work we randomly assigned travel times between POIs to be between 15 and 60 minutes in units of 15-minutes. This gives us a travel-times graph. 
+All the accumulated travel information described so far is then fed to a travel planner. The travel planning step can be a simple call to \gpt or alternatively (in \approach) a call to an automated planner. In the latter, it called after all the information is translated to a formal planning task. This flow of information is shown in Figure~\ref{fig:architecture}.
+
+
+\subsection{LLM-based Tourist Plan}
+All the acquired travel information (set of POIs, utility of each POI, visit time, and travel time) is concatenated  and fed as text to \gpt. \gpt is then asked to generate a travel plan for the time specified, and to optimize the travel plan based on the utilities of the points of interest passed in. We prompt \gpt to generate a day travel plan for a fixed amount of time indicated with start and end hours. To help \gpt generate valid plans in as many cases as possible, we asked it to output the travel plan using explicit time (e.g., \textit{14:00}) which empirically worked better for us, for respecting the time constraint than using AM/PM or just asking to \textit{``give a plan for x-hours''}. See an example in Figure~\ref{fig:architecture}.
+For \gpt, the task of generating this plan with the previous information given in the prompt, involves selecting a subset of POIs that will fit in the schedule; this means considering the visiting time of POIs and the commute time between POIs, and then provide the best plan by utility to the user. Utility is the sum of the utilities of POIs in the plan.
+
+\subsection{Automated Planning Task}
+
+Automated Planning (AP) is the AI field that builds domain-independent solvers which produce sequence of actions (plans) to transform a given initial state into a  state where a set of goals have been achieved. A planning task in AP is  specified in a declarative language (typically PDDL) comprising an action model (domain) and a problem description where the initial state, the goals and the metric to optimize are defined. Oversubscription planning focuses on the class of tasks where not all goals can be achieved because the availability of bounded resources. This is the case for travel planning, since a tourist may be willing to visit more POIs that one can handle in a day itinerary. In oversubscription planning, some, or even all goals, can be deemed as \textit{soft-goals}, meaning that a plan is still valid if they are not reached in the final state. In PDDL3 this is represented with goal preferences~\cite{PDDL30}. In this case, planners  optimize for soft goals based on an utility function. Alternatively, soft goals
+can be represented with classic planning tasks where high-penalty artificial 
+actions are included in the domain to skip the goals that are not achieved at the end of the real plan~\cite{keyder2009soft}.  In this second case, planners optimize the cost function trying to avoid paying high penalties. 
+In our setting, we set visiting all POIs as soft goals, encoding them with the latter approach.
+
+In order to generate the planning task from the extracted information on a given travel (POIs, time constraints, driving times, ...), we used \gpt to convert the information on the POIs into dictionaries for the POI utility, travel-time and visit-time. \approach then converts these dictionaries into a PDDL planning task using the UPF planning library in python~\cite{upf}. The domain is fixed across all tasks and contains the following actions:
+
+    \begin{itemize}
+        \item Visit: the tourist spends time in a POI. For instance, visiting a park, taking a guided tour in a museum, etc.
+        \item Move: A generic action representing the time spent in going from one point to another. This includes walking short distances or taking public transport.
+    \end{itemize}
+
+ Figure~\ref{fig:pddl-visit} shows the definition of the visit action in PDDL. Symbols preceded by a question mark represent variables. Preconditions define conditions that have to be true in the state in order to execute the action. Effects are literals that are expected to be true in the state after applying the action. 
+
+\begin{figure}
+\centering
+\footnotesize{
+\begin{verbatim}
+(:action visit
+    :parameters (?vloc - location 
+                 ?vt0 - time 
+                 ?vtvisit - time 
+                 ?vtf - time)
+    :precondition
+      (and (normal_mode) 
+           (current_time ?vt0) 
+           (visited_time ?vloc ?vtvisit) 
+           (user_at ?vloc) 
+           (logic_sum ?vt0 ?vtvisit ?vtf))
+    :effect 
+      (and (visited ?vloc) 
+           (not (current_time ?vt0)) 
+           (current_time ?vtf) 
+           (increase (total-cost) 
+                     (visit_cost ?vloc))))    
+\end{verbatim}
+}
+\caption{PDDL definition of the visit action.}
+\label{fig:pddl-visit}
+\end{figure}
+
+
+
+Additionally, the model includes the artificial actions (\textit{end\_mode} and \textit{no\_visit}) needed to stop the real plan and then ignore unachieved goals~\cite{keyder2009soft} and thus, handle the oversubscription problem in the same way as in previous work~\cite{eswa-ondroad}.
+The problem description incorporates as static facts the information collected in the information retrieval step regarding the time to spend at POIs and time to commute. 
+Given that most current planners only optimize by minimizing a given function, the POIs' utility is reversed (\textit{MaxUtility - POI\_Utility + 1}), to translate it to cost.
+Time is discretized to 15-minutes slots, so the task can be represented without numeric preconditions. Each day slot is represented as an object. Thus, domain actions include parameters for the current slot, the time slot at action termination, and delta between the two. The logic of how to assign each parameter is encoded through pre-computed static facts of the initial state.  See for instance in Figure~\ref{fig:pddl-visit} the \textit{logic\_sum} precondition, which requires the current time (\textit{vt0}) is changed to the final time slot (\textit{vtf}) when the time-to-visit slot (\textit{vtvisit}) has passed.
+
+
+\begin{figure*}
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \input{tikz_figures/scatterplot_example}
+        \caption{With validity check.}
+        \label{fig:with_validity_check}
+    \end{subfigure}\hfill
+    \begin{subfigure}{0.5\textwidth}
+        \centering
+        \input{tikz_figures/scatterplot_example2}
+        \caption{Without validity check.}
+        \label{fig:without_validity_check}
+    \end{subfigure}
+    \caption{Utility of the plans returned by \approach and \gpt. Points below the solid diagonal indicate that \approach generated a higher quality plan than \gpt for the given travel planning task. Points at the horizontal red line indicate that \gpt generated an invalid plan.}
+    \label{fig:standard_day}
+\end{figure*}
+
+\section{Evaluation}
+
+
+\subsection{Experimental Setting}
+
+\paragraph{Approaches.}
+We compare \approach against an LLM-based baseline, \gpt.
+\approach uses Fast Downward~\cite{helmert06} as the AI planner, as provided in the Unified Planning Framework~\cite{upf}.
+%%
+We use the \textsc{seq-opt-lmcut} configuration of Fast Downward, which runs $\mbox{A}^*$ with the admissible \textsc{lmcut} heuristic to compute plans that are guaranteed to be valid and optimal.
+%%
+Experiments were run on a EC2 T3-medium instance with 4Gb of RAM.
+
+\paragraph{Benchmark.}
+We sampled $20$ cities for our experiments by asking \gpt to generate $10$ popular destinations and $10$ less popular ones.
+%%
+This selection ensures a comprehensive comparison across various travel contexts.
+%%
+For each city, we considered $N$ POIs located within or near the city limits. 
+%%
+These POIs serve as potential destinations for the travel plans.
+%%
+We ask both approaches, \gpt and \approach for one day travel plans involving at most $H$ tourism hours.
+
+\paragraph{Metrics.}
+We evaluate the generated travel plans using a set of metrics that assess their feasibility and quality. These metrics include:
+\begin{itemize}
+    
+    \item \textit{Plan Validity}. \approach plans will be valid by definition, since the planner we use is sound. However, this is not the case for the plans generated by \gpt. We check whether LLM-based plans are valid or not in terms of action applicability and time constraints. For the applicability check, we translate each \gpt plan into PDDL output format and use the UPF validator~\cite{upf} that returns true if the plan is valid, or false otherwise.
+    %%
+    %%
+    For the time constraints, we developed a validation function that checks if (1) the plan fits within $H$ tourism hours, and (2) each action lasts at least the time collected in the retrieval phase, i.e., travel and visit times are respected. This check is performed separately from the validator call because we verify that the time spend in each POI is at least the time required, and not the exact time. This is not directly achievable with the object representation we use for time slots. 
+    %%
+    If any of these constraints is violated, the \gpt-based plan is considered invalid.  
+    \item \textit{Plan Utility}. We define the utility of a travel plan as the sum of the utility of the POIs it visits.
+    %%
+    
+    \item \textit{Runtime}. Time in seconds needed to generate a travel plan. 
+    %%
+    This time comprises all the steps in each approach's pipeline.
+\end{itemize}
+
+
+\subsection{Results}
+
+
+\begin{figure*}[thb]
+    \begin{subfigure}{0.25\textwidth}
+    \centering
+    \input{tikz_figures/boxplot_pois_number}
+    \caption{Number of POIs visited.}
+    \label{fig:pois_number}
+    \end{subfigure}\hfill
+    %%
+    \begin{subfigure}{0.25\textwidth}
+    \centering
+    \input{tikz_figures/boxplot_avg_utility}
+    \caption{Average POI utility.}
+    \label{fig:avg_utility}
+    \end{subfigure}\hfill
+    %%
+    \begin{subfigure}{0.25\textwidth}
+    \centering
+    \input{tikz_figures/boxplot_max_utility}
+    \caption{Maximum POI utility.}
+    \label{fig:max_utility}
+    \end{subfigure}\hfill
+    %%
+    \begin{subfigure}{0.25\textwidth}
+    \centering
+    \input{tikz_figures/boxplot_min_utility}
+    \caption{Minimum POI utility.}
+    \label{fig:min_utility}
+    \end{subfigure}\hfill
+    \caption{Distribution of the number of POIs visited by each plan, as well as their average, maximum, and minimum utility.}
+    \label{fig:all}
+\end{figure*}
+
+\paragraph{Standard Day Travel Planning.}
+Our first experiment aims to analyze the performance of both approaches when doing \emph{standard} day travel planning.
+%%
+We define this as deciding the POIs to visit (and in which order) in $H=8$ hours of tourism (leaving meals aside) among a set of $N=10$ candidate POIs.
+%%
+We believe this is a standard travel planning setting faced by people when preparing for visiting a city.
+
+We generate $5$ different problems --each problem is a set of POIs with their associated utilities and visiting times, and travel times between POIs-- for each of the $20$ cities comprising our  benchmark, thus having $100$ travel planning tasks where we can compare \approach and \gpt.
+%%
+Figure~\ref{fig:with_validity_check} shows this comparison by plotting the utility of the plan computed by \approach ($x$ axis) and \gpt ($y$ axis) for each task.
+%%
+Points below the solid diagonal indicate that \approach generated a higher quality plan than \gpt for the given travel planning task.
+%%
+When \gpt generates an invalid plan, we associate it a utility value lower than the utility obtained by \approach in any task. We used a value of 21 so that it can be easily visualized.
+%%
+These are the points falling at the horizontal red line.
+
+As we can see, \approach generated higher utility plans than \gpt for all the tasks.
+%%
+\gpt returned $14$ valid plans out of the $100$ tasks, clearly indicating that it struggles to generate travel plans that satisfy hard constraints.
+%%
+
+Taking a closer look to the sources of invalidity, they are distributed as follows.
+%%
+Across the $86$ invalid plans, \gpt did not respect a visiting time in $81$, a traveling time in $27$, and the maximum number of hours devoted to tourism in $12$ of the plans.
+%%
+In $25$ out of the $86$ cases, \gpt generated plans with more than one invalidity source, with a maximum of $6$ invalid actions in some itineraries.
+%%
+The suggested time to visit POIs and travel between them in these invalid plans was on average $0.48\pm0.22$ of the time required to visit/travel, with extreme cases where this time deviation went as low as $0.08$.
+%%
+This was the case of a \gpt plan that suggested to spend just $15$ minutes to visit the Toronto Islands, while it was asked to allow at least $3$ hours.
+%%
+
+
+This is a blatant case where \gpt plan is clearly not executable in practice.
+%%
+However, in some cases the plan is invalid due to small visiting/traveling time differences.
+%%
+For example, one \gpt trip is invalid due to visiting the Tower of London for $1.5$ hours rather than $2$. 
+%%
+Even if incorrect from a hard constraints point of view, that plan would arguably be realistic and executable in practice, so we decided to treat \gpt favourably by removing the hard constraint checks, and report the utility of the resulting plans.
+%%
+These results are shown in Figure~\ref{fig:without_validity_check}.
+%%
+In this setting, \approach is still generating plans with higher utility than \gpt in $79$ of the $100$ problems.
+%%
+This highlights that, even when we do not constrain \gpt to follow some guidelines, it is still generating worse travel itineraries than \approach, whose plans are guaranteed to be sound and optimal.
+
+
+Focusing back on the $14$ tasks for which \gpt generated a valid travel plan, \approach's plans have on average of $1.19\pm0.12$ times more utility.
+
+%Continuing this analysis, 
+Figure~\ref{fig:all} shows the distribution of the number of POIs visited by the plans suggested by both approaches, as well as their average, maximum and minimum utility.
+%%
+As we can see, while \gpt suggests visiting an average of $4.2$ POIs, \approach suggests $5.5$, with trips in which it manages to fit $8$ POIs in small cities such as Colonia del Sacramento, Uruguay.
+%%
+By inspection, the \gpt solutions tend to involve visiting $3$ to $5$ of the highest utility places, which allows it to obtain a higher average utility of the visited POIs in a plan (see Figure~\ref{fig:avg_utility}).
+%%
+On the other hand, \approach also considers POIs with slightly lower utility (see Figure~\ref{fig:min_utility}) if they can be visited within the given tourism hours, resulting into optimal travel plans that maximize utility.
+
+
+
+\paragraph{Scalability.}
+
+Next, we evaluate how both approaches scale in terms of execution time and validity/quality of the returned travel plans as we increase the number of POIs and the  tourism hours.
+%%
+We perform this analysis in two popular cities, Paris and Rome, and as before, we do $5$ runs for each $\langle \mbox{city}, \#\mbox{POIs}, H \rangle$.
+%%
+We first fix the tourism hours to $8$ and increase the number of POIs from $8$ to $18$ in steps of $2$.
+%%
+Then, we fix the number of POIs to $10$, and increase the tourism hours from $6$ to $10$.
+%%
+The results of this evaluation are shown in Figure~\ref{scalability}.
+%%
+As a reminder, all travel plans generated by \approach are guaranteed to be valid and optimal, so we will solely focus on \gpt's performance when referring to these two metrics.
+
+\begin{figure*}
+    \begin{subfigure}{0.33\textwidth}
+    \centering
+    \input{tikz_figures/scalability_POI_validity}
+    \caption{Plans validity.}
+    \label{fig:scalability_POI_validity}
+    \end{subfigure}\hfill
+    %%
+    \begin{subfigure}{0.33\textwidth}
+    \centering
+    \input{tikz_figures/scalability_POI_suboptimality}
+    \caption{Plans suboptimality.}
+    \label{fig:scalability_POI_suboptimality}
+    \end{subfigure}\hfill
+    \begin{subfigure}{0.33\textwidth}
+    \centering
+    \input{tikz_figures/scalability_POI_runtime}
+    \caption{Runtime.}
+    \label{fig:scalability_POI_runtime}
+    \end{subfigure}\hfill
+%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%
+\begin{subfigure}{0.33\textwidth}
+    \centering
+    \input{tikz_figures/scalability_hours_validity}
+    \caption{Plans validity.}
+    \label{fig:scalability_hours_validity}
+    \end{subfigure}\hfill
+    %%
+    \begin{subfigure}{0.33\textwidth}
+    \centering
+    \input{tikz_figures/scalability_hours_suboptimality}
+    \caption{Plans suboptimality.}
+    \label{fig:scalability_hours_suboptimality}
+    \end{subfigure}\hfill
+    \begin{subfigure}{0.33\textwidth}
+    \centering
+    \input{tikz_figures/scalability_hours_runtime}
+    \caption{Runtime.}
+    \label{fig:scalability_hours_runtime}
+    \end{subfigure}\hfill
+\caption{\gpt ratio of invalid plans (first column), \gpt suboptimality ratio (second column) and \approach extra seconds compared to \gpt (third column) as we increase the number of POIs (first row) and the travel hours $H$ (second row).}
+\label{scalability}
+\end{figure*}
+
+
+As we can see in Figures~\ref{fig:scalability_POI_validity} and~\ref{fig:scalability_hours_validity}, \gpt is not able to consistently generate valid plans even in the simpler settings where it only needs to generate itineraries to visit $4$ POIs (Figure~\ref{fig:scalability_POI_validity}). While the $5$ plans to visit Paris are valid, none of the itineraries satisfy the hard constraints in the case of Rome.
+%%
+The ratio of valid plans decreases even more as \gpt needs to consider more POIs, and we can observe the same behavior when we fix the number of POIs to $10$ and increase the travel hours (Figure~\ref{fig:scalability_hours_validity}).
+
+Switching the focus to the quality of the returned plans (second column of Figure~\ref{scalability}), we can observe a clear decrease in the quality of the travel plans generated by \gpt as we increase the number of POIs to be considered, even when we remove the hard constraints checks.
+%%
+\gpt is able to return the optimal solution in problems with only $4$ POIs, as the optimal travel plan in these cases simply involves visiting them all.
+%%
+With $5$ and $6$ POIs, \gpt returns few plans with higher quality than \approach (suboptimality ratio $<1$).
+%%
+In these cases, it is not properly reasoning about the hard constraints, and it is just fitting more POIs into the plan, at the price of generating plans that are not actually executable in practice.
+%%
+However, the moment the problems start being oversubscribed, i.e., not all POIs can be visited within the given tourism hours, \gpt starts generating worse solutions that are up to $1.6$ times as bad as the optimal plan returned by \approach, which also offers the validity guarantees \gpt lacks.
+%%
+The suboptimality trend is not that clear when we increase the travel hours (Figure~\ref{fig:scalability_hours_suboptimality}), as this allows \gpt to fit more POIs in a plan, thus increasing its quality.
+
+Finally, the third column of Figure~\ref{scalability} shows the extra seconds required by \approach to generate a travel plan compared to \gpt.
+%%
+As we can see in Figure~\ref{fig:scalability_POI_runtime}, both approaches running time is almost the same up to around $10$ POIs.
+%%
+The resulting planning problems in these cases are small, and the planner can solve then in $<1$ second, so the main runtime driver is the interaction with the LLM.
+%%
+As we increase the number of POIs, optimally solving the resulting tasks becomes more challenging, and \approach requires from few seconds to up to $800$ seconds more than \gpt to generate an optimal itinerary in Rome with $18$ POIs.
+%%
+We do not observe this extra overhead when we fix the number of POIs and increase the travel hours (Figure~\ref{fig:scalability_hours_runtime}), as the planning tasks remain simple for the planner.
+%%
+There was one anomalous data point for travel planning in Paris for 10 hours, in which the LLM approach took 285 seconds. This was due to network issues and delays, as the other 9 out of 10 tries for the same experimental setting took no more than 11 seconds. 
+
+
+%\subsection{Discussions}
+%\lipsum[1-2]
+\section{Discussion}
+As mentioned in the introduction, we are using the utilities of POIs provided by \gpt as a proxy for user satisfaction when visiting each POI. But, utility based on tourist consensus (as retrieved by \gpt) can be replaced by user preferences. The user could state their preference in natural language, and \gpt can be used to find and rate places according to the user input. For example, if the user said they like art museums, then The Louvre would be highly rated. Other scoring methods maybe employed as well, and these new utilities can be input to the planner.
+
+In our work, we limited ourselves to day-planning and discretized time in 15 minute segments. One can extend this to continuous time and multi-day planning at the expense of higher planning time costs. The value of more granular time travel plans is left for future work. Additionally one can build multi-day travel plans by simply chaining single day travel plans and excluding the POI visited in previous days. 
+
+\iffalse
+\section{Extentions}
+% for ourselves, will be commented out for submission
+\begin{itemize}
+    \item More LLMs in addition to \gpt
+    \item Multi-day travel
+    \item Gaps between activities
+    \item Must-visit places (hard)
+    \item User preferences (soft)
+    \item Budget constraint
+    \item Open time of POIs (e.g. museums)
+    \item Full itinerary: hotel, flight, restaurant (and if reservations, then hard constraint)
+    \item Try satisficing planners
+\end{itemize}
+\fi
+
+
+\section{Conclusions and Future Work}
+In this paper, we presented a hybrid approach for travel planning that combines the strengths of LLMs and automated planners to generate travel plans that guarantee feasibility and maximize the satisfaction of user goals. We investigated the use of LLMs for oversubscription planning in the travel planning domain, considering real-world constraints. Experimental results across various travel scenarios demonstrate how we can greatly improve the performance of \gpt-based approaches in this domain by embedding them with a hybrid approach. 
+
+This research opens up several exciting future directions. One avenue for exploration is integrating real-time information, such as traffic conditions and weather forecasts, into the planning process to further enhance the practicality and adaptability of the generated plans. Moreover, extending the hybrid approach to other domains beyond travel planning, such as event scheduling and resource allocation, could broaden the impact of this research. As the field of AI continues to advance, we believe that the synergistic combination of LLMs and planners will play a crucial role in enabling intelligent and user-centric decision-making systems.
+
+%By leveraging LLMs for automatic parsing of user requests into planning problem formulations and utilizing planners for explicit optimization, our method ensures the generation of valid and preference-aligned travel plans.
+%\newpage
+
+\section{Disclaimer}
+This paper was prepared for informational purposes by
+the Artificial Intelligence Research group of JPMorgan Chase \& Co. and its affiliates (``JP Morgan''),
+and is not a product of the Research Department of JP Morgan.
+JP Morgan makes no representation and warranty whatsoever and disclaims all liability,
+for the completeness, accuracy or reliability of the information contained herein.
+This document is not intended as investment research or investment advice, or a recommendation,
+offer or solicitation for the purchase or sale of any security, financial instrument, financial product or service,
+or to be used in any way for evaluating the merits of participating in any transaction,
+and shall not constitute a solicitation under any jurisdiction or to any person,
+if such solicitation under such jurisdiction or to such person would be unlawful.
+
+%\bibliographystyle{aaai24}
+\bibliography{bibliography,daniel,general,travel-planning}
+
+\end{document}
