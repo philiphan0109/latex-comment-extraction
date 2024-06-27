@@ -33,6 +33,6 @@ def process_paper(path):
                 # print(f"  Comment Text: {comment_text.strip()}\n")
 
 
-path = "paper/"
+path = "paper2/"
 print(path)
 process_paper(path)

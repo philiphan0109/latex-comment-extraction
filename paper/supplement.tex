@@ -1,0 +1,163 @@
+\documentclass[11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amssymb,verbatim,epsfig}
+\usepackage{amsmath,setspace}
+\usepackage[amssymb]{SIunits} % SI-units
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{lipsum}  
+
+\usepackage[style = numeric-comp, sorting = none, backend=biber,maxbibnames=6,doi=true, eprint=false]{biblatex}
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map{
+      \step[fieldset=issn, null]
+      \step[fieldset=arxiv, null]
+    }
+  }
+}
+%Begin of addition
+\usepackage[usenames,dvipsnames]{xcolor} % color package
+\definecolor{MyBlue}{rgb}{0,0,0.45} %color used for clickable links and so on
+\usepackage{url} %Is added
+\usepackage[breaklinks,colorlinks=true, urlcolor=MyBlue, linkcolor=MyBlue, plainpages=false, citecolor=MyBlue,bookmarks=true,bookmarksopen=true,bookmarksnumbered=true]{hyperref}
+\usepackage{breakurl} 
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{lineno}
+\usepackage[margin=1in]{geometry} 
+\usepackage[small,bf]{caption}
+
+\newenvironment{supplement}{
+		\setcounter{table}{0}
+\renewcommand{\thetable}{SI \arabic{table}}%
+		\setcounter{section}{0}
+\renewcommand{\thesection}{SI \arabic{section}}%
+\setcounter{figure}{0}
+\renewcommand{\thefigure}{SI \arabic{figure}}%
+}
+
+
+
+\spacing{1} 
+\addbibresource{library.bib}
+\usepackage{appendix}
+
+\title{\vspace{-3 cm}\noindent \huge Supplementary information for \textit{Thermocavitation in gold-coated microchannels for needle-free jet injection}.} 
+
+\author{Jelle J. Schoppink$^{1*}$ \& Nicolás Rivera Bueno$^1$ \&
+David Fernandez Rivas$^1$, \\ 
+\small$^1$Mesoscale Chemical Systems group, MESA+ Institute and Faculty of Science and Technology, \\  
+\small University  of Twente, P.O. Box 217, 7500 AE Enschede, the Netherlands. \\
+\small $^*$ Corresponding author: j.j.schoppink@utwente.nl}
+
+\date{\today}
+
+\begin{document} \maketitle 
+
+
+
+\begin{supplement}
+		%\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
+\section{Laser beam shapes}\label{C4: Suppl: Sec: Beam shapes}
+
+\begin{figure}[b!]
+	\centering
+	\vspace{3 mm}
+	\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{Beam_45_e2_full2.eps}
+	\end{minipage}
+	\hspace{0.5cm}
+	\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{Beam_90_e2_full2.eps}
+	\end{minipage}
+	\caption{Laser beam shapes on the metallic layer captured by the camera for the 45~nm (left) and 90~nm (right) layer, imaged in colormap `turbo'. The white boxes correspond to the normalized intensity equal to 1/e$^{2}$ ($\approx 0.135$), from which the calculated beam radii are 69 (left) and 68~µm (right).}
+	\label{C4: suppl: fig: beam shapes}
+\end{figure}
+To create a reproducible beam shape for each experiment, the microfluidic chip is positioned using 3-axis stage (Thorlabs Rollerblock) which allows for micrometer accuracy positioning. As the laser beam is diverging, exact positioning is required to ensure the same identical beam size. Prior to each experiment, the beam size is imaged using the camera. 
+Figure~\ref{C4: Suppl: Sec: Beam shapes} shows the laser beam shapes on the metallic layer, for the 45 and 90~nm, respectively. These images are taken in the same configuration as the experiments (see Figure~1 in the main manuscript), but without the orange filter front of the camera, which normally blocks the blue laser light to protect it. As the camera is positioned at an angle, the images show the scattered laser light on the metallic layer. In both figures, the beam radius (1/e$^{2}$) is found to be approximately 70~nm. However, after further analysis, it was found that the intensity profiles are slightly different. The right image (90~nm) has a wider region of high intensity (red dots), whereas the high-intensity region in the left image is smaller. As the heat diffusion on the gold layer is much faster compared to the nucleation times, it is hypothesized that this is not significant. Furthermore, assuming the delivered energy is constant, the beam size does not have a significant effect on the bubble dynamics~\cite{Schoppink2024}.
+
+
+
+For the glass chip, the imaging of the laser beam is more complex. Due to the lack of the gold layer, there is (almost) no light scattering on the surface. Only minor surface defects result in scattering, but they are less abundant. To ensure the same beam size, the camera is kept at the exact same position when changing to the microfluidic chip without metallic layer. By moving the chip in focus of the camera, it is (approximately) in the same position as the previous chip. For further confirmation of the beam size, imaging of the beam size is still possible, although much noisier. Figure~\ref{C4: suppl: fig: beam shapes_glass} show these shapes, which confirm approximately the same beam diameter on the glass channel.
+
+
+
+\begin{figure}[t!]
+	\centering
+	
+	\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{Beam_metal_on_glass.eps}
+	\end{minipage}
+	\hspace{0.5cm}
+	\begin{minipage}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=\textwidth]{Beam_glass_on_glass.eps}
+	\end{minipage}
+	\caption{Laser beam shapes on the glass chip interface captured by the camera for the 45~nm-coated channel (left) and uncoated channel (right), imaged in colormap `turbo'. Compared to imaging the beam on the gold layer, visualization is more complex as there is almost no scattering on the smoother glass. Nonetheless, minor defects on the glass do scatter the laser light, providing an estimate of the beam size. The length the white lines in the image correspond to 135 µm and are approximately equal to the beam diameter.}
+	\label{C4: suppl: fig: beam shapes_glass}
+\end{figure}
+
+\section{Heating phase simulations}\label{C4: Suppl: Sec: Heating phase simulations}
+To compare the heating phase of the water through the gold layer and the dye, a very simplified numerical simulation is performed to obtain the temperature profile. The one-dimensional heat equation (see Equation~\ref{C4: suppl: eq: heat equation}) is simulated over time in a custom-made MATLAB script. 
+
+\begin{equation}\label{C4: suppl: eq: heat equation}
+	\frac{\delta T(t,x)}{\delta t} = \kappa \frac{\delta^2 T(t,x)}{\delta x^2} + Q(x)
+\end{equation}
+
+In this equation, $T$ is the temperature, $t$ indicates time, and $x$ the spatial coordinate. 
+This simulation includes heat dissipation in the liquid, calculated from the the liquid thermal diffusivity of water ($\kappa$ = 0.14~mm$^{2}$/s). Furthermore, the temperature is locally increased at every time step to mimic the laser heating, indicated by $Q(x)$ in the equation. 
+
+In the case of volumetric heating, the added temperature $Q_v$ follows an exponential curve according to Lambert-Beer, see equation~\ref{C4: suppl: eq: volumetric heat}
+\begin{equation}\label{C4: suppl: eq: volumetric heat}
+	Q_v(x) = C_v \times \exp{(-\alpha x)},
+\end{equation} 
+where $\alpha$ is the absorption coefficient of the dye, which is approximately 90~cm$^{-1}$, such that the ratio of $Q_v$ on the right boundary compared to the left boundary ($Q_v(x = 100~\mu m)$/$Q_v(x=0)$) is approximately 0.4. The constant $C_v$ is included to normalize $Q_v$. The added temperature per unit time for surface heating $Q_s$ can be seen in equation~\ref{C4: suppl: eq: surface heat}, 
+\begin{equation}\label{C4: suppl: eq: surface heat}
+	  Q_s(x) = \begin{cases} C_s & \mbox{if } 0 \le x \le 5 \mu m \\ \mbox{0} & \mbox{if } x > 5 \mu m \end{cases}
+\end{equation} 
+where all added temperature is in the region close to the surface, over a length of 5~µm. This would mimic the heated of the region only in close contact with the metallic layer. For larger values of x, the temperature is not increased, as it is not in contact with the metallic layer, and this region is only heated through heat dissipation. The constant $C_s$ is included to ensure that the sum of $Q_s$ and $Q_v$ are equal, such that the average temperatures are the same in both simulations.
+
+The spatial length of the simulation is taken as 100~µm, similar to the channel thickness in the experiment. This is split in 500 grid points, seperated by 200 nm. The heating phase is simulated for a total of 20 ms, similar to typical experimental nucleation times. The simulation includes $10^{6}$ time steps, to ensure convergence of the simulation. Heat dissipation into the boundaries is not taken into account, as it would largely increase the complexity and would most likely affect both simulations equally.
+
+\begin{figure}[t!]
+	\centering
+	\includegraphics[width=\textwidth]{volumetric_vs_surface_heating.eps}
+	\caption{Simulated normalized temperature profiles for volumetric vs surface heating at four different time instants. The numerical simulations of the one-dimensional heat equation include locally increasing temperature at every timestep to mimic the absorption of optical energy. In the case of volumetric heating, the whole liquid is heated, whereas in the case of surface heating, only the liquid at the surface is heated.}
+	\label{C4: suppl: fig: volumetric vs surface heating}
+\end{figure}
+
+The resulting temperature profiles at four time instants (5, 10, 15 and 20 ms) are shown in Figure~\ref{C4: suppl: fig: volumetric vs surface heating}. In the case of surface heating (red curve), the temperature increase for small values of $x$ (close to the metallic layer) is high, whereas the temperature increase for large $x$ is close to zero. As the time for thermal diffusion to act over a length of 100~µm is approximately 18 ms ($t = \frac{L^2}{4\kappa}$), the temperature at x = 100~µm only starts increasing at larger times. Therefore, even at 20 ms, the temperature profile is still largely inhomogeneous, such that most heat is localized close to the metallic layer. 
+
+In contrast, for the volumetric heating, the whole liquid is heated, resulting in a more homogeneous temperature profile.
+Although the liquid close to the left wall (x=0) is heated faster due to the exponential decay of the laser irradiance (see Equation~\ref{C4: suppl: eq: volumetric heat}), heat dissipation flattens this curve over time.
+
+Although the simulations are largely simplified, it semi-quantitatively shows that in the case of surface heating, the temperature profile is not constant. On the experimental timescales (1-20 ms) only the liquid close to the metal layer is heated. On the other hand, in the case of volumetric heating, the optical energy is already absorbed over a larger length, for which reason a much larger volume of liquid is heated. Therefore, it can be concluded that for volumetric heating, the superheated volume is larger, which generates a faster growing bubble. 
+
+\subsection{Surface heating including glass}\label{C4: Suppl: Subsec: simulations including glass}
+As mentioned, for the surface heating, dissipation into the glass cannot be neglected. The thermal diffusivity of glass is $\alpha_g =$ 0.64~mm$^{2}$/s, more than 4 times as high as the one of water ($\alpha_w$ = 0.14~mm$^{2}$/s). When including the glass layer in the simulation, it becomes clear that the glass heats up faster than the water, as can be seen in Figure~\ref{C4: suppl: fig: surface_heating_glass_water}. The ratio between the temperature increase in the glass and the water (grey vs blue area) is equal to 0.68 : 0.32. The origin of the 0.68 lies in the ratio of the thermal diffusivities, where $0.68\approx(\frac{\alpha_g}{\alpha_g+\alpha_w})^2 = (\frac{0.64}{0.78})^2$. The square relation originates from the fact that the temperature gradients are not equal, which is much larger in the water compared to the glass (as can also be seen in Figure~\ref{C4: suppl: fig: surface_heating_glass_water}).
+
+\begin{figure}[b!]
+	\centering
+	\includegraphics[width=0.5\textwidth]{surface_heating_glass_water.eps}
+	\caption{Simulated normalized temperature profiles for surface heating. The numerical simulations of the one-dimensional heat equation include locally increasing temperature at x = 0 at every timestep to mimic the absorption of optical energy. Heat dissipation into the glass x$<0$ and the water x$>0$ is included according to their heat diffusivity of 0.64 and 0.14 mm$^{2}$/s, respectively. The areas under the curve have a ratio of 0.68:0.32}
+	\label{C4: suppl: fig: surface_heating_glass_water}
+\end{figure}
+
+Although the temperature of the glass increases approximately twice as fast as the water (0.68/0.32$\approx$2), this does not mean that 68$\%$ of the energy is lost in heating up the glass. The volumetric heat capacity of glass is lower than the one of water. For the borosilicate glass, the specific heat capacity is 0.83~kJ/(kg~K)~\cite{Schott_Thermal}, and the density 2230~kg/m$^{3}$~\cite{Schott_Mechanical}, resulting in a volumetric heat capacity of 1.85~MJ/(K m$^3$), approximately 44$\%$ of the value of water (4.18~MJ/(K m$^3$)). Multiplying these values result in a energy ratio of 0.68*1.85 : 0.32 * 4.18 = 1.26 : 1.33, or approximately 1 to 1. This means that half the absorbed energy dissipates into the glass and the other half into the water. It is important to mention that this calculation does not include the actual heat transfer across the interfaces of the gold to the glass and water with an interfacial thermal resistance, only the heat dissipation in the glass and water. For the glass, this actually includes two interfaces, first from the gold to the tantalum layer and then from the tantalum layer to the glass. Nonetheless, this calculation gives a rough estimation of the energy dissipation into the glass.
+
+
+%\addtocontents{toc}{\protect\setcounter{tocdepth}{1}}
+\printbibliography
+\end{supplement}
+
+\end{document}

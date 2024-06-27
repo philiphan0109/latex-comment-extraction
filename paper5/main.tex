@@ -1,0 +1,546 @@
+\documentclass[lettersize,journal]{IEEEtran}
+\usepackage{amsmath,amsfonts}
+% \usepackage{algorithmic}
+
+% \usepackage{algorithm}
+\usepackage{array}
+% \usepackage[caption=false,font=normalsize,labelfont=sf,textfont=sf]{subfig}
+\usepackage{subcaption}
+
+\captionsetup{compatibility=false}
+
+\usepackage{textcomp}
+\usepackage{stfloats}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{cite}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+% updated with editorial comments 8/9/2021
+\usepackage{xcolor}         % colors
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{amsmath}  % For align environment and other math features
+\usepackage{amssymb}
+
+\newcommand{\algo}{\texttt{VARCO}}
+\newcommand{\non}{\rho}
+
+\newcommand{\lipGrad}{L_\nabla}
+\input{latex_resources/mysymbol.sty}
+%\input{latex_resources/my_sections.tex}
+%\input{latex_resources/my_beamer_defs.sty}
+%\input{latex_resources/plot_appearance.tex}
+\input{latex_resources/juan_defs.sty}
+
+\begin{document}
+
+\title{Distributed Training of Large Graph Neural Networks with Variable Communication Rates }
+
+\author{Juan Cervi\~no$^*$, Md Asadullah Turja$^*$, Hesham Mostafa$^*$, Nageen Himayat, Alejandro Ribeiro
+        % <-this % stops a space
+\thanks{$^*$These authors contributed equally to the paper.  JC, AR are with the Department of Electrical and
+Systems Engineering, University of Pennsylvania, PA. MAT is with the University of North Carolina at Chapel Hill. HM, NH are with the Intel Corporation. JC is the corresponding author jcervino@seas.upenn.edu.}% <-this % stops a space
+% \thanks{Manuscript received April 19, 2021; revised August 16, 2021.}
+}
+
+% The paper headers
+% \markboth{Journal of \LaTeX\ Class Files,~Vol.~14, No.~8, August~2021}%
+% {Shell \MakeLowercase{\textit{et al.}}: A Sample Article Using IEEEtran.cls for IEEE Journals}
+
+% \IEEEpubid{0000--0000/00\$00.00~\copyright~2021 IEEE}
+% Remember, if you use this you must call \IEEEpubidadjcol in the second
+% column for its text to clear the IEEEpubid mark.
+
+\maketitle
+
+\begin{abstract}
+	Training Graph Neural Networks (GNNs) on large graphs presents unique challenges due to the large memory and computing requirements. 
+	Distributed GNN training, where the graph is partitioned across multiple machines, is a common approach to training GNNs on large graphs. 
+	However, as the graph cannot generally be decomposed into small non-interacting components, data communication between the training machines quickly limits training speeds. 
+	Compressing the communicated node activations by a fixed amount improves the training speeds, but lowers the accuracy of the trained GNN. 
+	In this paper, we introduce a variable compression scheme for reducing the communication volume in distributed GNN training without compromising the accuracy of the learned model. 
+	Based on our theoretical analysis, we derive a variable compression method that converges to a solution equivalent to the full communication case, for all graph partitioning schemes. 
+	Our empirical results show that our method attains a comparable performance to the one obtained with full communication. We outperform full communication at any fixed compression ratio for any communication budget.
+ \end{abstract}
+
+\begin{IEEEkeywords}
+Graph Neural Networks, Distributed Training.  
+\end{IEEEkeywords}
+
+\section{Introduction}
+\IEEEPARstart{G}{raph} Neural Networks (GNNs) are a neural network architecture tailored for graph-structured data \cite{zhou2020graph,wu2020comprehensive,bronstein2017geometric}. GNNs are multi-layered networks, where each layer is composed of a (graph) convolution and a point-wise non-linearity \cite{gama2018convolutional}.
+GNNs have shown state-of-the-art performance in robotics \cite{gama2020decentralized,tzes2023graph}, weather prediction \cite{lam2022graphcast}, protein interactions \cite{jumper2021highly} and physical system interactions \cite{fortunato2022multiscale}, to name a few. The success of GNNs can be attributed to some of their theoretical properties such as generalization \cite{NEURIPS2022_1eeaae7c,2024arXiv240605225W},  being permutation-invariant \cite{keriven2019universal,satorras2021n}, stable to perturbations of the graph \cite{gama2020stability}, transferable across graphs of different sizes \cite{ruiz2020graphon}, and their expressive power \cite{xu2018powerful,bouritsas2022improving,kanatsoulis2022graph,chen2019equivalence}. 
+
+In a GNN, the data is propagated through the graph via graph convolutions, which aggregate information across neighborhoods. In large-scale graphs, the data diffusion over the graph is costly in terms of computing and memory requirements. To overcome this limitation, several solutions were proposed. Some works have focused on the transferability properties of GNNs, i.e. training a GNN on a small graph and deploying it on a large-scale graph \cite{ruiz2020graphon,maskey2023transferability}. Other works have focused on training on a sequence of growing graphs \cite{cervino2023learning,10094894}. Though useful, these solutions either assume that an accuracy degradation is admissible (i.e. transferability bounds), or that all the graph data is readily accessible within the same training machine. These assumptions may not hold in practice, as we might need to recover the full centralized performance without having the data in a centralized manner.
+
+Real-world large-scale graph data typically cannot fit within the memory of a single machine or accelerator, which forces GNNs to be learned in a distributed manner \cite{cai2021dgcl,wang2021flexgraph,zheng2020distdgl,wang2022neutronstar}. To do this efficiently, several solutions have been proposed. 
+There are \textit{data-parallel} approaches that distribute the data across different machines where model parameters are updated with local data and then aggregated via a parameter server. 
+Another solution is \textit{federated learning} (FL), where the situation is even more complex as data is naturally distributed across nodes and cannot be shared to a central location due to privacy or communication constraints\cite{bonawitz2019towards,li2020review,li2020federated}.  
+Compared to data parallel approaches FL suffers from data heterogeneity challenges as we cannot control the distribution of data across nodes to be identically distributed \cite{shen2022an}. The GNN-FL adds additional complexity as the graph itself (input part of the model) is split across different machines.  
+The GNN-FL counterpart has proven to be successful when the graph can be split into different machines\cite{he2021fedgraphnn,mei2019sgnn}. However, training locally while assuming no interaction between datasets is not always a reasonable assumption for graph data. 
+% \begin{wrapfigure}{r}{0.5\textwidth}
+% 	\begin{center}
+ \begin{figure}
+		\includegraphics[width=0.48\textwidth]{figures/figure_partition} 
+	% \end{center}
+	\caption{Example of partitioning a graph with $9$ nodes into $3$ machines. Each machine only stores the features of the nodes in their corresponding partition. }
+ \label{fig:partitions}
+ \end{figure}
+% \end{wrapfigure}
+
+Two observations of GNNs draw this work. First, large graph datasets cannot be split into non-interacting pieces across a set of machines. Therefore, training GNNs distributively requires interaction between agents in the computation of the gradient updates. Second, the amount of communicated data affects the performance of the trained model; the more we communicate the more accurate the learned model will be. In this paper, we posit that the compression rate in the communication between agents should vary between the different stages of the GNN training. Intuitively, at the early stages of training, the communication can be less reliable, but as training progresses, and we are required to estimate the gradient more precisely, the quality of the communicated data should improve. This observation translates into a varying compression rate, that compresses more at the early stages of training, and less at the later ones.
+
+
+
+This paper considers the problem of efficiently learning a GNN across a set of machines, each of which has access to part of the graph data (see Figure \ref{fig:partitions}). Drawn from the observation that in a GNN, model parameters are significantly smaller than the graph's input and intermediate node feature, we propose to compress the intermediate GNN node features that are communicated between different machines. Given that this compression affects the accuracy of the GNN, in this paper we introduce a variable compression scheme that trades off the communication overhead needed to train a GNN distributively and the accuracy of the GNN. 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Figure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Figure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[t]
+	\centering
+	%\begin{subfigure}{0.38\textwidth}
+	\includegraphics[width = \textwidth]{figures/figure_algorithm} 
+	%\subcaption{}
+	%\end{subfigure}
+	%\quad
+	%\begin{subfigure}{0.58\textwidth}
+	%\includegraphics[width = \textwidth]{figures/one_shot_aggregation} 
+	%\subcaption{}    
+	%\label{fig:dom_parallel_b}
+	%\end{subfigure}
+	\caption{To compute a gradient step, we need to gather the data. To do so, each machine starts by \textbf{computing} the activations of the local nodes. Then, these activations are \textbf{compressed} and \textbf{communicated} to adjacent machines. Once all the activations are communicated, each machine \textbf{decompresses} the data from the compressed nodes.  }
+		\label{fig:algorithm}
+\end{figure*} 
+
+The contributions of this paper are:
+\begin{enumerate}
+	\item We present a novel algorithm to learn graph representations while compressing the data communicated between the training agents. We propose to vary the compression rate progressively, to achieve a comparable performance to the no-compression case at a fraction of the communication cost. 
+    \item We present a method that does not require a specific graph partitioning setup, allowing it to be used when the graph partitioning cannot be controlled. We validate this thrust empirically by training on random graph partitioning. 
+	\item We theoretically show that our method converges to a first-order stationary point of the full graph training problem while taking distributed steps and compressing the inter-server communications. 
+	\item We empirically show that our method attains a comparable performance to the full communication training scenario while incurring fewer communication costs. In particular, by plotting accuracy as a function of the communication costs, our method outperforms full communication and fixed compression rates in terms of accuracy achieved per communicated byte. 
+\end{enumerate}
+\section*{Related work}
+\textbf{Mini-Batch Training.} In the context of distributed GNN training, \cite{zheng2020distdgl} proposes to distribute mini-batches between a set of machines, each of which computes a local gradient, updates the GNN, and communicates it back to the server. \cite{zheng2020distdgl} uses METIS \cite{karypis1998fast} to partition the graph, which reduces communication overhead and balances the computations between machines. Although \cite{zheng2020distdgl} provides good results in practice, the GNN does not process data on the full graph, only a partition of it, which can yield sub-optimal results compared to processing the full graph.
+In \cite{kaler2023communication} they employ a policy to cache data associated with frequently accessed vertices in remote partitions. This method reduces the communications across partitions by creating local copies of the data.  
+%(ii) the size of the partition is as big as a single unit can process it, which forces servers to be above a particular threshold. 
+
+
+\textbf{Memory Optimization.} In this work we do full batch training, which has also been considered in the literature. Similar to us is \textit{sequential aggregation and rematerialization} \cite{mostafa2022sequential}, which sequentially re-constructs and frees pieces of the large GNN during the backward pass computation. Even in densely connected graphs, this deals with the memory limitations of the GNN, showing that the memory requirements per worker decrease linearly with the number of workers. Others have studied similar approaches in the context of distributed training \cite{mostafa2023fastsample}. In \cite{md2021distgnn} they propose to use a balanced partitioning of the graph, as well as a shared memory implementation. They utilize a delayed partial aggregation of remote partitions by either ignoring or delaying feature vector aggregation during training. 
+
+\textbf{Quantization.} A related approach to dealing with the limitations of a single server for training compression in communication is quantization in the architecture. To train GNNs more efficiently using quantization, the most salient examples are feature quantization \cite{ma2022bifeat}, Binary
+Graph Neural Networks \cite{bahri2021binary}, vector quantization \cite{ding2021vq}, last bit quantization \cite{feng2020sgquant}, and degree quantization \cite{tailor2020degree}. There are also works on adaptive quantization of the messages between machines. In \cite{wan2023adaptive}, they adapt the quantization level using stochastic integer quantization. However similar, this work adapts the quantization level locally, at the message level, which differs from our global view of compression. In all, although related in spirit, quantizing a GNN is a local operation that differs from compressing the communication between servers. 
+
+
+\textbf{Sampling Based Methods}
+Our method can be applied in conjunction with sampling-based methods. In sampling-based methods, each node only aggregates from a random subset of its neighbors \cite{NEURIPS2021_a378383b,bai2021efficient,serafini2021scalable,liu2021pick}. In the context of distributed learning, this random subset could include remote nodes. Therefore communication between machines becomes a bottleneck, and our method would still be relevant to reduce the communication volume. If we bias the sampling to only consider local nodes, then this would hurt performance, as it is equivalent to splitting the graph into multiple disconnected components, which does not work well in practice.
+
+
+\section{Learning Graph Neural Networks}
+
+In this paper, we consider the problem of training GNNs on graphs that are stored in a set of machines. Formally, a graph is described by a set of vertices and edges $\mathcal{G} = ({\bf V},{\bf E})$, where $|\bf V|=n$ is the set of vertices whose cardinality is equal to the number of nodes $n$, and ${\bf E} \subseteq {\bf V}\times{\bf V}$ is the set of edges. The graph $\mathcal{G}$ can be represented by its adjacency matrix $\bbS\in \reals^{n\times n}$. 
+%given by $[\bbS]_{ij}=w(i,j)/m$, where $w_{ij}$ is the weight corresponding to edge $(i,j)$, with $w\in\{0,1\}$ if the graph is unweighted. 
+Oftentimes, the graph includes vertex features, $F_V \in \mathbb{R}^{|{\bf V}| \times |D_v|}$, and edge features, $F_E \in \mathbb{R}^{|{\bf E}| \times |D_v|}$, where $D_v$ and $D_E$ are the vertex and edge feature dimensions, respectively. Graph problems fall into three main categories: node-level prediction where the goal is to predict properties of individual nodes; edge-level prediction where the goal is to predict edge features or predict the locations of missing edges; and graph-level prediction where the goal is to predict properties of entire graphs. In this paper, we focus on distributed training of GNNs for node classification problems. Our distributed training approach is still relevant to the other two types of graph problems, as they also involve a series of GNN layers, followed by readout modules for edge-level or graph-level tasks.
+
+A GNN is a multi-layer architecture, where at each layer, messages are aggregated between neighboring nodes via graph convolutions. Formally, given a graph signal $\bbx \in \reals^n$, where $[\bbx]_i$ represents the value of the signal at node $i$, the graph convolution can be expressed as
+\begin{align}\label{eqn:graph_convolution}
+	\bbz_n = \sum_{k=0}^{K-1}h_k \bbS^k x_n, 
+\end{align}
+where $\bbh=[h_0,\dots,h_{K-1}]\in\reals^K$ are the graph convolutional coefficients. In the case that $K=2$, and $\bbS$ is binary, the graph convolution \eqref{eqn:graph_convolution} translates into the \texttt{AGGREGATE} function in the so-called \textit{message-passing neural networks}. 
+A GNN is composed of $L$ layers, each of which is composed of a graph convolution \eqref{eqn:graph_convolution} followed by a point-wise non-linear activation function $\non$ such as \texttt{ReLU}, or \texttt{tanh}. The $l$-th layer of a GNN can be expressed as, 
+\begin{align}\label{eqn:gnn_layer_l}
+	\bbX_l = \non\bigg(\sum_{k=0}^{K-1} \bbS^k\bbX_{l-1}\bbH_{l,k}\bigg),
+\end{align}
+where $\bbX_{l-1}\in \reals^{n\times F_{l-1}}$ is the output of the previous layer (with $\bbX_{0}$ is equal to the input data $\bbX=[\bbx_1,\dots,\bbx_n]\in\reals^{n\times F_0}$), and $\bbH_{l,k}\in \reals ^{F_{l-1}\times F_{l}}$ are the convolutional coefficients of layer $l$ and hop $k$. We group all learnable coefficients $\ccalH=\{\bbH_{l,k}\}_{l,k}$, and define the GNN as $\bbPhi(\bbx,\bbS,\ccalH)=\bbX_L$. 
+
+\subsection{Empirical Risk Minimization}
+
+We consider the problem of learning a GNN that given an input graph signal $\bbx\subset\ccalX\subseteq\reals^n$ can predict an output graph signal $\bby\subset\ccalY\subseteq\reals^n$ of an unknown distribution $p(X,Y)$, 
+%
+\begin{align}\label{eqn:SRM}
+	\tag{SRM}
+	\minimize_\ccalH \mbE_{p}[ \ell(\bby,\bbPhi(\bbx,\bbS,\ccalH))],
+\end{align}
+% 
+where $\ell$ is a non-negative loss function $\ell:\reals^d\times\reals^d\to\reals^+$, such that $\ell(\bby, \bby)=0$ iif $\bby=\bby$. Common choices for the loss function are the cross-entropy loss and the mean square error.
+Problem \eqref{eqn:SRM} is denoted called Statistical Risk Minimization \cite{vapnik2013nature}, and the choice of GNN for a parameterization is justified by the structure of the data, and the invariances in the graph \cite{bronstein2017geometric}. However, problem \eqref{eqn:SRM} cannot be solved in practice given that we do not have access to the underlying probability distribution $p$. In practice, we assume to be equipped with a dataset $\ccalD=\{x_i,y_i\}_i$ drawn i.i.d. from the unknown probability $p(X,Y)$ with $|\ccalD|=m$ samples. We can therefore obtain the empirical estimator of \eqref{eqn:SRM} as, 
+%
+\begin{align}\label{eqn:ERM}
+	\tag{ERM}
+	\minimize_\ccalH \mbE_\ccalD[ \ell(\bby,\bbPhi(\bbx,\bbS,\ccalH))]:=\frac{1}{m}\sum_{i=1}^m \ell(\bby_i,\bbPhi(\bbx_i,\bbS,\ccalH)).
+\end{align}
+The empirical risk minimization problem \eqref{eqn:ERM} can be solved in practice given that it only requires access to a set of samples $\ccalD$. 
+The solution to problem \eqref{eqn:ERM} will be close to \eqref{eqn:SRM} given that the samples are i.i.d., and that there is a large number of samples $m$\cite{vapnik2013nature}. To solve problem \eqref{eqn:ERM}, we will resort to gradient descent, and we will update the coefficients $\ccalH$ according to, 
+%
+\begin{align}\label{eqn:SGD}
+	\tag{SGD}
+	\ccalH_{t+1} = \ccalH_{t} -\eta_t \mbE_\ccalD[\nabla_\ccalH \ell(\bby, f(\bbx,\bbS, \ccalH))],
+\end{align}
+%
+where $t$ represents the iteration, and $\eta_t$ the step-size. In a centralized manner computing iteration \eqref{eqn:SGD} presents no major difficulty, and it is the usual choice of algorithm for training a GNN. When the size of the graph becomes large, and the graph data is partitioned across a set of agents, iteration \eqref{eqn:SGD} requires communication. 
+In this paper, we consider the problem of solving the empirical risk minimization problem \eqref{eqn:ERM} through gradient descent \eqref{eqn:SGD} in a decentralized and efficient way.
+
+
+% Let ${\bf h}^{l-1}$ be the tensor of vertex features at layer $l-1$ and ${\bf h}^0 \equiv {\bf x}$ the input vertex features. The action of a GNN layer is given by:
+% \begin{align}
+	%   {\bf z}^l & = {\bf W}^l{\bf h}^{l-1},\\
+	%   m^l_{j\rightarrow i} & = f_{message}(z_i^l,z_j^l;\ccalH_l), \\
+	%   h_i^l & = f_{node}(h_i^{l-1},Agg(\{m^l_{j\rightarrow i} : j\in \mathcal{N}(i)\});\phi^l), \\
+	% \end{align}
+% where ${\bf W}^l$ is a learnable weight matrix. $f_{message}$ and $f_{node}$ are learnable transformations parameterized by $\ccalH_l$ and $\phi_l$, respectively. $Agg$ is a a permutation-invariant aggregation operator such as mean or sum.
+
+\section{Distributed GNN training}
+% We consider two different distributed training scenarios: distributed full-graph training and distributed sampling-based training. In distributed full-graph training, we partition the graph as shown in Fig.~\ref{fig:dom_parallel_a}, where both the graph topology (the edges) and the input node features are partitioned almost equally among the training machines. Each machine is responsible for computing the features of the vertices in its local partitions for all layers in the GNN layer stack. The GNN model is replicated across all machines. The communication steps for a single GNN layer are illustrated in Fig.~\ref{fig:dom_parallel_b}: in the forward pass, each machine fetches the feature vectors of remote neighbors and propagates their messages to the nodes in the local partition; in the backward pass, gradients flow in the opposite direction and are accumulated in the GNN model weights. At the end of the backward pass, the weight gradients are summed across all machines and used to update the GNN model weights. In every GNN layer, our compression schemes are used to compress remotely fetched features. The message function thus has the form:
+
+Consider a set $\ccalQ,|\ccalQ|=Q$ of workers that jointly learn a single GNN $\bbPhi$. Each machine $q\in\ccalQ$ is equipped with a subset of the graph $\bbS$, and node data, as shown in Figure~\ref{fig:algorithm}. Each machine is responsible for computing the features of the nodes in its local partitions for all layers in the GNN. The GNN model $\ccalH$ is replicated across all machines. To learn a GNN, we update the weights according to gradient descent \eqref{eqn:SGD}, and average them across machines. This procedure is similar to the standard \texttt{FedAverage} algorithm used in \textit{Federated Learning}\cite{li2020federated}.
+
+The gradient descent iteration \eqref{eqn:SGD} cannot be computed without communication given that the data in $(\bby,\bbx)_i$ is distributed in the $Q$ machines. To compute the gradient step \eqref{eqn:SGD}, we need the machines to communicate graph data. What we need to communicate is the data of each node in the adjacent machines; transmit the input feature $x_j$ for each neighboring node $j\in \ccalN_i^k, j \in q^{'}$. For each node that we would like to classify, we would require all the graph data belonging to the $k$-hop neighborhood graph. This procedure is costly and grows with the size of the graph, which renders it unimplementable in practice. 
+
+As opposed to communicating the node features, and the graph structure for each node in the adjacent machine, we propose to communicate the features and activation of the nodes at the nodes in the boundary. Note that in this procedure the bits communicated between machines do not depend on the number of nodes in the graph and the number of features compressed can be controlled by the width of the architecture used (see Appendix \ref{appendix:CompressionMechanism}). The only computation overhead that this method requires is computing the value of the GNN at every layer for a given subset of nodes using local information only. 
+
+\subsection{Computing the Gradient Using Remote Compressed Data}
+
+Following the framework of communicating the intermediate activation, to compute a gradient step \eqref{eqn:SGD}, we require $3$ communication rounds (i) the forward pass, in which each machine fetches the feature vectors of remote neighbors and propagates their messages to the nodes in the local partition, (ii) the backward pass, in which the gradients flow in the opposite direction and are accumulated in the GNN model weights, and  (iii) the aggregation step in which the weight gradients are summed across all machines and used to update the GNN model weights. The communication steps for a single GNN layer are illustrated in Figure~\ref{fig:algorithm}. 
+
+To compute a gradient step, we first compute the forward pass, for which we need the output of the GNN at a node $i$. To compute the output of a GNN at node $i$, we need to evaluate the GNN according to the graph convolution \eqref{eqn:graph_convolution}. Note that to evaluate \eqref{eqn:graph_convolution}, we require access to the value of the input features $x_j$ for each $j\in \ccalN_i^k$, which might not be on the same client as $i$. In this paper, we propose that the clients with nodes in $\ccalN_i^k$, compute the forward passes \textit{locally} (i.e. using only the nodes in their client), and communicate the compressed activations for each layer $l$. 
+
+
+\begin{algorithm*}[t]
+	\caption{\algo:\ Distributed Graph Training with \textbf{VAR}iable  \textbf{CO}mmunication Rates}\label{alg:varying_compr_rates}
+	\begin{algorithmic}
+		\State Split graph $\ccalG$ into $Q$ partitions and assign them to each worker $q_i$, initialize the GNN with weights $\ccalH_0$ and distribute it to all workers $q_i$, and fix initial compression rate $c_0$, and scheduler $r$
+		\Repeat
+		\State {\textbf{Each Worker $q_i$}: Compute the activations for each node in the local graph (cf. equation \eqref{eqn:gnn_layer_l}) using the local nodes.}
+		\State {\textbf{Each Worker $q_i$}: Compress the activations of the nodes that are in the boundary using the compression mechanism (cf. equation \eqref{eqn:compress_decompress}), and communicate them to the adjacent machines.}
+		\State {\textbf{Each Worker $q_i$}: Collect data from all adjacent machines, and compute forward pass by using non-compressed activations for local nodes and compressed activations for non-local nodes that are fetched from other machines.}
+		%\State {\textbf{Each Worker $w_i$}: Decompress activations $\tilde %x_i=g^{-1}_{\epsilon,r_k}(a_i)$, and compute gradient step.}
+		\State {\textbf{Each Worker $q_i$}: Compute parameter gradients by back-propagating errors across machines and through the differentiable compression routine. Apply the gradient step to the parameters in each worker(cf. equation \eqref{eqn:SGD})}. 
+		\State {\textbf{Server}: Average parameters, send them back to workers, and update compression rate $c_{t+1}$}
+		\Until{Convergence}
+	\end{algorithmic}
+\end{algorithm*}
+
+Once the values of the activations are received, they are decompressed, processed by the local machine, and the output of the GNN is obtained. To obtain the gradient of the loss $\ell$, the output of the GNN is compared to the true label, and the gradient with respect to the parameters of the GNN is computed. The errors are once again compressed and communicated back to the clients. Which, will update the values of the parameters of the GNN, after every client updates the values of the parameters $\ccalH$, there is a final round of communication where the values are averaged. Note that this procedure allows the GNN to be updated using the whole graph. By controlling the number of bits communicated by the compressing-decompressing mechanism, we can control the communication overhead. Formally, the compressing and decompressing mechanism can be modeled as follows,
+\begin{definition}\label{def:CompressionDecompression}
+	The compression and decompression mechanism $g_{\epsilon,r},g_{\epsilon,r}^{-1}$ with compression error $\epsilon$, and compression rate $r$,  satisfies that given a set of parameters $\bbx\in\reals^n$, when compressed and decompressed, the following relation holds i.e.,
+	\begin{align}\label{eqn:compress_decompress}
+		&\bbz= g_{\epsilon,r} (\bbx), \text{ and }\tilde \bbx = g_{\epsilon,r}^{-1}(g_{\epsilon,r}( \bbx))\nonumber \\
+  &\text{ and }\mbE[\|\tilde \bbx - \bbx\|]\leq \delta \text{ with }\mbE[||\tilde \bbx - \bbx||^2]\leq\epsilon^2,
+	\end{align}
+	where $\bbz\in \reals^{n/r}$ with $n/r\in\mathbb{Z}$ is the compressed signal. If $\delta=0$, the compression is lossless. 
+\end{definition}
+% 
+Intuitively, the error $\epsilon$, and compression rate $r$ are related; a larger compression rate $r$ will render a larger compression error $\epsilon$. Also, compressed signals require less bandwidth to be communicated. 
+Relying on the compression mechanism \eqref{eqn:compress_decompress}, a GNN trained using a \textit{fixed} compression ratio $r$ during training, will converge to a neighborhood of the optimal solution. The size of the neighborhood will be given by the variance of the compression error $\epsilon^2$. The first-order compression error $\delta$ is related to the mismatch in the compressed and decompressed signals. Our analysis works for any value of $\delta$, which encompasses both lossy ($\delta>0$), as well as loss-less compression ($\delta=0$).
+%
+\begin{assumption}\label{as:Loss_Grad_Lipschitz}
+	The loss $\ell$ function has $L$ Lipschitz continuous gradients, $||\nabla\ell(\bby_1,\bbx)- \nabla\ell(\bby_2,\bbx)||\leq L||\bby_1-\bby_2||$.
+\end{assumption}
+% \begin{assumption}\label{as:estimator_variace}
+% 	The empirical estimator of the gradient $ \nabla_\ccalH \ell (y_i,\Phi(x_i,\bbS;\ccalH_t))$ is an unbiased estimator of the gradient $\nabla_\ccalH \ell (y_i,\Phi(x_i,\bbS;\ccalH_t))$, and the variance is  $\sigma^2$,
+% 	\begin{align}
+% 		\mbE\bigg[|| \nabla_\ccalH \ell (y,\Phi(x,\bbS;\ccalH_t))- \nabla_\ccalH \ell (y,\Phi(x,\bbS;\ccalH_t))||^2\bigg]\leq \sigma^2.
+% 	\end{align}
+% 	% \begin{align}
+% 		% 	\mbE\bigg[|| \frac{1}{B}\sum_{i=1}^B\nabla_\ccalH \ell (y_i,\Phi(x_i,\bbS;\ccalH_t))- \nabla_\ccalH \ell (y,\Phi(x,\bbS;\ccalH_t))||^2\bigg]\leq \frac{\sigma^2}{B}
+% 		% \end{align}
+% 	% with $\infty>\sigma>0$ being the variance of the estimator. 
+% \end{assumption}
+\begin{assumption}\label{as:normalized_lipschitz}
+	The non-linearity $\non$ is normalized Lipschitz.
+\end{assumption}
+\begin{assumption}\label{as:GNN_lipschitz}
+	The GNN, and its gradients are $M$-Lipschitz with respect to the parameters $\ccalH$.
+\end{assumption}
+\begin{assumption}\label{as:filter_bounded}
+	The graph convolutional filters in every layer of the graph neural network are bounded, i.e.
+	\begin{align}
+		&||h_{*\bbS}x|| \leq ||x|| \lambda_{max} \bigg(\sum_{t=0}^T h_t \bbS^t\bigg),\nonumber\\
+  &\text{ with } \lambda_{max} \bigg(\sum_{t=0}^T h_t \bbS^t\bigg)<\infty.
+	\end{align}
+\end{assumption}
+% \red{add $\sigma$ variance, normalized input X}
+%
+Assumption \ref{as:Loss_Grad_Lipschitz} holds for most losses used in practice over a compact set. 
+%Assumption \ref{as:estimator_variace} is true for i.i.d. data, the exact characterization of $\sigma$ depends on the architecture. 
+Assumption \ref{as:normalized_lipschitz} holds for most non-linearities used in practice over normalized signals. Assumption \ref{as:GNN_lipschitz} is a standard assumption, and the exact characterization is an active area of research \cite{fazlyab2019efficient}. Assumption \ref{as:filter_bounded} holds in practice when the weights are normalized.
+\begin{proposition}[Convergence of GNNs Trained on Fixed Compression]\label{prop:fixed_compression}
+	Under assumptions \ref{as:Loss_Grad_Lipschitz} through \ref{as:filter_bounded}, consider the iterates generated by equation \eqref{eqn:SGD} where the normalized signals $\bbx$ are compressed using compression rate $c$ with corresponding error $\epsilon$(cf. Definition \ref{def:CompressionDecompression}). Consider an $L$ layer GNN with $F$, and $K$ features and coefficients per layer respectively. Let the step-size  be $\eta\leq 1/\lipGrad$, with $\lipGrad=4M\lambda_{max}^L\sqrt{KFL}$ if the compression error is such that at every step $k$, and any $\beta>0$,
+	\begin{align}
+		\mbE_\ccalD[||\nabla_\ccalH \ell (y,\Phi(x,\bbS;\ccalH_t)) ||^2] \geq \lipGrad^2\epsilon^2  +\beta,
+	\end{align}
+	then the fixed compression mechanism converges to a neighborhood of the first-order stationary point of \ref{eqn:SRM} in $K\leq \ccalO(\frac{1}{\beta})$ iterations, i.e., 
+	\begin{align}
+		\mbE_\ccalD[|| \nabla_\ccalH \ell (y,\Phi(x,\bbS;\ccalH_t))||^2]\leq \lipGrad^2\epsilon^2 +\beta.
+	\end{align}
+\end{proposition}
+\begin{proof}
+	The proof can be found in Appendix \ref{appendix:proposition_fixed_compression}
+\end{proof}
+
+% \begin{figure*}
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/prodsrandom16.pdf}
+% 		\caption{Random Partitioning}
+% 		\label{fig:sub1}
+% 	\end{subfigure}%
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/prodsmetis16.pdf}
+% 		\caption{METIS Partitioning}
+% 		\label{fig:sub2}
+% 	\end{subfigure}
+% 	\caption{Accuracy per epoch for the Products Dataset with $16$ servers.}
+% 	\label{fig:prods16epoch}
+% \end{figure*}
+
+\begin{figure*}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/arxivrandom16.pdf}
+		\caption{Arxiv Dataset}
+		\label{fig:acc_arxiv}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/prodsrandom16.pdf}
+		\caption{Products Dataset}
+		\label{fig:acc_prods}
+	\end{subfigure}
+	\caption{Accuracy per iteration for random partitioning with $16$ servers.}
+	\label{fig:acc_random_16}
+\end{figure*}
+
+Proposition \ref{prop:fixed_compression} is important because it allows us to show that the fixed compression mechanism can converge to a neighborhood of the first-order stationary point of \ref{prop:fixed_compression}. The size of the neighborhood can be controlled by the compression rate $\epsilon$.
+%, as well as the variance of the estimator $\sigma$. 
+Although useful, Proposition \ref{prop:fixed_compression}, presents a limitation on the quality of the solution that can be obtained through compression. In what follows we introduce a variable compression scheme that can trade-off between efficient communication and sub-optimality guarantees. 
+
+\section{VARCO - Variable Compression For Distributed GNN Learning}
+In this paper, we propose variable compression rates as a way to close the gap between training in a centralized manner and efficient training in a distributed manner. We use Proposition \eqref{prop:fixed_compression} as a stepping stone towards a training mechanism that reduces the compression ratio $r_t$ as the iterates progress. We begin by defining a scheduler $r(t):\mathbb{Z}\to \reals$ as a strictly decreasing function that given a train step $t\in \mathbb{Z}$, returns a compression ratio $r(t)$, such that $r(t^{'})< r(t)$ if $t^{'}> t$. 
+The scheduler $r$ will be in charge of reducing the compression ratio as the iterates increase. An example of scheduler can be the linear $r_{lin}(t)=\frac{c_{min}-c_{max}}{T} t + c_{max}$ scheduler (see Appendix \ref{prop:scheduler}).
+In this paper, we propose to train a GNN by following a compression scheme by a scheduler $r$, given a GNN architecture, $Q$-clients, and a dataset $\ccalD$. 
+%
+%
+
+\begin{figure*}
+	\begin{subfigure}{0.24\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/all_partitionsarxivrandom.pdf}
+		\caption{Random Part. in Arxiv Dat.}
+		\label{subfig:ServerRandomArxiv}
+	\end{subfigure}
+	\begin{subfigure}{0.24\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/all_partitionsarxivmetis.pdf}
+		\caption{METIS Part. in Arxiv Dat.}
+		\label{subfig:ServerMetisArxiv}
+	\end{subfigure}
+	\begin{subfigure}{0.24\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/all_partitionsprodsrandom.pdf}
+		\caption{Random Part. in Products Dat.}
+		\label{subfig:ServerRandomProds}
+	\end{subfigure}
+         \begin{subfigure}{0.24\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/all_partitionsprodsmetis.pdf}
+		\caption{Metis Part. in Products Dat.}
+		\label{subfig:ServerMetisProds}
+	\end{subfigure}
+	\caption{Accuracy as a function of the number of servers.}
+	\label{fig:servers}
+\end{figure*}
+
+% \begin{figure*}
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/arxivrandom16.pdf}
+% 		\caption{Random Partitioning}
+% 		\label{subfig:arxivRandom}
+% 	\end{subfigure}%
+% 	\begin{subfigure}{0.5\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/arxivmetis16.pdf}
+% 		\caption{METIS Partitioning}
+% 		\label{subfig:arxivmetis}
+% 	\end{subfigure}
+% 	\caption{Accuracy as a function of epoch for the Arxiv Dataset with $16$ servers.}
+% 	\label{fig:arxiv16epoch}
+% \end{figure*}
+
+% \begin{figure}[h]
+%   \centering
+%   \begin{subfigure}{0.33\textwidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/all_partitionsarxivrandom.pdf}
+%     \caption{Random Part. in Arxiv Dat.}
+%     \label{subfig:ServerRandomArxiv}
+%   \end{subfigure}
+%   \begin{subfigure}{0.33\textwidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/all_partitionsarxivmetis.pdf}
+%     \caption{METIS Part. in Arxiv Dat.}
+%     \label{subfig:ServerMetisArxiv}
+%   \end{subfigure}
+%   \begin{subfigure}{0.33\textwidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/all_partitionsprodsrandom.pdf}
+%     \caption{Random Part. in Products Dat.}
+%     \label{subfig:ServerRandomProds}
+%   \end{subfigure}
+%   \caption{Accuracy as a function of the number of servers.}
+%   \label{fig:servers}
+% \end{figure}
+
+% \begin{figure}[h]
+%   \centering
+%   \begin{subfigure}{0.5\textwidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/arxivrandom16.pdf}
+%     \caption{Random Partitioning}
+%     \label{subfig:arxivRandom}
+%   \end{subfigure}%
+%   \begin{subfigure}{0.5\textwidth}
+%     \centering
+%     \includegraphics[width=\linewidth]{figures/arxivmetis16.pdf}
+%     \caption{METIS Partitioning}
+%     \label{subfig:arxivmetis}
+%   \end{subfigure}
+%   \caption{Accuracy as a function of epoch for the Arxiv Dataset with $16$ servers.}
+%   \label{fig:arxiv16epoch}
+% \end{figure}
+
+% \subsection{$\algo$ Algorithm Construction}
+%
+During the forward pass, we compute the output of the GNN at a node $n_i$ using the local data, and the compressed data from adjacent machines. The compressed data encompasses both the features at the adjacent nodes, as well as the compressed activations of the intermediate layers for that node. The compression mechanism compresses the values of the GNN using scheduler $r(t)$, and communicates them the to machine that owns node $n$. The backward pass receives the gradient from the machine that owns node $n$ and updates the values of the GNN. After the GNN values are updated, the coefficients of the GNN are communicated to a centralized agent that averages them and sends them back to the machines. A more succinct explanation of the aforementioned procedure can be found in Algorithm \ref{alg:varying_compr_rates}.
+
+\subsection{Convergence of the VARCO Algorithm}
+%
+We characterize the convergence of the $\algo$ algorithm in the following proposition.
+
+
+\begin{proposition}[Scheduler Convergence]\label{prop:scheduler}
+	Under assumptions \ref{as:Loss_Grad_Lipschitz} through \ref{as:filter_bounded}, consider the iterates generated by equation \eqref{eqn:SGD} where the normalized signals $\bbx$ are compressed using compression rate $r$ with corresponding error $\epsilon$(cf. Definition \ref{def:CompressionDecompression}). Consider an $L$ layer GNN with $F$, and $K$ features and coefficients per layer respectively. Let the step-size  be $\eta\leq 1/\lipGrad$, with $\lipGrad=4M\lambda_{max}^L\sqrt{KFL}$.
+	Consider a scheduler such that the compression error $\epsilon_t$ decreases at every  step $\epsilon_{t+1}<\epsilon_t$, then for any $\sigma>0$
+	\begin{align}
+		\mbE_\ccalD[||\nabla_\ccalH \ell (y,\Phi(x,\bbS;\ccalH_t)) ||^2]\leq \sigma . 
+	\end{align}
+	happens infinitely often.
+\end{proposition}
+\begin{proof}
+	The proof can be found in Appendix \ref{appendix:scheduler}.
+\end{proof}
+
+
+According to Proposition \ref{prop:scheduler}, for any monotonically decreasing scheduler, we can obtain an iterate $t$, whose gradient has a norm smaller than $\sigma$. This is an improvement to the fixed compression Proposition \ref{prop:fixed_compression}, given that we removed the term that depends on $\epsilon^2$, converging to a smaller neighborhood. The condition on the scheduler is simple to satisfy; the compression error $\epsilon(t)$ needs to decrease on every step (see more information about schedulers in Appendix \ref{appendix:scheduler}). This means that the scheduler does not require information about the gradient of the GNN. 
+Compressing the activations in a GNN can prove to reduce the communication required to train it, given that the overall communication is reduced. However, keeping a fixed compression ratio might not be enough to obtain a GNN of comparable accuracy to the one trained using no compression. By using a variable compression for the communications, we obtain the best of both worlds -- we reduce the communication overhead needed to train a GNN, without compromising the overall accuracy of the learned solution. The key observation is that in the early stages of training, an estimator of the gradient with a larger variance is acceptable, while in the later stages, a more precise estimator needs to be used. This behavior can be translated into efficiency; use more information from other servers only when needed. 
+
+\section{Experiments}
+
+
+We benchmarked our method in $2$ real-world datasets: OGBN-Arxiv \cite{wang2020microsoft} and OGBN-Products \cite{Bhatia16}. In the case of OGBN-Arxiv, the graph has $169,343$ nodes and $1,166,243$ edges and it represents the citation network between computer science arXiv papers. The node features are $128$ dimensional embeddings of the title and abstract of each paper \cite{NIPS2013_9aa42b31}. The objective is to predict which of the $40$ categories the paper belongs to. In the case of OGBN-Products, the graph represents products that were bought together on an online marketplace. 
+There are $2,449,029$ nodes, each of which is a product, and $61,859,140$ edges which represent that the products were bought together. Feature vectors are $100$ dimensional and the objective is to classify each node into $47$ categories.  For each dataset, we partition the graph at random and using METIS partitioning \cite{karypis1997metis} and distribute it over $\{2,4,8,16\}$ machines. In all cases, we trained for $300$ epoch. We benchmarked $\algo$ against full communication, no intermediate communication, and fixed compression for $\{2,4\}$ fixed compression ratios. For the GNNs, we used a $3$ layered GNN with $256$ hidden units per layer,  \texttt{ReLU} non-linearity, and \texttt{SAGE} convolution \cite{hamilton2017inductive}. 
+For $\algo$, we used a linear compression with slope $5$, and $128$ and $1$ maximum and minimum compression ratio respectively (see Appendix \ref{appendix:scheduler}). We empirically validate the claims that we put forward, that our method (i) attains the same accuracy as the one trained with full communication without requiring a particular type of partitioning, and (ii) for the same attained accuracy, our method is more efficient in terms of communication.
+
+\subsection{Accuracy}
+We report the accuracy over the unseen data, frequently denoted test accuracy. Regarding accuracy, we can compare the performance of our variable compression algorithm \texttt{VARCO}, against no communication, and full communication and fixed compression ratios. In Figure \ref{fig:acc_random_16} we present the accuracy as a function of the epoch for $16$ servers and random partitions of the graph. This is the most challenging scenario given that the graph is partitioned at random and the number of partitions is the largest that we experimented with. As can be seen, our method of variable compression attains a better performance than the full communication. What is more, fixed compression has a degradation in performance in both datasets, thus validating the fact that variable compression improves upon fixed compression and no communication. 
+
+In Figure \ref{fig:servers} we show the accuracy as a function of the number of servers for variable compression, full communication, and no communication. We show results for both random \ref{subfig:ServerRandomArxiv} and METIS \ref{subfig:ServerMetisArxiv} partitioning for the Arxiv and Products datasets. As can be seen in all three plots, the variable compression attains a comparable performance to the one with full communication regardless of the partitioning scheme. 
+% Also, the fixed compression scheme is not able to recover the full communication accuracy when the number of servers increases. Consistent with Proposition \ref{prop:fixed_compression}, as the fixed compression increases, the accuracy attained by the GNN decreases. 
+These plots validate that our method attains a comparable performance with the one obtained with full communication both for METIS as well as random partitioning. 
+
+
+
+It is worth noting that to obtain the METIS partitioning, we need to run a min-cut algorithm which is very expensive in practice. Also, it needs to be run on a centralized computer, requiring access to the whole graph dataset. However, our algorithm does not require the graph to be partitioned in any particular way and attains the same results in random as well as METIS partitioning, as can be seen in Figures \ref{subfig:ServerRandomArxiv}, and \ref{subfig:ServerRandomProds}.
+
+% We study the accuracy as a function of the number of epochs with $16$ servers. This setup is the most challenging, given that the size of the graph in each server is the smallest, and it is therefore the one in which communication is needed.  
+% In Figure \ref{fig:arxiv16epoch}, we show the accuracy per epoch for the Arxiv dataset. As can be seen in both random \ref{subfig:arxivRandom}, and METIS \ref{subfig:arxivmetis} partitioning, the accuracy of variable compression is comparable to the one with full communication. Also, the different fixed compression mechanisms have a worse performance (10\% and 3\% in random and METIS partitioning respectively), and their performance degrades as their fixed compression increases. 
+% In Figure~\ref{fig:prods16epoch}, we plot the results for the products dataset with $16$ servers. Again, in both partitioning schemes, our variable compression algorithm attains a comparable performance to the one trained on full communication. In this case, compared to the Arxiv dataset \ref{fig:arxiv16epoch}, the spread of the results is smaller, and the effect of our method is less significant. This is related to the fact that the graph is larger, and therefore, the partitions are also larger.
+% In all, for both partitioning methods, and both datasets, we can validate that the variable compression mechanism attains a comparable performance to the one trained on the full communication, which is not the case for fixed compression. 
+% \subsection{Efficiency}
+\begin{figure*}
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/acc_comm_arxivrandom16.pdf}
+		\caption{Arxiv Dataset}
+		\label{fig:eff_arxiv}
+	\end{subfigure}%
+	\begin{subfigure}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/new_figs/acc_comm_prodsrandom16.pdf}
+		\caption{Products Dataset}
+		\label{fig:eff_prods}
+	\end{subfigure}
+	\caption{Accuracy per floating points communicated for random partitioning with $16$ servers.}
+	\label{fig:efficiency}
+\end{figure*}
+
+\subsection{Efficiency}
+In terms of efficiency, we can plot the accuracy as a function of the number of floating point numbers communicated between servers. The fixed compression and full communication schemes communicate a constant number of bytes in each round of communication. This number is proportional to the cross-edges between machines, multiplied by the compression coefficient, which in the case of full communication is one. 
+Our method is particularly useful given that at the early stages of training, fewer bytes of communication are needed, and the GNN can rely more heavily on the local data. Intuitively, all learning curves show a similar slope at the beginning of training, and they converge to different values in the later stages. 
+In Figure~\ref{fig:efficiency} we corroborate that our method attains the best accuracy as a function of bytes communicated throughout the full trajectory. Given that the $\algo$ curve in Figure~\ref{fig:efficiency} is above all curves, for any communication budget i.e. number of bits, $\algo$ obtains the best accuracy of all methods considered. This indeed validates our claim that using $\algo$ is an efficient way of training a GNN. 
+
+%In Figure \ref{fig:accuracy_floats}, we show the accuracy as a function of the communicated floating points values for OGBN-Arxiv with $16$ machines. In Figure \ref{fig:accuracy_floats}, we show that $\algo$
+%obtains the most efficient training curve in terms of communication costs, given that the variable compression line is above all other curves. 
+%Intuitively, all learning curves show a similar slope at the beginning of training, and they converge to different values in the later stages, decreasing the compression rate is an efficient way of learning a GNN as shown in Figure \ref{fig:accuracy_floats}. Given that the $\algo$ curve in Figure \ref{fig:accuracy_floats} is above all curves, this means that for any communication budget i.e. number of bits, $\algo$ obtains the best accuracy of all methods considered. This indeed validates our claim that using $\algo$ is an efficient way of training a GNN. 
+%In all, our experiments on real-world datasets show that $\algo$ is an efficient way of obtaining GNNs that attain a comparable performance to the one obtained using full communication, but, at a fraction of the communication costs. In Appendix \ref{appendix:scheduler}, we show different combinations of variable compressions, all of which attain same similar results, showcasing the robustness of our algorithm.
+% \subsection{Robustness}
+% In Figure \ref{fig:robustness} we validate the robustness of our method to the choice of compression rate. Using linear compression rate, at epoch $e$, with $c_{min}=1$, $c_{max}=128$, $E=300$ and compression rate $c =\min(c_{max} - a \frac{ c_{max} - c_{min}}{E}e, c_{min} )$, we vary the slope $a$ of the scheduler and verify that the algorithm attains a comparable performance for all runs.  This is consistent with Proposition \ref{prop:scheduler}, as we only require that the scheduler decreases in every iteration. In Appendix \ref{appendix:CompressionMechanism}, the equations that govern the compression rate are described. 
+% \begin{figure*}
+% 	\begin{subfigure}{0.33\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/robustnessarxivrandom16.pdf}
+% 		\caption{Random Part. in Arxiv Dat.}
+% 		\label{subfig:RobustRandomArxiv}
+% 	\end{subfigure}
+% 	\begin{subfigure}{0.33\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/robustnessprodsrandom16.pdf}
+% 		\caption{Random Part. in Prods Dat.}
+% 		\label{subfig:RobustMetisArxiv}
+% 	\end{subfigure}
+% 	\begin{subfigure}{0.33\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{figures/schedulers/comm_floats_per_epoch.pdf}
+% 		\caption{Comm. Floats Per Epoch}
+% 		\label{subfig:ServerRobustEpochs}
+% 	\end{subfigure}
+% 	\caption{Accuracy per epoch with $16$ servers for different variable compression schemes.}
+% 	\label{fig:robustness}
+% \end{figure*}
+%In Table \ref{table:results} we show the results of our Algorithm $\algo$. For all configurations, $\algo$ attains a comparable performance to the full communication setup. It should also be noted that $\algo$ is robust given that it does not depend on the the number of servers or the dataset. Table \ref{table:results} therefore validates the claim that our $\algo$ attains a comparable performance to the one obtained with full communication. 
+%\begin{wrapfigure}{r}{0.5\textwidth}
+%	\begin{center}
+%		\includegraphics[width=0.5\textwidth]{figures/accuracy/arxiv16floats.pdf} 
+%	\end{center}
+%	\caption{Accuracy of the GNNs as a function of the communicated floats for the OGBN-Arxiv with $16$ machines.}
+%	\label{fig:accuracy_floats}
+%\end{wrapfigure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% Figure
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+In this paper, we presented a distributed method to train GNNs by compressing the activations and reducing the overall communications. We showed that our method converges to a neighborhood of the optimal solution, while computing gradient estimators communicating fewer bytes. Theoretically, we showed that by increasing the number of bits communicated (i.e. decreasing the compression ratio) as epochs evolve, we can decrease the loss throughout the whole training trajectory. We also showed that our method only requires the compression ratio to decrease in every epoch, without the need for any information about the process. Empirically, we benchmarked our algorithm in two real-world datasets and showed that our method obtains a GNN that attains a comparable performance to the one trained on full communication, at a fraction of the communication costs. 
+
+
+% \bibliographystyle{unsrtnat}
+\bibliographystyle{IEEEtran}
+\bibliography{ref.bib}
+
+\input{appendix}
+\end{document}
+
+

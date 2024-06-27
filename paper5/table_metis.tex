@@ -1,0 +1,26 @@
+% Please add the following required packages to your document preamble:
+% \usepackage{multirow}
+\begin{table*}
+\centering
+\begin{tabular}{c|cccccccc}
+\hline
+\multirow{3}{*}{Algorithm}    & \multicolumn{4}{c}{OGBN-Products}                                                                                        & \multicolumn{4}{|c}{OGBN-Arxiv}                                                                      \\ \cline{2-9} 
+                              & \multicolumn{8}{c}{Number of Servers}                                                                                                                                                                                           \\ \cline{2-9} 
+                              & \multicolumn{1}{c|}{$2$}     & \multicolumn{1}{c|}{$4$}     & \multicolumn{1}{c|}{$8$}     & \multicolumn{1}{c|}{$16$}    & \multicolumn{1}{c|}{$2$}     & \multicolumn{1}{c|}{$4$}     & \multicolumn{1}{c|}{$8$}     & $16$    \\ \hline
+Full Comm& \multicolumn{1}{c|}{$78.61$} & \multicolumn{1}{c|}{$78.79$} & \multicolumn{1}{c|}{$78.53$} & \multicolumn{1}{c|}{$78.25$} & \multicolumn{1}{c|}{$68.81$} & \multicolumn{1}{c|}{$69.63$} & \multicolumn{1}{c|}{$68.88$} & \multicolumn{1}{c}{$68.98$} \\ \hline
+No Comm& \multicolumn{1}{c|}{$78.01$} & \multicolumn{1}{c|}{$78.39$} & \multicolumn{1}{c|}{$78.13$} & \multicolumn{1}{c|}{$77.62$} & \multicolumn{1}{c|}{$67.90$} & \multicolumn{1}{c|}{$66.77$} & \multicolumn{1}{c|}{$67.69$} & \multicolumn{1}{c}{$65.63$} \\ \hline
+\textbf{Variable Comp. Slope $2$(ours)}& \multicolumn{1}{c|}{$78.43$} & \multicolumn{1}{c|}{$78.12$} & \multicolumn{1}{c|}{$78.80$} & \multicolumn{1}{c|}{$78.57$} & \multicolumn{1}{c|}{$69.25$} & \multicolumn{1}{c|}{$68.72$} & \multicolumn{1}{c|}{$69.08$} & \multicolumn{1}{c}{$69.14$} \\ \hline
+\textbf{Variable Comp. Slope $3$(ours)}& \multicolumn{1}{c|}{$78.50$} & \multicolumn{1}{c|}{$78.26$} & \multicolumn{1}{c|}{$78.21$} & \multicolumn{1}{c|}{$78.31$} & \multicolumn{1}{c|}{$69.89$} & \multicolumn{1}{c|}{$69.48$} & \multicolumn{1}{c|}{$68.86$} & \multicolumn{1}{c}{$69.58$} \\ \hline
+\textbf{Variable Comp. Slope $4$(ours)}& \multicolumn{1}{c|}{$78.73$} & \multicolumn{1}{c|}{$78.01$} & \multicolumn{1}{c|}{$78.13$} & \multicolumn{1}{c|}{$78.58$} & \multicolumn{1}{c|}{$69.39$} & \multicolumn{1}{c|}{$68.96$} & \multicolumn{1}{c|}{$68.75$} & \multicolumn{1}{c}{$69.16$} \\ \hline
+\textbf{Variable Comp. Slope $5$(ours)}& \multicolumn{1}{c|}{$78.59$} & \multicolumn{1}{c|}{$78.51$} & \multicolumn{1}{c|}{$78.03$} & \multicolumn{1}{c|}{$78.35$} & \multicolumn{1}{c|}{$69.49$} & \multicolumn{1}{c|}{$69.04$} & \multicolumn{1}{c|}{$69.11$} & \multicolumn{1}{c}{$68.78$} \\ \hline
+\textbf{Variable Comp. Slope $6$(ours)}& \multicolumn{1}{c|}{$78.21$} & \multicolumn{1}{c|}{$78.61$} & \multicolumn{1}{c|}{$78.50$} & \multicolumn{1}{c|}{$78.68$} & \multicolumn{1}{c|}{$69.33$} & \multicolumn{1}{c|}{$68.60$} & \multicolumn{1}{c|}{$69.41$} & \multicolumn{1}{c}{$69.36$} \\ \hline
+\textbf{Variable Comp. Slope $7$(ours)}& \multicolumn{1}{c|}{$78.32$} & \multicolumn{1}{c|}{$78.39$} & \multicolumn{1}{c|}{$78.36$} & \multicolumn{1}{c|}{$78.56$} & \multicolumn{1}{c|}{$69.24$} & \multicolumn{1}{c|}{$69.28$} & \multicolumn{1}{c|}{$68.12$} & \multicolumn{1}{c}{$69.05$} \\ \hline
+Fixed Comp Rate $2$& \multicolumn{1}{c|}{$78.49$} & \multicolumn{1}{c|}{$78.49$} & \multicolumn{1}{c|}{$78.18$} & \multicolumn{1}{c|}{$78.46$} & \multicolumn{1}{c|}{$67.68$} & \multicolumn{1}{c|}{$67.76$} & \multicolumn{1}{c|}{$66.73$} & \multicolumn{1}{c}{$65.78$} \\ \hline
+Fixed Comp Rate $4$& \multicolumn{1}{c|}{$78.62$} & \multicolumn{1}{c|}{$78.31$} & \multicolumn{1}{c|}{$78.42$} & \multicolumn{1}{c|}{$78.34$} & \multicolumn{1}{c|}{$67.75$} & \multicolumn{1}{c|}{$66.64$} & \multicolumn{1}{c|}{$66.96$} & \multicolumn{1}{c}{$66.09$} \\ \hline
+% Fixed Comp Rate $8$& \multicolumn{1}{c|}{$78.44$} & \multicolumn{1}{c|}{$78.24$} & \multicolumn{1}{c|}{$78.83$} & \multicolumn{1}{c|}{$78.72$} & \multicolumn{1}{c|}{$68.16$} & \multicolumn{1}{c|}{$67.97$} & \multicolumn{1}{c|}{$66.09$} & \multicolumn{1}{c}{$67.19$} \\ \hline
+% Fixed Comp Rate $16$& \multicolumn{1}{c|}{$78.71$} & \multicolumn{1}{c|}{$78.72$} & \multicolumn{1}{c|}{$78.39$} & \multicolumn{1}{c|}{$78.44$} & \multicolumn{1}{c|}{$68.32$} & \multicolumn{1}{c|}{$67.65$} & \multicolumn{1}{c|}{$67.13$} & \multicolumn{1}{c}{$67.08$} \\ \hline
+% Fixed Comp Rate $32$& \multicolumn{1}{c|}{$78.65$} & \multicolumn{1}{c|}{$78.67$} & \multicolumn{1}{c|}{$78.45$} & \multicolumn{1}{c|}{$78.03$} & \multicolumn{1}{c|}{$68.98$} & \multicolumn{1}{c|}{$66.68$} & \multicolumn{1}{c|}{$67.11$} & \multicolumn{1}{c}{$67.01$} \\ \hline
+% Fixed Comp Rate $64$& \multicolumn{1}{c|}{$78.55$} & \multicolumn{1}{c|}{$78.48$} & \multicolumn{1}{c|}{$78.34$} & \multicolumn{1}{c|}{$78.68$} & \multicolumn{1}{c|}{$67.88$} & \multicolumn{1}{c|}{$67.56$} & \multicolumn{1}{c|}{$67.81$} & \multicolumn{1}{c}{$67.00$} \\ \hline
+\end{tabular}
+\caption{\label{table:results_metis} Accuracy results when training GNNs with full-communication, no communication, fixed and variable compression in both OGBN-Arxiv, and OGBN-Products. We test our Algorithm with $2,4,8$ and $16$ clients with \textbf{METIS partitioning} of the graph. }
+\end{table*}
