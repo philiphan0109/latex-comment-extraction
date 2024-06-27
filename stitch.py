@@ -8,12 +8,12 @@ def read_tex_file(file_path):
         return file.read()
 
 def find_includes(tex_content):
-    pattern = r'(?<!%)\\(input|include){([^}]+)}'
-    return re.findall(pattern, tex_content)
+    pattern = r'(?<!%)^[^%]*\\(input|include)\{([^}]+)\}'
+    return re.findall(pattern, tex_content, re.MULTILINE)
 
 def find_commented_includes(tex_content):
-    pattern = r'(%.*\\(input|include){([^}]+)})'
-    return re.findall(pattern, tex_content)
+    pattern = r'^\s*%\s*\\(input|include)\{([^}]+)\}'
+    return re.findall(pattern, tex_content, re.MULTILINE)
 
 def convert_to_comment(content):
     lines = content.splitlines()
@@ -43,8 +43,8 @@ def stitch_tex_files(path):
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
-        else:
-            print(f"File not found: {include_path}")
+        # else:
+        #     print(f"File not found: {include_path}")
             
     
     for comment, command, include_file in commented_includes:
@@ -55,8 +55,21 @@ def stitch_tex_files(path):
             include_content = read_tex_file(include_path)
             commented_content = convert_to_comment(include_content)
             main_content = main_content.replace(comment, f'% {include_file[:-4]}\n{commented_content}')
-        else:
-            print(f"File not found: {include_path}")
+        # else:
+        #     print(f"File not found: {include_path}")
     
     return main_content
 
+
+#test
+
+# tex_content = """
+# \\input{file1}
+# % \\include{file2}
+# %    \\input{file3}
+# \\include{file4}
+# % some comment \\input{file5}
+# """
+
+# print("Includes:", find_includes(tex_content))
+# print("Commented Includes:", find_commented_includes(tex_content))
