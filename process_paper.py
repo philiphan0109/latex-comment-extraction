@@ -6,7 +6,7 @@ from comment_extraction import extract_comments
 # 1) generate a new .tex file named FULL_PAPER.tex
 # 2) extract the comments from the full paper
 
-path = "paper/"
+path = "test_set/"
 
 def read_tex_file(file_path):
     with open(file_path, 'r', encoding="utf-8") as file:
@@ -53,4 +53,15 @@ def process_paper(path):
             if is_standalone(tex_file) and tex_file not in included_files and tex_file != main_file_path:
                 file.write(f"{tex_file}\n")
 
-process_paper(path)
+if __name__ == '__main__':
+    test_path = "test_set"
+    counter = 1000
+    incorrect_papers = []
+    for paper_path in os.listdir(test_path):
+        try:
+            paper_path = os.path.join(test_path, paper_path)
+            process_paper(paper_path)
+        except Exception as e:
+            incorrect_papers.append(paper_path)
+            counter -= 1
+    print(incorrect_papers)
