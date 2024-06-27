@@ -37,17 +37,24 @@ def stitch_tex_files(path):
     commented_includes = find_commented_includes(main_content)
     
     for command, include_file in includes:
+        raw_include_file = include_file
         if not include_file.endswith('.tex'):
             include_file += '.tex'
         include_path = os.path.join(path, include_file)
+        raw_include_path = os.path.join(path, raw_include_file)
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
-        # else:
-        #     print(f"File not found: {include_path}")
+        elif os.path.exists(raw_include_path):
+            include_content = read_tex_file(include_path)
+            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
+        else:
+            print(f"RAW FILE NOT FOUND: {raw_include_path}")
+            # print(f"File not found: {include_path}")
             
     
     for comment, command, include_file in commented_includes:
+        raw_include_file = include_file
         if not include_file.endswith('.tex'):
             include_file += '.tex'
         include_path = os.path.join(path, include_file)
@@ -55,6 +62,9 @@ def stitch_tex_files(path):
             include_content = read_tex_file(include_path)
             commented_content = convert_to_comment(include_content)
             main_content = main_content.replace(comment, f'% {include_file[:-4]}\n{commented_content}')
+        elif os.path.exists(raw_include_file):
+            include_content = read_tex_file(include_path)
+            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
         # else:
         #     print(f"File not found: {include_path}")
     
