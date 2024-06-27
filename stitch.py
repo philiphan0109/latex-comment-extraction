@@ -4,7 +4,7 @@ import re
 dir_path = "paper/"
 
 def read_tex_file(file_path):
-    with open(file_path, 'r') as file:
+    with open(file_path, 'r', encoding="utf-8") as file:
         return file.read()
 
 def find_includes(tex_content):
@@ -21,7 +21,7 @@ def convert_to_comment(content):
     return commented_content
 
 def is_standalone(file):
-    with open(file, 'r') as f:
+    with open(file, 'r', encoding="utf-8") as f:
         content = f.read()
         return '\\begin{document}' in content and '\\end{document}' in content
 
@@ -34,7 +34,7 @@ def identify_main_tex(files):
 
     for file in files:
         if is_standalone(file):
-            with open(file, 'r') as f:
+            with open(file, 'r', encoding="utf-8") as f:
                 content = f.read()
                 if re.search(r'\bsupplement\b', file.lower()):  
                     supplement_files.append(file)
@@ -43,7 +43,7 @@ def identify_main_tex(files):
     
     if main_candidates:
         for file in main_candidates:
-            with open(file, 'r') as f:
+            with open(file, 'r', encoding="utf-8") as f:
                 content = f.read()
                 if contains_main_document_elements(content):
                     return file
@@ -55,7 +55,7 @@ def identify_main_tex(files):
 def get_included_files(main_file):
     included_files = []
     if main_file:
-        with open(main_file, 'r') as f:
+        with open(main_file, 'r', encoding="utf-8") as f:
             content = f.read()
             # Look for \include or \input commands
             included_files = re.findall(r'\\(?:include|input)\{([^}]+)\}', content)
@@ -112,14 +112,3 @@ def stitch_tex_files(path):
 
 
 #test
-
-# tex_content = """
-# \\input{file1}
-# % \\include{file2}
-# %    \\input{file3}
-# \\include{file4}
-# % some comment \\input{file5}
-# """
-
-# print("Includes:", find_includes(tex_content))
-# print("Commented Includes:", find_commented_includes(tex_content))
