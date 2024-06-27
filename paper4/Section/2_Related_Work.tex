@@ -1,0 +1,83 @@
+\section{Background}
+In this section, we introduce the literature on facial behavior primitives in developing depression inferences and machine learning models (Section \ref{FacialBehaviorPrimitives}) and provide prior work on depression detection using mobile sensing technologies in the fields of mobile and affective computing communities (Section \ref{DepressionMobileSensing}).
+
+\subsection{Facial Behavior Primitives in Depression } \label{FacialBehaviorPrimitives}
+Research on nonverbal facial behavior often shows that individuals with depression usually exhibit fewer happy facial expressions, reduced expressiveness, and less head movement. The less frequent display of happy facial expressions by depressed patients is a commonly observed finding \cite{chentsova2010further, gehricke2000reduced, renneberg2005facial, sloan2001diminished}. Various studies also link depression with decreased general facial expression \cite{renneberg2005facial, gaebel2004facial} and head movement \cite{fisch1983analyzing, joshi2013can, alghowinem_head_2013}. One study found that participants with major depressive disorder (MDD) had a significantly reduced transient pupillary response \cite{laurenzo2016pupillary}, lending support to the potential of detecting depression through these means. Typical symptoms of depression, such as sorrowful expressions and a lack of affective experience, have been characterized by researchers using facial expressions \cite{ellgring2007non}. However, the prevalence of negative facial expressions in depressed individuals is disputed, with contradictory findings presented in various studies. Some argue that depression is characterized by an increase in negative facial expressions \cite{sloan1997subjective, reed2007impact}, while others suggest that depressed people may actually exhibit more positive facial expressions \cite{renneberg2005facial, gaebel2004facial}.
+
+To diagnose depression, nonverbal signals have been introduced by researchers in affective computing. For instance, Cohn et al. \cite{cohn2009detecting} proposed visual signals as non-verbal behavioral features -- manually annotated facial action units (AUs) and active appearance model (AAM) features, which are mathematically derived representations of facial images that capture shape and texture variations. They found that participants with high depression severity displayed fewer associative facial expressions (AU12 -- lip corner puller, and AU15 -- lip corner depressor) and more non-associative facial expressions (AU14 -- dimpler), indicating that these traits helped spot depression. Most recently, Valstar et al. \cite{song2020spectral, valstar2014avec} have used facial and auditory features to detect depression in pre-recorded videos. Their finding suggests that AU4 (brow lowerer), AU12 (lip corner puller), AU15 (lip corner depressor), and AU17 (chin raiser) are useful for estimating depression severity, supporting existing evidence. These findings highlight the potential utility of automated facial behavior analysis towards predicting of depression. These initial studies were based on recorded video data from consenting participants in controlled environments. In contrast, deploying such technologies in uncontrolled, everyday settings raises valid privacy concerns. However, our approach mitigates these concerns by processing data directly on the device. By leveraging on-device computation for feature extraction, we significantly reduce the privacy risks associated with transmitting sensitive facial data. This method ensures that personal data does not leave the user's device, aligning with privacy-preserving strategies essential for real-world applications.
+
+\begin{table}[h]
+\caption{\label{tab:background}Studies on Predicting Depression Using Facial Behavior Primitives}
+\centering  
+\tiny
+
+\begin{tabular}{p{1.5cm}p{.5cm}p{1.5cm}p{3cm}p{1.5cm}p{2cm}p{1.3cm}}
+\toprule
+\textbf{Study} & \textbf{Part.} & \textbf{Study Length} & \textbf{Data \& Feature Types} & \textbf{Validation Method} & \textbf{Performance Metrics} & \textbf{Research Environment} \\
+\midrule
+
+Cohn et al. \cite{cohn2009detecting} & 57 & 7-week intervals & Audio/video, 17 AUs, AAM & Leave-one-out & Accuracy: 79\% & Lab \\
+
+Valstar et al. \cite{valstar2013avec} & 292 & One video each & AVEC13, LPQ & 5-fold & MAE: 10.88, \newline RMSE: 13.61 & Lab \\
+
+Song et al. \cite{song2020spectral} & 84 & One video each & AVEC14, 17 AUs, Pose, Gaze & 50/50 split & MAE: 5.95, \newline RMSE: 7.15 & Lab \\
+
+Kong et al. \cite{kong2022automatic} & 102 & N/A & 10 photos, Deep learned & 7:2:1 split & Accuracy: 98.23\% & Lab \\
+
+Casado et al. \cite{casado2023depression} & 376 & One video each & AVEC13/14, rPPG & N/A & AVEC13: MAE: 6.43, \newline AVEC14: MAE: 6.57 & Lab \\
+
+Wang et al. \cite{wang2015using} & 37 & 10 weeks & Photos, Eigenfaces, landmarks & N/A & N/A & In the wild \\
+
+
+Nepal et al. \cite{nepal2024moodcapture} & 177 & 90 days & AU, Gaze, Head Pose, Rigidity Parameters, and Eye, 2D \& 3D Landmarks & 5-fold leave-subject-out & Balanced Acc: 61\% & In the wild \\
+
+
+Our approach & 25 & 4 weeks & 12 AUs, Smile, Eye open, Head Pose, EAR, IVA, 133 landmarks & Leave-One-Person-out & Accuracy: 51\%, \newline AUC: 67\% \newline MAE: 3.26 & In the wild \\
+ &  &  &  & Leave-One-Day-out & Accuracy: 69\%, \newline AUC: 81\% \newline MAE: 3.08 &  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Researchers in HCI have explored using mobile camera sensors to capture and analyze user data for mental health assessment. For instance, Rui et al. \cite{wang2015using} developed a smartphone app that takes photos of users' faces throughout the day, extracting facial expressions and landmarks. However, this approach had limited success. The correlation between facial expressions, landmarks, and mental health was difficult to establish due to the poor performance of facial expression algorithms, landmark detectors, and image quality. In a separate HCI study, Vincent et al. \cite{tseng2018alertnessscanner} used pupil information to gauge user alertness as an indicator of mental states. A recent study, MoodCapture \cite{nepal2024moodcapture}, evaluated depression using images taken automatically by smartphone front-facing cameras during everyday activities. This tool analyzes features in the images such as angles, dominant colors, locations, objects present, and lighting conditions. The study showed that a random forest algorithm trained on facial landmarks can effectively distinguish between depressed and non-depressed individuals, and predict raw PHQ-8 scores. The effectiveness of MoodCapture for developers looking to conduct similar studies in various environments might be constrained because the authors haven't released their mobile system, dataset, or machine learning pipeline. Our study advances from MoodCapture in terms of data collection mechanisms, on-device processing, privacy awareness, and the facial attributes collected. While MoodCapture captures images when participants respond to EMA questions, our protocol relies on opportunistic data collection. We gather data when participants interact with their smartphones at specific triggers (See Section \ref{sec:UBS}). This allows us to collect information that more comprehensively represents participants' daily lives and emotional states. By using a broader data collection framework, we can conduct a richer analysis of behavioral patterns and emotional nuances that occur during regular phone usage, not just during specific survey responses. Both MoodCapture and our study are primarily designed for depression detection. However, using smartphone cameras to capture images could also extend to assessing other cognitive states, such as alertness, through pupil imaging. These approaches \cite{tseng2018alertnessscanner, wang2015using, nepal2024moodcapture}, however, raises privacy concerns due to the transmission and processing of facial images on external servers. Our study complements the findings of these studies by implementing all data processing locally on the user's device; we plan to open source our system to the research community, which can be used for further studies in behavior modeling through affective signals.
+
+
+
+
+\subsection{Detecting Depression Using Mobile Sensing} \label{DepressionMobileSensing}
+Significant progress has been made in detecting depression with mobile sensing. For instance, Chikersal et al. \cite{chikersal2021detecting} utilized the AWARE \cite{ferreira2015aware}, an open-source context instrumentation framework. It tracked behavioral data such as Bluetooth, calls, GPS, microphone, and screen status from smartphones and wearable fitness devices to detect depression in college students. Their method achieved 85.4\% accuracy in identifying changes in individuals' depression and 85.7\% accuracy in detecting post-semester depression over a semester-long (16 weeks) study. In a different study, Asare et al. \cite{opoku2022mood} also used the AWARE framework to monitor behavioral data. They focused on sleep, physical activity, phone usage, GPS location, and daily mood ratings using the circumplex model of affect (CMA) to detect depression. This approach resulted in 81.43\% accuracy. Though sensing systems have proven effective in various applications, their ability to provide real-time insights and interventions is relatively unexplored. This is mainly due to the resource-intensive requirements of pre-processing, feature engineering, and model development, which demand further scrutiny to fully utilize their capabilities. It is worth noting that the systems examined in previous research did not support near-real-time facial feature extraction. This distinctive feature separates our affective mobile system from others. We summarize the findings of these studies in Table \ref{tab:background2}.
+
+\begin{table}[h]
+\caption{\label{tab:background2}Studies on Predicting Depression Using Mobile Sensing}
+\centering
+\tiny
+
+\begin{tabular}{p{2cm}p{3cm}p{2cm}p{5.5cm}}
+\toprule
+\textbf{Study} & \textbf{Sensors Used} & \textbf{Results} & \textbf{Findings} \\
+\midrule
+
+Chikersal et al. \cite{chikersal2021detecting} & Bluetooth, GPS, Screen, Calls, Sleep & Accuracy: 82.3\% \newline F1: 78\% & Identifies depressive symptoms using data from smartphones and fitness trackers of college students. The study introduce advanced feature extraction technique. \\
+
+Opoku et al. \cite{opoku2022mood} & Sleep, Activity, GPS, Phone Usage & Accuracy: 81.43\% \newline AUC: 82.31\% & Classifies individuals as depressed/non-depressed using mood scores and sensor data. Significant differences found in mood, sleep, activity, phone usage, GPS mobility. \\
+
+Pedrelli et al. \cite{pedrelli2020monitoring} & EDA, Heart Rate, Accelerometer, Sleep, Movements, Temperature & MAE: 3.88 - 4.74  & Feasibility of monitoring depression severity with smartphones and wearables, showing moderate to high correlations with clinician-assessed scores. \\
+
+Farhan et al. \cite{farhan2016behavior} & GPS, Physical Activity & F1: 55\% & Behavioral data from smartphones predict clinical depression. Combining with PHQ-9 scores enhances accuracy. \\
+
+Nepal et al. \cite{nepal2024moodcapture} & AU, Gaze, Head Pose, Rigidity Parameters, Eye, 2D \& 3D Landmarks & Balanced Acc: 61\% & Uses smartphone images to detect depression by analyzing facial expressions and features, demonstrating machine learning potential in mental health assessment. \\
+
+Islam and Bae \cite{islam2024pupilsense} & Pupil-Iris Ratio & Accuracy: 76\% \newline F1: 64\% \newline AUC: 71\% & Pupillary response in natural settings varies between morning and evening and can differentiate between depressive and non-depressive states. \\
+
+Our approach & 12 AUs, Smile, Eye open, Head Pose, EAR, IVA, 133 landmarks & Accuracy: 69\% \newline F1: 67\% \newline AUC: 81\% \newline MAE: 3.08 & FacePsy detects depressive episodes by collecting facial behaviors and head gestures in real-world settings, achieving high predictive accuracy with key features like eye-open states, smile expressions, and specific Action Units. \\
+
+\bottomrule
+\end{tabular}
+\end{table}
+
+Pedrelli et al. \cite{pedrelli2020monitoring} have collected data streams from a wearable tracker, Empatica, and smartphone to detect changes in depression severity. The authors leveraged physiological data such as electrodermal activity (EDA), peripheral skin temperature, heart rate, motion from the 3-axis accelerometer, sleep characteristics, social interactions, activity patterns, and the number of apps used, etc. They evaluated their predictive models using two evaluation methods: user-split and time-split. They achieved an mean absolute error (MAE) ranging between 3.88 and 4.74. However, their work's limitation is that participants must wear two E4 Empatica, one in each hand. Such obtrusive approaches lead to decreased compliance of participants and extra cost (\$1,690 per device) for researchers and users. In another study \cite{farhan2016behavior}, they have used GPS and physical activity as sensor features for depression. In another study \cite{islam2024pupilsense}, researchers used pupillometry data as a proxy for psychological state to detect depression. They found pupillary response in natural settings varies between morning and evening and can differentiate between depressive and non-depressive states. All of the earlier studies have mostly focused on behavioral and social changes in a person during the depression because open-sourced and deployable mobile frameworks are limited in the HCI community. As we know, depression is a multifaceted disorder that affects the behavioral, physiological, and social aspects of people's lives. The current mobile sensing-based approaches \cite{opoku2022mood, chikersal2021detecting, farhan2016behavior} may not be able to capture the physiological signals with rich emotional signals, which have been shown to be important indicators of depression. Whereas wearable sensing-based physiological sensing solutions are proposed, the cost is very high for such deployment. As motivated by the works \cite{cohn2009detecting, valstar2013avec, song2020spectral, kong2022automatic, casado2023depression} in affective computing have shown great potential in capturing physiological signals with rich emotional data in persons with depression in lab settings. However, these studies have been unexplored in real-world deployment where continuous symptom monitoring is essential part of delivering an appropriate real-time intervention. In this paper, we would address this specific issue by developing an affective mobile system that can unobtrusively and opportunistically track individual facial behavior primitives to give insights into their complex mental state in near-real time by extracting various emotional data motivated by theories in affective computing. As human face serves as a crucial and natural medium for conveying emotional and mental states \cite{el2005real}. While some studies use facial behavior primitives to detect depression \cite{song2020spectral, valstar2014avec}, attempts to detect depression using passively sensed facial behavior primitives in a naturalistic environment have been unsuccessful \cite{wang2015using}. The effectiveness of the existing depression detection models based on facial behavior primitives in natural environments is also unexplored. 
+
+
+Therefore, we aim to design, refine, and develop configurable triggering for data collection, including when unlocking phones and app use, to capture users' facial behavior data in their everyday settings. Our method opportunistically captures users' facial behavior primitives unobtrusively by triggering data collection when users interact with their own smartphones. In addition to detecting depression, we explore the minimum number of days user data required to produce reliable performance. The following sections describe our approach in detail, starting with the design of our passively running mobile affective system.
+
+
+

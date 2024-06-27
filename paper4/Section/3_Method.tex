@@ -1,0 +1,215 @@
+\section{Design Open-Sourced Affective Mobile System for Researchers in HCI Community}
+% Facial Behavior Sensing 
+Our framework design is built upon the HCI theory and affective computing research. This section introduces an overview of designing our affective mobile system, FacePsy (Section \ref{sec:TAF}, \ref{sec:UBS}, \ref{sec:DR}, \ref{sec:CP})., and evaluates the feasibility of the system in a pilot study to refine the FacePsy (Section \ref{sec:FS}). FacePsy is open-sourced with several key objectives. Our primary goal is to encourage widespread adoption of the system, enabling users to derive value from the generated data and facilitating engagement with topics related to mental health sensing, particularly in the context of depression. Additionally, we aim to cultivate a community of contributors who can enhance the system by designing FacePsy with modularity as a central principle. The complete source code for FacePsy can be accessed on GitHub: https://github.com/stevenshci/FacePsy.
+
+\subsection{Technical Aspects of FacePsy}
+\label{sec:TAF}
+FacePsy is designed to capture real-time facial behavior primitives as users interact with their mobile devices. Operating with a response time of 2.5 Hz, which was robustly tested across two different devices, the app leverages the front camera to gather facial data during specified triggers opportunistically. This approach enhances data relevance and optimizes energy consumption and privacy. FacePsy integrates advanced modules such as facial landmark detection \cite{mlkit}, head pose estimation \cite{mlkit}, and facial action unit recognition \cite{ertugrul2019cross}, running these sophisticated processes directly on the device. This on-device processing ensures privacy and increases energy efficiency by eliminating the need for continuous data transmission. In response to the challenges prevalent in the HCI and Ubicomp domains concerning the deployment of everyday facial behavior sensing systems, FacePsy emphasizes: (1) Achieving high performance in facial image capture and feature extraction without compromising the user experience. The tested response time ensures that the app functions effectively in real-time. (2) Prioritizing on-device image processing to safeguard user privacy and improve battery efficiency. (3) Implementing trigger-based data collection to refine model performance, reducing the need for continuous data monitoring and processing. (4) Enhancing system controllability and configurability, which allows researchers to customize data collection parameters according to specific research needs.
+
+The rest of the section describes the facial behavior primitives detection implemented in the FacePsy system to achieve the required research goal in detail. 
+
+\subsection{Unobtrusive Background Sensing on A User's Phone}
+\label{sec:UBS}
+FacePsy has introduced functionalities, including configurable app triggers for data sampling. Researchers can now set data collection trigger conditions and sampling rates, with a default set to 10 seconds, informed by studies indicating peak emotional responses within this timeframe \cite{ekman2003emotions, matsumoto2011evidence}. The app supports real-time feature extraction using the smartphone's camera. We quantized a CNN model \cite{ertugrul2019cross} to integrate into our system; it efficiently extracts facial behavior features, with processing time varying based on the device's capabilities and feature complexity. Processed images are automatically discarded from the user device after 20 seconds to ensure user privacy and manage storage. None of the processed images leave the user's device or are processed outside of user's device. Additionally, our system offers researchers flexibility in defining sampling triggers and rates, enhancing its applicability for diverse research needs.
+
+Upon installation, the mobile app registers as a background service, monitoring user events like phone lock/unlock and application usage (e.g., WhatsApp, Twitter). These events trigger a 10-second data collection session using a photo burst, a duration optimized for battery and computational efficiency based on our feasibility study. FacePsy captures facial markers, such as Action Units \cite{ekman1978facial}, and securely syncs this data to a research server during this session. To balance image processing demands and resource consumption, the app records at a rate of 2.5Hz, ensuring seamless phone usage. This decision was informed by a feasibility study involving two users. An alternative for a higher frame rate could involve recording as a media stream and processing it frame-by-frame using a codec.
+
+
+\subsection{Design Rationale Behind Facial Behavior Primitives Selection}
+\label{sec:DR}
+Our framework design is based on principles of HCI theory and is informed by extensive research in affective computing. Theoretical Backgrounds on hand-crafted features (e.g., HOG, LBP, etc.) \cite{song2019dynamic, dhall2015temporally} or deep-learned \cite{zhou2018visually, jan2017artificial} features have adopted to represent each frame or short video segment in lab settings. However, traditional hand-crafted features are not optimal for facial behavior applications as they are not specifically designed for this purpose. Based on previous studies, which suggest that non-verbal visual cues characterize depression, our proposed approach uses facial behavior attributes such as Action Units (AUs), face landmarks, and head pose as frame-wise descriptors. The machine learning kit (ML Kit) \cite{mlkit} is used to automatically detect face landmarks, smile and eye-open probability, and head pose, facilitating data collection. A convolutional neural network (CNN) \cite{ertugrul2019cross} is adapted to detect the intensities of 12 different AUs, resulting in 151-channel facial behavior time-series data (12 AU, 1 smile probability, 2 eye open probability, 3 head pose, and 133 face landmarks) for each session. 
+ 
+AUs from the facial action coding system (FACS) \cite{ekman1978facial}, which taxonomizes human facial movements, specifically AU4, AU12, AU15, and AU17, have been linked to depression severity \cite{song2020spectral, gavrilescu2019predicting} and mood disorders \cite{hong2019exploring, kollias2021affect}. Additionally, 133 facial landmarks that localize key facial regions are detected using ML Kit \cite{prabhu2017real}. Features extracted from these landmarks, such as Eye-aspect ratio (EAR) \cite{feng2020using} and intervector angles (IVA) \cite{islam2016sention}, have associations with hypervigilance \cite{benoit2005hypovigilence}, drowsiness \cite{maior2020real}, and facial expression analysis \cite{islam2016sention}. Moreover, they've been instrumental in assessing mental fatigue \cite{cheng2019assessment}. We also computed probabilities for smile and eye-open states, which have been linked to depression \cite{gehricke2000reduced} and fatigue \cite{zhang2017driver, kroencke2000fatigue}. Lastly, our app captured head Euler angles representing head movements. Head pose features, such as slower head movements and specific head orientations, have been identified as indicators of depression \cite{song2020spectral, alghowinem_head_2013} and suicidal ideation \cite{laksana2017investigating, eigbe2018toward}. 
+ 
+ The rationale behind selecting these features is rooted in their established associations with mental health indicators, especially depression. By integrating a wide range of facial attributes, our approach aims to provide a holistic and unbiased representation of facial behaviors. Compared to previously employed hand-crafted and deep-learned features, the facial behavior descriptors provided in this work have several advantages. They are impartial since their values are unrelated to the subjects' identities, which prevents bias based on gender, age, ethnicity, etc., from influencing the results, as suggested by Song et al. \cite{song_spectral_2020}. Second, They have a clear, comprehensible meaning, which makes them more interpretable.
+
+
+
+\subsection{Configurability, Privacy and User Awareness}
+\label{sec:CP}
+% \subsubsection{Configurability}
+To provide high configurability for tailoring the application as needed, the FacePsy helps researchers adjust the duration of data collection, which by default is set to 10 seconds upon any trigger for data collection. Furthermore, it allows for distinct data collection durations based on different trigger types, such as app usage, and phone unlocking. Lastly, the system supports the configuration of various app usage triggers to initiate data collection, ensuring a comprehensive and adaptable research tool.
+
+ \begin{figure}[h]
+    \includegraphics[scale=0.27]{Figs/Fail.png}
+    \caption{Examples of Test Images that Fails to Capture Features}
+    \label{fig:FacePsyFail}
+\end{figure}
+
+% \subsubsection{Privacy Consideration}
+When designing our system, paramount importance was given to user privacy and awareness. Drawing inspiration from HCI research, we investigate user nudging \cite{balebako2014improving, felt2012ve} in privacy systems \cite{denning2014situ}. This involves giving information about background data collection, especially in private contexts where no images are stored. Firstly, a clear notification is displayed in the notification bar, indicating "Data collection is active" to ensure users are always aware when data is being collected. Additionally, a green light indicator is positioned next to the camera, signaling when the camera is actively capturing data. In the event FacePsy app automatically restarts itself in the background, either due to a phone restart or an app crash, a toast notification is presented to the user, stating "FacePsy is running on background" Lastly, to further safeguard user data, once facial behavior primitives are extracted, the processed images are automatically deleted from the user's device.
+
+
+
+\begin{figure}[h]
+    \includegraphics[scale=0.27]{Figs/Success.png}
+    \caption{Examples of Test Images That Succeeds to Capture Features }
+    \label{fig:FacePsySuccess}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\small
+\caption{FacePsy App Resource Usage on Google 4 \& 5a}
+\begin{tabular}{lccc}
+\toprule
+Resource & Day 1 (T1, T2) & Day 2 & Avg (T1 \& T2) \\
+\midrule
+Battery & 37\%, 57\% & 58\%, 43\% & 48.75\% \\
+Memory (MB) & 133, 144 & 85, 57  & 104.75 \\
+Data usage (MB) & 9.25, 22.23 & 16.13, 6.3 & 13.48 \\
+Storage (MB) & 175, 155 & 177, 177 & 171 \\
+\bottomrule
+\label{tabs:RU}
+\end{tabular}
+\end{table}
+
+
+
+
+\subsection{Feasibility Study}
+\label{sec:FS}
+Prior to investigating if facial behavior primitives collected from FacePsy can assess a user's depression status, we decided to carry out a feasibility study to see whether the system could precisely detect the user's facial behaviors using the front-facing camera of a smartphone. To do this, we enlisted the help of 1 volunteer (T2: tester 2) and the first author (T1: tester 1), who used a Google Pixel 4 and 5a smartphone to gather data for two days. Participants carried FacePsy installed in their phones into their daily lives. FacePsy collected data whenever participants unlocked their phones. We evaluate our system for perceived slowness in their device, causing any delay, interruption, or disruption to phone usage. Our facial behavior sensing modules generated pictures annotated action units, smile probability, eye open probability, head pose, and face landmarks. After gathering these pictures, the first author confirmed if the facial behavior primitives were correctly detected. To do this, the first author manually verified that the annotated photographs matched the unannotated photos. Annotated images of facial behavior markers that were identified are shown in Figures \ref{fig:FacePsySuccess}, while images were accurate, the processing modules made errors on several occasions (See Figure \ref{fig:FacePsyFail}). On average, the app consumed 48.75\% battery while running in the background and 104.75mb memory. See Table \ref{tabs:RU} for more details. In total, we collected 834 images. Our features extraction module processed only 817 images where a face was detected with an average failure rate of 2.04\% (See Table \ref{tab:FacePsyPerfromance}). This was calculated based on daily end-of-day reports from volunteers regarding resource consumption by our app. To optimize resource consumption, we implement opportunistic data collection, which allows the app to collect data less frequently, thus reducing the load on device resources. Further refining data collection triggers can be done to ensure that the app only collects data when optimal behavioral signals are present, reducing unnecessary resource usage.
+
+\begin{table}[h]
+\centering
+\small
+\caption{FacePsy Data Processing Performance}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{T1} & \textbf{T2} \\
+\midrule
+Total Images & 411 & 423 \\
+
+Successful Extractions & 401 & 416 \\
+
+Number of Failures & 10 & 7 \\
+
+Overall Failure Rate (\%) & 2.43\% & 1.65\% \\
+
+Failure Rate for AU (\%) & 10.97\% & 24.28\% \\
+
+Failure Rate for Landmarks (\%) & 0.00\% & 0.00\% \\
+
+Failure Rate for Classification(Eye, Smile) & 0.00\% & 1.68\% \\
+
+Failure Rate for Head Pose (\%) & 0.00\% & 0.00\% \\
+\bottomrule
+\end{tabular}
+
+\label{tab:FacePsyPerfromance}
+\end{table}
+
+
+The results of our app feasibility evaluation were encouraging. Our system detected the facial behavior makers without hindering the user device experience at a 10-second photo burst in the background.
+\nopagebreak
+
+\section{Field Study Data Collection}
+In this section, we describe our study protocol and data collection process in naturalistic environments.
+
+\subsection{Participants}
+
+Of N=25 participants (mean age 27.88 $\pm$ 8.87, range 18 - 48)\footnote{9 participants did not provide an age in the demographic survey.}, 8 were females, 11 were males, and 6 did not specify gender on the demographic survey. 15 participants were Asian, 4 participants were Caucasian, and 6 participants did not specify their ethnicity on the demographic survey. 1 participant indicated that their highest education was high school, 8 participants had bachelor's degrees, 10 participants had master's degrees, and 6 participants did not indicate their highest education on the demographic survey. 4 participants indicated that they had been diagnosed with a mental disorder in the past, 15 indicated they had not, and 6 did not answer the question on the demographic survey. Detailed demographic distribution is provided in Table \ref{tab:demographic}.
+
+\begin{table}
+\centering
+\small
+\caption{\label{tab:demographic} Demographic Distribution}  % <-- Your table caption here
+\setlength{\tabcolsep}{4pt}  % adjust to fit your needs
+% \small  % or \footnotesize if needed
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Attribute} & \textbf{Unspecified} & \textbf{Male} & \textbf{Female} & \textbf{Total} \\
+\midrule
+\textbf{Gender} & 6 & 11 & 8 & 25 \\
+\textbf{Age (Average)} & - & 24.11 & 32.71 & 27.88 \\
+\textbf{Ethnicity} &  &  &  &  \\
+- Unspecified & 6 & 0 & 0 & 6 \\
+- Asian & 0 & 9 & 6 & 15 \\
+- Caucasian & 0 & 2 & 2 & 4 \\
+\textbf{Education} &  &  &  &  \\
+- Unspecified & 6 & 0 & 0 & 6 \\
+- High School & 0 & 0 & 1 & 1 \\
+- Bachelor's Degree & 0 & 5 & 3 & 8 \\
+- Master's Degree & 0 & 6 & 4 & 10 \\
+\textbf{Mental Health Rate (Average on a scale of 1-10)} & - & 6.73 & 6.88 & 6.79 \\
+\textbf{Depression State} &   &   &   &   \\
+- Unspecified & 6 & 0 & 0 & 6 \\
+- Not at all often & 0 & 2 & 1 & 3 \\
+- Not so often & 0 & 4 & 4 & 8 \\
+- Somewhat often & 0 & 5 & 1 & 6 \\
+- Very often & 0 & 0 & 2 & 2 \\
+\textbf{Mental Disorder Diagnosis} &  &  &  &  \\
+- Unspecified & 6 & 0 & 0 & 6 \\
+- No & 0 & 9 & 6 & 15 \\
+- Yes & 0 & 2 & 2 & 4 \\
+\textbf{Smoking Marijuana} &  &  &  &  \\
+- Unspecified & 6 & 0 & 0 & 6 \\ 
+- No & 0 & 9 & 8 & 17 \\ 
+- Yes & 0 & 2 & 0 & 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Participants and Study Procedure}
+This study was reviewed and approved by the Institutional Review Board (IRB) at the University. Participants in this study were on-boarded remotely across multiple time zones via Zoom Conference Meetings. Participants were eligible to participate in the study if they were above 18 and owned a data plan-enabled Android smartphone. The research team advertised the study through flyers and posts on Facebook and Whatsapp groups. Participants were asked to respond to a screening questionnaire and select a preferred time for the onboarding Zoom meeting. In the onboarding meeting, the interviewer gave participants informed consent and asked them to respond to the baseline questionnaire. After the baseline, the interviewer took a semi-structured interview to understand the participant's mental health, followed by installing a mobile application on the participant's device to track sensor data from their smartphones. The study questionnaires were delivered through email and administered with Qualtrics, an online survey platform.
+
+Out of 38 participants who were initially recruited, only 25 participants completed the study. One participant reported having a high battery drain because of our app and dropped out of the study after two days. We later found the participant had high social media usage, which resulted in frequent data collection triggers. Among others, 3 participants dropped out for personal reasons, 5 didn't complete surveys, and 4 had incompatible Android versions, leading to the failure of the data collection trigger module. The participants were compensated up to \$135 for full compliance with the study. The participants were compensated \$20 for baseline and installing the data collection app and were compensated \$25 weekly for 4 weeks. 
+ 
+
+\subsection{Ground-Truth: Mental health measures} \label{Sec:GT_MHM}
+Participants' depression symptoms were assessed using a self-reported 9-item Patient Health Questionnaire-9 (PHQ-9) \cite{kroenke2001phq} at three distinct times: upon joining the study (baseline), two weeks into the study (mid-point), and at the conclusion of the study (end-point). Each item on the PHQ-9 is scored from 0 (not at all) to 3 (nearly every day), with the total scores ranging from 0 to 27. This scoring captures the frequency of symptoms such as mood, sleep issues, fatigue, and changes in appetite over the past two weeks. Monitoring a single person's multiple PHQ-9 scores over time can yield valuable insights into their mental health progression. The PHQ-9 categorizes depression severity into five levels: scores of 0–4 signify no depression symptoms, 5–9 indicate mild depressive symptoms, 10–14 represent moderate depressive symptoms, 15–19 signify moderately severe depressive symptoms, and 20–27 denote severe depressive symptoms. This method allows researchers and clinicians to track the severity and changes in depressive symptoms effectively.
+
+We can define a depressive episode as a period characterized by persistent feelings of sadness, hopelessness, and a lack of interest or pleasure in most activities observed with a PHQ-9 score during a two-week observation period. we label two weeks of data from the participant as depressed or non-depressed (i.e., a depressive episode) based on the PHQ-9 score of the participant at the beginning and end of the two-week observation period, which falls within the range of mild depressive symptoms or worse according to the PHQ-9 severity scale \cite{gilbody2007screening}. We label an individual as having a depressive episode only if the PHQ-9 score of the person is equal to or greater than 5 at both the beginning and end of the observation period; otherwise, it is considered a non-depressive period. This approach ensures consistency in labeling periods as depressive or non-depressive based on established thresholds of depressive symptom severity. We complement our binary classification models by incorporating regression models designed to predict the PHQ-9 scores. It’s important to note that the PHQ is a versatile instrument, used both for screening for depression and for monitoring changes in clinical symptoms \cite{kroenke2010patient}. In total, we label 14 cases of depressive episodes and 30 non-depressive episodes (where depressive episode length is two weeks). We excluded the last two weeks of data from 6 participants due to non-compliance, resulting in the exclusion of 6 depressive episodes.
+
+
+\subsection{Facial behavior data collection}
+The FacePsy app activates to capture facial data in three circumstances: when the user unlocks their phone when the user accesses one of a preset number of trigger apps. The phone unlock trigger activates the FacePsy app for 10 seconds after a user unlocks their phone. FacePsy also activates for 10 seconds when the user opens one of thirty-five different apps in total, divided into the categories of communication, social, productivity, entertainment, and health. For example, Instagram, Google Chrome, and Android Messages are all considered trigger apps. The images processed were mostly clear and had high resolution. However, some images had some noise or blurriness on which the model could not detect faces, which is a precursor for routines such as AU detection, landmark detection, etc. These frames were dropped.
+
+
+\section{Data Processing And Analysis}
+\subsection{Feature Engineering} \label{Section-Feature-Extraction}
+Since most of the features are extracted by our behavior-sensing system on the user phone itself, we extract very few features as part of post-processing. Our system pre-extracts features such as Action Units (AU1, 2, 4, 6-7, 10, 12, 14, 17, 23-24), Smiling and Eye open probability, face landmarks, and Head pose features (yaw, pitch and roll) on user device itself. We additionally extract features such as the Eye-aspect ratio and Inter-vector angles. More details on these features are described below. 
+
+\subsubsection*{Inter-vector angle}
+Inter-Vector Angles (or IVA) are scale-invariant geometric features computed on facial landmarks for the purpose of facial shape representation \cite{islam2016sention}. We consider the nose center as the centroid of the face for the purposes of computing IVA features. We then segment the face into 8 regions (nose center, jawline, left eyebrow, left eye, right eyebrow, right eyebrow, mouth, and cheeks) and compute in total 1439 triangles by taking permutations of all possible triangles from the centroid to the remaining facial landmarks. We then use Principle Component Analysis to reduce the number of IVA features down to 10. We then compute angular velocity and acceleration. 
+
+\subsubsection*{Eye-aspect ratio}
+Eye Aspect Ratio is a measure of the aspect ratio of the eye region, which is used as an estimate of the eye-opening state. We defined EAR as the sum of two vertical lengths of the eye divided by two times the horizontal length of the eye. 
+
+We collected 12 Action Units (AU), 1 Smile Probability, 2 Eye Open Probabilities, 3 Head Euler Angles, 2 Eye Aspect Ratios, and 20 Inter-Vector Angles. We segmented each participant's day into four epochs: midnight (12am-6am), morning (6am-12pm), afternoon (12pm-6pm), and evening (6pm-12am), each lasting six hours. For each epoch, we computed statistical features such as min, max, mean, median, sum, std, q1 and q3 to summarize the features of that epoch. After this procedure, we have 320 features for each epoch in our final dataset. We then classified each instance into its respective depression class. We noticed variations in participation duration, with an average of 3.36 days missing due to participants' early exit from the study. This resulted in a total dataset of 616 participant days. In total, we gathered 544 days of facial data from 25 participants over a four-week period. Notably, there were 55 days without any recorded data, as explained by participants, such as planned holidays or breaks. A further 17 days lacked data due to issues like image quality and eye-open probability in the feature extraction process. As a result, the total number of effective data points for analysis is 544.
+
+\subsection{Statistical Analysis}
+The primary target variable of interest in our statistical analysis was the presence or absence of a depressive episode. We calculated Pearson's correlation coefficient (r-value) for each feature within our dataset to assess its relationship with the target variable. Additionally, we determined the mean and standard deviation for each feature, separating the data by group. Features were then ordered according to the absolute value of their r-values to pinpoint those with at least a weak correlation (r-value >= |0.20|). This approach allowed us to focus on the most significant relationships, improving the interpretability and efficiency of our models, minimizing unnecessary complexity, and reducing the likelihood of overfitting.
+
+\begin{figure}
+    \includegraphics[scale=0.233]{Figs/overview3.png}
+    \caption{Overview of Our Affective Mobile System}
+    \label{fig:FacePsyStudyFlow}
+\end{figure}
+
+% Machine Learning and Evaluation. Overview of our machine learning system based on facial behavior primitives captured though smartphone camera to detect depressive episodes in naturalistic setting. LOPDO: leave-one-person-day-out
+\subsection{Feature Selection}
+Our analysis used feature selection (FS) with a Decision Tree classifier, specifically the CART (Classification and Regression Trees) algorithm implemented in scikit-learn's DecisionTreeClassifier. To compute the importance scores for all features in the dataset, we used the Gini importance, a measure derived directly from the Decision Tree itself. We then established a threshold for feature selection based on the mean value of these importance scores, which calculated to 0.00078125. Features with importance values above this threshold were considered significant and retained for further analysis, while those below were discarded. This approach ensures a data-driven, objective criterion for feature selection, enhancing model interpretiveness and efficiency by focusing on features that contribute to the prediction of depressive episodes.
+
+\subsection{Predictive Modeling with Machine Learning}
+In our predictive analysis using machine learning (See Figure \ref{fig:FacePsyStudyFlow}), we developed a classification model to detect instances of depression and non-depression, as well as a regression model to predict the PHQ-9 score (See Section \ref{Sec:GT_MHM}). We assigned labels of depression and non-depression to each day of data based on their corresponding PHQ-9 scores, which served as the ground-truth values.
+
+Our predictive modeling framework utilizes LightGBM (LGBM), a machine-learning library that implements a gradient-boosting algorithm. This method has demonstrated robust predictive capabilities in previous research \cite{opoku2022mood, opoku2021predicting} focused on depression prediction. Our goal is to develop both a universal model that identifies general patterns and a hybrid model that captures intricate interactions and temporal sequences within the data. To address the issue of class imbalance, where depressive instances are less frequent, we applied SMOTE \cite{chawla2002smote} on the training dataset to enhance the representation of the minority class, used mean imputation for handling missing data, and performed standard scaling on the features. Hyperparameter tuning was conducted tomaximize the AUROC value for classification and MAE for regression. We constructed nine supervised models, each tailored to different learning schemes and utilizing subsets of facial behavior features sourced from various facial regions to assess their predictive power for depression. The evaluation of these models primarily relies on the AUROC score \cite{huang2005using}. This metric is particularly effective for depression prediction as it evaluates a model's ability to distinguish between depressive and non-depressive states by considering both the true positive rate (TPR) and false positive rate (FPR). The insensitivity of AUROC to class imbalance makes it especially valuable, and a higher AUROC score signifies superior model performance.
+
+\subsubsection{Universal model}
+This learning scheme utilizes a standardized procedure where a single model is created for all users to identify depressive episodes. It uses a leave-one-participant-out (LOPO), a.k.a leave-one-out/leave-one-group-out cross-validation technique. This approach, commonly used in numerous mobile inference systems, provides a clear understanding of model generalizability. Once this universal model is in place, it remains unchanged.
+
+\subsubsection{Hybrid model}
+The ideal model would blend the high precision of individualized models with the ease of use of universal models that don't require user training. Our study was unable to use individualized models due to a lack of data - only two labels per participant, which is not enough for such intricate modeling. We experimented with a hybrid model, incorporating a small quantity of user-specific data with a broader general user dataset. we implement nested cross-validation to minimize the likelihood of model overfitting by implementing a robust ML model training strategy recommended by Asare et al. \cite{opoku2022mood} for the predictive analysis of depression.  We employed stratified three-fold cross-validation with a time-series aware leave-one-participant-day-out (LOPDO) cross-validation for the outer and inner cross-validation. In other words, one participant's day is chosen as the test set, and the remaining participant's dataset is chosen as the training set for each iteration of the nested cross-validation. All training set samples captured after the test set are subtracted for time-series awareness. This approach could avoid the unworkable situation in which future datasets are used to forecast the past. Consequently, the LOPDO model effectively combines unique aspects of how an individual's facial behavior data is linked to their state of depression while also identifying general patterns consistently seen across different people. The classifiers' hyperparameter optimization, feature scaling, oversampling, and missing data imputation were all addressed by inner cross-validation. Using grid search across a predetermined set of parameters, we optimized the classifiers' hyperparameters by maximizing the model AUROC score.
+
+
+
+
+
+
+
+
+

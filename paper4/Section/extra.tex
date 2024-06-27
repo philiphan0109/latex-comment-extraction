@@ -1,0 +1,108 @@
+ 
+\begin{table}[h]
+\caption{\label{tab:correlation} Correlation between sensor features and depression binary}
+
+
+  
+\footnotesize
+\centering  
+    \begin{tabular}{p{3cm}|p{2cm}|p{1cm}|p{3cm}|p{3cm}}
+    \toprule
+    Top 20 Ranked Feature & Pearson correlation coefficient(r) & p-value & Mean (SD) in depression & Mean (SD) in no-depression \\ 
+    \midrule
+    % leftEyeOpenProbability\_sum & -0.161 & 0.0 & & \\
+    % AU12\_min & 0.115 & 0.0 & & \\
+    % AU12\_median & 0.0633 & 0.0 & & \\
+    % AU12\_mean & 0.073 & 0.0 & & \\
+    % AU12\_q1 & 0.0853 & 0.0 & & \\
+    % AU12\_q3 & 0.0527 & 0.0 & & \\
+    % AU14\_sum & -0.114 & 0.0 & & \\
+    % AU12\_sum & -0.1266 & 0.0 & & \\
+    % AU14\_min & 0.0782 & 0.0 & & \\
+    % AU14\_q1 & 0.0502 & 0.0 & & \\
+    % AU15\_sum & -0.0918 & 0.0 & & \\
+    % AU15\_min & 0.0959 & 0.0 & & \\
+    % AU15\_median & 0.0819 & 0.0 & & \\
+    % AU15\_mean & 0.0795 & 0.0 & & \\
+    % AU15\_std & 0.0526 & 0.0 & & \\
+    % AU14\_max & -0.0467 & 0.0 & & \\
+    % AU15\_q1 & 0.0878 & 0.0 & & \\
+    % AU10\_q3 & -0.1049 & 0.0 & & \\
+    % AU10\_std & -0.0642 & 0.0 & & \\
+    % AU06\_max & -0.1419 & 0.0 & & \\
+
+pir\_left\_min & 0.4184 & 0.0 & 0.1059 (0.0798) & 0.0329 (0.0423) \\
+AU15\_q1 & 0.1545 & 0.0 & 0.1635 (0.2105) & 0.0917 (0.1966) \\
+pir\_right\_sum & -0.3727 & 0.0 & 5.1043 (6.6566) & 17.2436 (23.3131) \\
+AU07\_max & -0.1213 & 0.0 & 0.8285 (0.2335) & 0.8911 (0.2213) \\
+pir\_right\_q3 & 0.0949 & 0.0 & 0.3058 (0.2205) & 0.2511 (0.335) \\
+AU12\_std & 0.0475 & 0.0 & 0.21 (0.1193) & 0.1966 (0.1439) \\
+pir\_right\_std & 0.2835 & 0.0 & 0.1466 (0.104) & 0.0789 (0.1003) \\
+pir\_left\_mean & 0.1151 & 0.0 & 0.2487 (0.1746) & 0.1969 (0.2568) \\
+AU15\_mean & 0.1429 & 0.0 & 0.2481 (0.2201) & 0.1774 (0.2207) \\
+pir\_left\_median & 0.0308 & 0.0 & 0.2162 (0.155) & 0.2027 (0.2741) \\
+time\_of\_day & -0.1212 & 0.0 & 12.3003 (6.8897) & 14.1811 (7.0175) \\
+pir\_left\_sum & -0.3605 & 0.0 & 5.5458 (6.3728) & 16.6152 (22.0458) \\
+pir\_right\_min & 0.4423 & 0.0 & 0.1094 (0.0813) & 0.0303 (0.0395) \\
+AU24\_min & 0.0798 & 0.0 & 0.0103 (0.0369) & 0.0042 (0.0243) \\
+pir\_left\_q1 & 0.0253 & 0.0002 & 0.1561 (0.1133) & 0.1481 (0.2005) \\
+headEulerAngle\_Y\_median & 0.0234 & 0.0007 & -0.049 (7.0394) & -0.4291 (7.9123) \\
+leftEyeOpenProbability\_max & -0.0191 & 0.0055 & 0.9367 (0.1574) & 0.9434 (0.1615) \\
+AU14\_std & 0.0133 & 0.0536 & 0.2091 (0.1199) & 0.2054 (0.142) \\
+pir\_right\_q1 & -0.0098 & 0.156 & 0.159 (0.1138) & 0.1623 (0.2223) \\
+pir\_right\_median & -0.0063 & 0.3581 & 0.2179 (0.1563) & 0.2208 (0.303) \\
+    \midrule
+    \bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+\begin{subfigure}{.4\textwidth}
+  \centering
+  % include second image
+  \includegraphics[width=1\linewidth]{Figs/pir_left_sum.png}  
+  \caption{\textcolor{purple}{just realized, how come pir\_left\_sum can be greater than 20 at any given data point? there is something weird with the summations. the sampling times may not be consistent. for example, in one of the rows i see pir\_left\_mean=0.27 and pir\_left\_sum= 45. We should probably drop pir sums from analysis. Also, I don't understand why the value dispersions are not continuous. there are only 13 different values pir columns take? }}
+  \label{fig:}
+\end{subfigure}
+
+
+
+
+
+\begin{table}
+\caption{\textcolor{purple}{not quite matching with SHAP.. headangle\_X correlation is very interesting.. }}
+\begin{tabular}{llr}
+\toprule
+{} & Depression Binary highest correlated features &         r \\
+\midrule
+0  &                      phq &  0.747846 \\
+1  &                      bdi &  0.476106 \\
+2  &           panas\_positive & -0.335765 \\
+3  &         flowers\_err\_rate & -0.258230 \\
+4  &     headEulerAngle\_X\_max & -0.250410 \\
+5  &    headEulerAngle\_X\_mean & -0.234935 \\
+6  &      headEulerAngle\_X\_q1 & -0.229388 \\
+7  &  headEulerAngle\_X\_median & -0.228794 \\
+8  &      headEulerAngle\_X\_q3 & -0.227639 \\
+9  &     headEulerAngle\_Z\_max & -0.207464 \\
+10 &              cma\_valence & -0.202206 \\
+11 &      headEulerAngle\_Z\_q3 & -0.197787 \\
+12 &     headEulerAngle\_X\_min & -0.197014 \\
+13 &                 AU04\_max & -0.196952 \\
+14 &    headEulerAngle\_Z\_mean & -0.195197 \\
+15 &  headEulerAngle\_Z\_median & -0.194644 \\
+16 &             pir\_left\_sum & -0.186315 \\
+17 &      headEulerAngle\_Z\_q1 & -0.184908 \\
+18 &     headEulerAngle\_X\_sum & -0.173874 \\
+19 &                 AU06\_sum & -0.172343 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
