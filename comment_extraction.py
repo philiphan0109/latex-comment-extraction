@@ -31,14 +31,16 @@ def extract_comments(path):
                 current_comment = True
             comment_end_index = current_index + len(line)
         else:
+            if current_comment:
+                comments_by_section[current_section].append((comment_start_index, comment_end_index))
+                current_comment = False
+        
             end_of_line_comment = re.search(r'(?<!\\)%.*$', line)
             if end_of_line_comment:
                 comment_start_index = current_index + end_of_line_comment.start()
                 comment_end_index = current_index + len(line)
                 comments_by_section[current_section].append((comment_start_index, comment_end_index))
-            if current_comment:
-                comments_by_section[current_section].append((comment_start_index, comment_end_index))
-                current_comment = False
+            
         current_index += len(line) + 1
                 
         # Update Section (If applicable)

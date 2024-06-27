@@ -6,6 +6,7 @@ from comment_extraction import extract_comments
 # 1) generate a new .tex file named FULL_PAPER.tex
 # 2) extract the comments from the full paper
 
+path = "paper3/"
 
 def process_paper(path):
     full_paper = stitch_tex_files(path)
@@ -17,7 +18,7 @@ def process_paper(path):
         text = text_file.read()
     
     results = extract_comments(full_paper_path)
-    output_path = "paper/a.txt"
+    output_path = os.path.join(path, "a.txt")
     with open(output_path, "w", encoding="utf-8") as file:
         for section, comments in results.items():
             print(comments)
@@ -33,6 +34,5 @@ def process_paper(path):
                 # print(f"  Comment Text: {comment_text.strip()}\n")
 
 
-path = "paper2/"
 print(path)
 process_paper(path)
