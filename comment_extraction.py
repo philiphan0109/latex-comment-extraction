@@ -24,22 +24,6 @@ def extract_comments(path):
 
     lines = full_paper.split("\n")
     for line in lines:
-        # Find Section
-        section_match = re.match(r'\\section{(.+?)}', line)
-        if section_match:
-            current_section = section_match.group(1)
-            if current_section not in comments_by_section:
-                comments_by_section[current_section] = []
-            current_comment = False
-        if "\\begin{abstract}" in line:
-            current_section = "Abstract"
-            if current_section not in comments_by_section:
-                comments_by_section[current_section] = []
-            current_comment = False
-        elif "\\end{abstract}" in line:
-            current_section = "Other"
-            current_comment = False
-
         # Find Comment
         if line.lstrip().startswith("%"):
             if not current_comment:
@@ -56,6 +40,22 @@ def extract_comments(path):
                 comments_by_section[current_section].append((comment_start_index, comment_end_index))
                 current_comment = False
         current_index += len(line) + 1
+                
+        # Update Section (If applicable)
+        section_match = re.match(r'\\section{(.+?)}', line)
+        if section_match:
+            current_section = section_match.group(1)
+            if current_section not in comments_by_section:
+                comments_by_section[current_section] = []
+            current_comment = False
+        if "\\begin{abstract}" in line:
+            current_section = "Abstract"
+            if current_section not in comments_by_section:
+                comments_by_section[current_section] = []
+            current_comment = False
+        elif "\\end{abstract}" in line:
+            current_section = "Other"
+            current_comment = False
 
     if current_comment:
         comments_by_section[current_section].append((comment_start_index, comment_end_index))
