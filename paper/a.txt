@@ -130,6 +130,16 @@ Section: A web-based appendix
   Comment Text: 
  %
 
+  Comment Indices: (36573, 37733)
+  Comment Text: 
+ % sections/environment_properties
+% \section{Environment properties}
+% \label{sec:environment_properties}
+% 
+% The Arcade Learning Environment (ALE) is a platform designed for evaluating and comparing the performance of reinforcement learning algorithms on classic arcade games. ALE has emerged as the benchmark for evaluating the capabilities of reinforcement learning (RL) algorithms in tackling intricate discrete control tasks. Since its release in 2013 \citep{bellemare2012ale}, the benchmark has gained thousands of citations and almost all state-of-the-art RL algorithms have featured it in their work. However, results generated from the full benchmark have typically been limited to a few large research groups.
+% 
+% The cost of producing evaluations on the full dataset is not feasible for many researchers and not necessary if you want to evaluate some specific algorithm capabilities, like long context games. Therefore, here we provide some key properties of the environments based on our previous findings which will allow the RL community select a small but representative subsets of environments when evaluating specific algorithm capabilities.
+
 Section: Related work
   Comment Indices: (39954, 40629)
   Comment Text: 
