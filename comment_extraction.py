@@ -8,6 +8,8 @@ nltk.download('punkt')
 
 dir_path = "paper/"
 
+import re
+
 def extract_comments(path):
     comments_by_section = {}
 
