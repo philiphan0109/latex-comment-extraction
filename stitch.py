@@ -87,7 +87,7 @@ def stitch_tex_files(path):
             include_content = read_tex_file(include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
         elif os.path.exists(raw_include_path):
-            include_content = read_tex_file(include_path)
+            include_content = read_tex_file(raw_include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
         else:
             print(f"RAW FILE NOT FOUND: {raw_include_path}")
@@ -103,7 +103,7 @@ def stitch_tex_files(path):
             commented_content = convert_to_comment(include_content)
             main_content = main_content.replace(comment, f'% {include_file[:-4]}\n{commented_content}')
         elif os.path.exists(raw_include_file):
-            include_content = read_tex_file(include_path)
+            include_content = read_tex_file(raw_include_fileinclude_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
         # else:
         #     print(f"File not found: {include_path}")
