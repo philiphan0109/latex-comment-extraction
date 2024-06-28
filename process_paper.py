@@ -1,6 +1,7 @@
 import os
 from stitch import stitch_tex_files, identify_main_tex, is_standalone, get_included_files
 from comment_extraction import extract_comments
+import time
 
 # given a directory of .tex files this function will:
 # 1) generate a new .tex file named FULL_PAPER.tex
@@ -35,9 +36,8 @@ def process_paper(path):
                 file.write(f"  Comment Text: \n {comment_text.strip()}\n\n")
 
 if __name__ == '__main__':
+    starttime = time.time()
     test_path = "test_set"
-    process_paper(test_path)
-    
     
     counter = 1000
     incorrect_papers = []
@@ -49,5 +49,4 @@ if __name__ == '__main__':
             incorrect_papers.append(paper_path)
             counter -= 1
     print(incorrect_papers)
-
-# process_paper(path)
+    print(f"This took: {time.time() - starttime} seconds")
