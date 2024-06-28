@@ -8,12 +8,13 @@ def read_tex_file(file_path):
         return file.read()
 
 def find_includes(tex_content):
-    pattern = r'\\(input|include)\{([^}]+)\}'
+    pattern = r'(?<!%)\s*\\(input|include)\{([^}]+)\}'
     return re.findall(pattern, tex_content)
 
 def find_commented_includes(tex_content):
     pattern = r'^\s*%\s*\\(input|include)\{([^}]+)\}'
     return re.findall(pattern, tex_content, re.MULTILINE)
+
 
 def convert_to_comment(content):
     lines = content.splitlines()
@@ -77,7 +78,7 @@ def stitch_tex_files(path):
     commented_includes = find_commented_includes(main_content)
     
     for command, include_file in includes:
-        print(f"{command}: {include_file}")
+        # print(f"{command}: {include_file}")
         raw_include_file = include_file
         if not include_file.endswith('.tex'):
             include_file += '.tex'
@@ -93,8 +94,7 @@ def stitch_tex_files(path):
             main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
         else:
             print(f"RAW FILE NOT FOUND: {raw_include_path}")
-            # print(f"File not found: {include_path}")
-            
+
     for command, include_file in commented_includes:
         raw_include_file = include_file
         if not include_file.endswith('.tex'):
