@@ -7,8 +7,6 @@ import time
 # 1) generate a new .tex file named FULL_PAPER.tex
 # 2) extract the comments from the full paper
 
-# path = "test_set/2010.04425/"
-
 def read_tex_file(file_path):
     with open(file_path, 'r', encoding="utf-8") as file:
         return file.read()
@@ -37,16 +35,18 @@ def process_paper(path):
 
 if __name__ == '__main__':
     starttime = time.time()
-    test_path = "test_set"
+    test_path = "test_set/1502.06138/millepatte_final.tex"
+    # process_paper(test_path)
+    content = read_tex_file(test_path)[185056]
     
-    counter = 1000
-    incorrect_papers = []
-    for paper_path in os.listdir(test_path):
-        try:
-            paper_path = os.path.join(test_path, paper_path)
-            process_paper(paper_path)
-        except Exception as e:
-            incorrect_papers.append(paper_path)
-            counter -= 1
-    print(incorrect_papers)
-    print(f"This took: {time.time() - starttime} seconds")
+    # counter = 1000
+    # incorrect_papers = []
+    # for paper_path in os.listdir(test_path):
+    #     try:
+    #         paper_path = os.path.join(test_path, paper_path)
+    #         process_paper(paper_path)
+    #     except Exception as e:
+    #         incorrect_papers.append(paper_path)
+    #         counter -= 1
+    # print(incorrect_papers)
+    # print(f"This took: {time.time() - starttime} seconds")
