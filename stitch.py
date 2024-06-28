@@ -7,18 +7,40 @@ def read_tex_file(file_path):
     with open(file_path, 'r', encoding="utf-8", errors="replace") as file:
         return file.read()
 
-def find_includes(tex_content):
-    pattern = r'(?<!%)\s*\\(input|include)\{([^}]+)\}'
-    return re.findall(pattern, tex_content)
-
-def find_commented_includes(tex_content):
-    pattern = r'^\s*%\s*\\(input|include)\{([^}]+)\}'
-    return re.findall(pattern, tex_content, re.MULTILINE)
+def find_include_tag(line):
+    """Find \input or \include tags within a line."""
+    pattern = r'\\(input|include)\{([^}]+)\}'
+    match = re.search(pattern, line)
+    return match.groups() if match else None
 
 def convert_to_comment(content):
     lines = content.splitlines()
     commented_content = '\n'.join([f'% {line}' for line in lines])
     return commented_content
+
+def process_include_tag(line, path):
+    tag, filename = find_include_tag(line)
+    raw_file_path = filename
+    if not filename.endswith('.tex'):
+        filename += '.tex'
+    file_path = os.path.join(path, filename)
+    raw_file_path = os.path.join(path, filename)
+    if os.path.exists(file_path):
+        content = read_tex_file(file_path)
+        if line.strip().startswith('%'):
+            return convert_to_comment(content)
+        else:
+            return content
+    elif os.path.exists(raw_file_path):
+        content = read_tex_file(raw_file_path)
+        if line.strip().startswith('%'):
+            return convert_to_comment(content)
+        else:
+            return content
+    else:
+        if not line.strip().startswith('%'):
+            print(f"RAW FILE NOT FOUND: {raw_file_path}")
+        return line
 
 def is_standalone(file):
     with open(file, 'r', encoding="utf-8", errors="replace") as f:
@@ -62,47 +84,12 @@ def stitch_tex_files(path):
         raise FileNotFoundError("Main .tex file not found in the directory")
 
     main_content = read_tex_file(main_file_path)
-    includes = find_includes(main_content)
-    commented_includes = find_commented_includes(main_content)
-    
-    for command, include_file in includes:
-        # print(f"{command}: {include_file}")
-        raw_include_file = include_file
-        if not include_file.endswith('.tex'):
-            include_file += '.tex'
-        include_path = os.path.join(path, include_file)
-        raw_include_path = os.path.join(path, raw_include_file)
-        if os.path.exists(include_path) and not os.path.isdir(include_path):
-            include_content = read_tex_file(include_path)
-            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
-            main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
-        elif os.path.exists(raw_include_path) and not os.path.isdir(raw_include_path):
-            include_content = read_tex_file(raw_include_path)
-            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
-            main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
+    processed_lines = []
+
+    for line in main_content.splitlines():
+        if find_include_tag(line):
+            processed_lines.append(process_include_tag(line, path))
         else:
-            print(f"RAW FILE NOT FOUND: {raw_include_path}")
+            processed_lines.append(line)
 
-    for command, include_file in commented_includes:
-        raw_include_file = include_file
-        if not include_file.endswith('.tex'):
-            include_file += '.tex'
-        include_path = os.path.join(path, include_file)
-        raw_include_path = os.path.join(path, raw_include_file)
-        if os.path.exists(include_path) and not os.path.isdir(include_path):
-            include_content = read_tex_file(include_path)
-            commented_content = convert_to_comment(include_content)
-            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', commented_content)
-            main_content = main_content.replace(f'\\{command}{{{include_file}}}', commented_content)
-        elif os.path.exists(raw_include_path) and not os.path.isdir(raw_include_path):
-            include_content = read_tex_file(raw_include_path)
-            commented_content = convert_to_comment(include_content)
-            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', commented_content)
-            main_content = main_content.replace(f'\\{command}{{{include_file}}}', commented_content)
-        # else:
-        #     print(f"File not found: {include_path}")
-    
-    return main_content
-
-
-#test
+    return '\n'.join(processed_lines)
