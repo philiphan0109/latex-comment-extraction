@@ -1,5 +1,5 @@
 import os
-from stitch import stitch_tex_files, identify_main_tex, is_standalone, get_included_files
+from stitch import stitch_tex_files
 from comment_extraction import extract_comments
 import time
 
@@ -17,7 +17,7 @@ def process_paper(path):
     with open(full_paper_path, 'w', encoding="utf-8") as output_file:
         output_file.write(full_paper)
 
-    with open(full_paper_path, "r", encoding="utf-8") as text_file:
+    with open(full_paper_path, "r", encoding="utf-8", errors="replace") as text_file:
         text = text_file.read()
     
     results = extract_comments(full_paper_path)
@@ -35,10 +35,10 @@ def process_paper(path):
 
 if __name__ == '__main__':
     starttime = time.time()
-    test_path = "test_set/1502.06138/millepatte_final.tex"
+    test_path = "test_set/0910.3932/"
     process_paper(test_path)
 
-    
+    # test_path = "test_set/"
     # counter = 1000
     # incorrect_papers = []
     # for paper_path in os.listdir(test_path):
