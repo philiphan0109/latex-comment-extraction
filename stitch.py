@@ -8,8 +8,8 @@ def read_tex_file(file_path):
         return file.read()
 
 def find_includes(tex_content):
-    pattern = r'(?<!%)^[^%]*\\(input|include)\{([^}]+)\}'
-    return re.findall(pattern, tex_content, re.MULTILINE)
+    pattern = r'\\(input|include)\{([^}]+)\}'
+    return re.findall(pattern, tex_content)
 
 def find_commented_includes(tex_content):
     pattern = r'^\s*%\s*\\(input|include)\{([^}]+)\}'
@@ -77,16 +77,17 @@ def stitch_tex_files(path):
     commented_includes = find_commented_includes(main_content)
     
     for command, include_file in includes:
+        print(f"{command}: {include_file}")
         raw_include_file = include_file
         if not include_file.endswith('.tex'):
             include_file += '.tex'
         include_path = os.path.join(path, include_file)
         raw_include_path = os.path.join(path, raw_include_file)
-        if os.path.exists(include_path):
+        if os.path.exists(include_path) and not os.path.isdir(include_path):
             include_content = read_tex_file(include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
             main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
-        elif os.path.exists(raw_include_path):
+        elif os.path.exists(raw_include_path) and not os.path.isdir(raw_include_path):
             include_content = read_tex_file(raw_include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
             main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
@@ -100,12 +101,12 @@ def stitch_tex_files(path):
             include_file += '.tex'
         include_path = os.path.join(path, include_file)
         raw_include_path = os.path.join(path, raw_include_file)
-        if os.path.exists(include_path):
+        if os.path.exists(include_path) and not os.path.isdir(include_path):
             include_content = read_tex_file(include_path)
             commented_content = convert_to_comment(include_content)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', commented_content)
             main_content = main_content.replace(f'\\{command}{{{include_file}}}', commented_content)
-        elif os.path.exists(raw_include_path):
+        elif os.path.exists(raw_include_path) and not os.path.isdir(raw_include_path):
             include_content = read_tex_file(raw_include_path)
             commented_content = convert_to_comment(include_content)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', commented_content)
