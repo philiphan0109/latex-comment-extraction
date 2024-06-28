@@ -15,7 +15,6 @@ def find_commented_includes(tex_content):
     pattern = r'^\s*%\s*\\(input|include)\{([^}]+)\}'
     return re.findall(pattern, tex_content, re.MULTILINE)
 
-
 def convert_to_comment(content):
     lines = content.splitlines()
     commented_content = '\n'.join([f'% {line}' for line in lines])
@@ -49,17 +48,6 @@ def identify_main_tex(files):
                 if contains_main_document_elements(content):
                     return file
     return main_candidates[0] if main_candidates else None
-
-
-
-def get_included_files(main_file):
-    included_files = []
-    if main_file:
-        with open(main_file, 'r', encoding="utf-8", errors="replace") as f:
-            content = f.read()
-            # Look for \include or \input commands
-            included_files = re.findall(r'\\(?:include|input)\{([^}]+)\}', content)
-    return included_files
 
 def stitch_tex_files(path):
     tex_files = []
