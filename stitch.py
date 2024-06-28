@@ -98,12 +98,13 @@ def stitch_tex_files(path):
         if not include_file.endswith('.tex'):
             include_file += '.tex'
         include_path = os.path.join(path, include_file)
+        raw_include_path = os.path.join(path, raw_include_file)
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             commented_content = convert_to_comment(include_content)
             main_content = main_content.replace(comment, f'% {include_file[:-4]}\n{commented_content}')
-        elif os.path.exists(raw_include_file):
-            include_content = read_tex_file(raw_include_fileinclude_path)
+        elif os.path.exists(raw_include_path):
+            include_content = read_tex_file(raw_include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
         # else:
         #     print(f"File not found: {include_path}")
