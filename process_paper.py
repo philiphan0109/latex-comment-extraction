@@ -8,7 +8,7 @@ import time
 # 2) extract the comments from the full paper
 
 def read_tex_file(file_path):
-    with open(file_path, 'r', encoding="utf-8") as file:
+    with open(file_path, 'r', encoding="utf-8", errors="replace") as file:
         return file.read()
 
 def process_paper(path):
@@ -36,8 +36,8 @@ def process_paper(path):
 if __name__ == '__main__':
     starttime = time.time()
     test_path = "test_set/1502.06138/millepatte_final.tex"
-    # process_paper(test_path)
-    content = read_tex_file(test_path)[185056]
+    process_paper(test_path)
+
     
     # counter = 1000
     # incorrect_papers = []
