@@ -85,14 +85,16 @@ def stitch_tex_files(path):
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
+            main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
         elif os.path.exists(raw_include_path):
             include_content = read_tex_file(raw_include_path)
             main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
+            main_content = main_content.replace(f'\\{command}{{{include_file}}}', include_content)
         else:
             print(f"RAW FILE NOT FOUND: {raw_include_path}")
             # print(f"File not found: {include_path}")
             
-    for comment, command, include_file in commented_includes:
+    for command, include_file in commented_includes:
         raw_include_file = include_file
         if not include_file.endswith('.tex'):
             include_file += '.tex'
@@ -101,10 +103,13 @@ def stitch_tex_files(path):
         if os.path.exists(include_path):
             include_content = read_tex_file(include_path)
             commented_content = convert_to_comment(include_content)
-            main_content = main_content.replace(comment, f'% {include_file[:-4]}\n{commented_content}')
+            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', commented_content)
+            main_content = main_content.replace(f'\\{command}{{{include_file}}}', commented_content)
         elif os.path.exists(raw_include_path):
             include_content = read_tex_file(raw_include_path)
-            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', include_content)
+            commented_content = convert_to_comment(include_content)
+            main_content = main_content.replace(f'\\{command}{{{include_file[:-4]}}}', commented_content)
+            main_content = main_content.replace(f'\\{command}{{{include_file}}}', commented_content)
         # else:
         #     print(f"File not found: {include_path}")
     
