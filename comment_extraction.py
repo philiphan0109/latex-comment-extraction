@@ -24,7 +24,7 @@ def extract_comments(path):
 
     lines = full_paper.split("\n")
     for line in lines:
-        # Find Comment
+        # Comment
         if line.lstrip().startswith("%"):
             if not current_comment:
                 comment_start_index = current_index
@@ -42,8 +42,7 @@ def extract_comments(path):
                 comments_by_section[current_section].append((comment_start_index, comment_end_index))
             
         current_index += len(line) + 1
-                
-        # Update Section (If applicable)
+        #Section
         section_match = re.match(r'\\section{(.+?)}', line)
         if section_match:
             current_section = section_match.group(1)
@@ -128,26 +127,26 @@ def extract_comment_statistics(path):
     
     return comment_statistics
 
-if __name__ == "__main__":
-    print("hello")
-    path_to_main_tex = "paper/main.tex"
-    output_path = "paper/a.txt"
+# if __name__ == "__main__":
+#     print("hello")
+#     path_to_main_tex = "paper/main.tex"
+#     output_path = "paper/a.txt"
     
-    results = extract_comments(path_to_main_tex)
+#     results = extract_comments(path_to_main_tex)
     
-    with open(output_path, "w", encoding="utf-8") as file:
-        for section, comments in results.items():
-            file.write(f"Section: {section}\n")
-            print(f"Section: {section}")
-            for start_idx, end_idx in comments:
-                # Extract the actual comment text from the document
-                with open(path_to_main_tex, "r", encoding="utf-8") as text_file:
-                    text_file.seek(start_idx)
-                    comment_text = text_file.read(end_idx - start_idx)
+#     with open(output_path, "w", encoding="utf-8") as file:
+#         for section, comments in results.items():
+#             file.write(f"Section: {section}\n")
+#             print(f"Section: {section}")
+#             for start_idx, end_idx in comments:
+#                 # Extract the actual comment text from the document
+#                 with open(path_to_main_tex, "r", encoding="utf-8") as text_file:
+#                     text_file.seek(start_idx)
+#                     comment_text = text_file.read(end_idx - start_idx)
                 
-                file.write(f"  Comment Indices: ({start_idx}, {end_idx})\n")
-                file.write(f"  Comment Text: {comment_text.strip()}\n\n")
+#                 file.write(f"  Comment Indices: ({start_idx}, {end_idx})\n")
+#                 file.write(f"  Comment Text: {comment_text.strip()}\n\n")
                 
-                # Print to console as well
-                print(f"  Comment Indices: ({start_idx}, {end_idx})")
-                print(f"  Comment Text: {comment_text.strip()}\n")
+#                 # Print to console as well
+#                 print(f"  Comment Indices: ({start_idx}, {end_idx})")
+#                 print(f"  Comment Text: {comment_text.strip()}\n")
