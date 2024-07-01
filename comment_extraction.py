@@ -4,7 +4,7 @@ import nltk
 from nltk.tokenize import word_tokenize
 
 # Download NLTK data files (only need to do this once)
-nltk.download('punkt')
+# nltk.download('punkt')
 
 dir_path = "paper/"
 

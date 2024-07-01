@@ -47,7 +47,7 @@ if __name__ == '__main__':
     test_path = "test_set/"
     paper_paths = [os.path.join(test_path, paper_path) for paper_path in os.listdir(test_path)]
     
-    num_processes = 100 # filler
+    num_processes = 5 # filler
     
     with mp.Pool(num_processes) as pool:
         results = pool.map(wrapper, paper_paths)
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     print(f"This took: {time.time() - starttime} seconds.")
     
     
-    # # Local Testing
+    # Local Testing
     # starttime = time.time()
     # test_path = "test_set/"
     # counter = 1000
