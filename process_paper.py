@@ -2,6 +2,7 @@ import os
 from stitch import stitch_tex_files
 from comment_extraction import extract_comments
 import time
+import multiprocessing as mp
 
 # given a directory of .tex files this function will:
 # 1) generate a new .tex file named FULL_PAPER.tex
@@ -33,20 +34,40 @@ def process_paper(path):
                 file.write(f"  Comment Indices: ({start_context_idx}, {end_context_idx})\n")
                 file.write(f"  Comment Text: \n {comment_text.strip()}\n\n")
 
+def wrapper(args):
+    try:
+        process_paper(*args)
+        return None
+    except Exception as e:
+        return(args[0])
+
 if __name__ == '__main__':
-    # test_path = "test/"
-    # process_paper(test_path)
-    
+    # MP Testing
     starttime = time.time()
     test_path = "test_set/"
-    counter = 1000
-    incorrect_papers = []
-    for paper_path in os.listdir(test_path):
-        try:
-            paper_path = os.path.join(test_path, paper_path)
-            process_paper(paper_path)
-        except Exception as e:
-            incorrect_papers.append(paper_path)
-            counter -= 1
-    print(incorrect_papers)
-    print(f"This took: {time.time() - starttime} seconds | Papers correct: {counter}")
+    paper_paths = [os.path.join(test_path, paper_path) for paper_path in os.listdir(test_path)]
+    
+    num_processes = 100 # filler
+    
+    with mp.Pool(num_processes) as pool:
+        results = pool.map(wrapper, paper_paths)
+    
+    failed_paths = [paper for paper in results if paper != None]
+    print(f"Processed: {len(failed_paths)} / {len(paper_paths)} papers.")
+    print(f"This took: {time.time() - starttime} seconds.")
+    
+    
+    # # Local Testing
+    # starttime = time.time()
+    # test_path = "test_set/"
+    # counter = 1000
+    # incorrect_papers = []
+    # for paper_path in os.listdir(test_path):
+    #     try:
+    #         paper_path = os.path.join(test_path, paper_path)
+    #         process_paper(paper_path)
+    #     except Exception as e:
+    #         incorrect_papers.append(paper_path)
+    #         counter -= 1
+    # print(incorrect_papers)
+    # print(f"This took: {time.time() - starttime} seconds | Papers correct: {counter}")
