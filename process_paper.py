@@ -43,21 +43,24 @@ def wrapper(path):
 
 if __name__ == '__main__':
     # MP Testing
-    starttime = time.time()
-    test_path = "test_set/"
-    paper_paths = [os.path.join(test_path, paper_path) for paper_path in os.listdir(test_path)]
+    # starttime = time.time()
+    # test_path = "test_set/"
+    # paper_paths = [os.path.join(test_path, paper_path) for paper_path in os.listdir(test_path)]
     
-    num_processes = 8 # filler
+    # num_processes = 8 # filler
     
-    with mp.Pool(num_processes) as pool:
-        results = pool.map(wrapper, paper_paths)
+    # with mp.Pool(num_processes) as pool:
+    #     results = pool.map(wrapper, paper_paths)
     
-    failed_paths = [paper for paper in results if paper != None]
-    print(f"Processed: {len(paper_paths) - len(failed_paths)} / {len(paper_paths)} papers.")
-    print(f"This took: {time.time() - starttime} seconds.")
+    # failed_paths = [paper for paper in results if paper != None]
+    # print(f"Processed: {len(paper_paths) - len(failed_paths)} / {len(paper_paths)} papers.")
+    # print(f"This took: {time.time() - starttime} seconds.")
     
     
     # Local Testing
+    test_path = "test/"
+    process_paper(test_path)
+    
     # starttime = time.time()
     # test_path = "test_set/"
     # counter = 1000

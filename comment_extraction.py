@@ -43,9 +43,10 @@ def extract_comments(path):
             
         current_index += len(line) + 1
         #Section
-        section_match = re.match(r'\\section{(.+?)}', line)
+        section_match = re.match(r'\\(section|subsection|subsubsection|section*|subsection*|subsubsection*){(.+?)}', line)
         if section_match:
-            current_section = section_match.group(1)
+            print(section_match.group(1))
+            current_section = f"{section_match.group(1)}:{section_match.group(2)}"
             if current_section not in comments_by_section:
                 comments_by_section[current_section] = []
             current_comment = False
