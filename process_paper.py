@@ -34,12 +34,12 @@ def process_paper(path):
                 file.write(f"  Comment Indices: ({start_context_idx}, {end_context_idx})\n")
                 file.write(f"  Comment Text: \n {comment_text.strip()}\n\n")
 
-def wrapper(args):
+def wrapper(path):
     try:
-        process_paper(*args)
+        process_paper(path)
         return None
     except Exception as e:
-        return(args[0])
+        return path
 
 if __name__ == '__main__':
     # MP Testing
@@ -47,13 +47,13 @@ if __name__ == '__main__':
     test_path = "test_set/"
     paper_paths = [os.path.join(test_path, paper_path) for paper_path in os.listdir(test_path)]
     
-    num_processes = 5 # filler
+    num_processes = 8 # filler
     
     with mp.Pool(num_processes) as pool:
         results = pool.map(wrapper, paper_paths)
     
     failed_paths = [paper for paper in results if paper != None]
-    print(f"Processed: {len(failed_paths)} / {len(paper_paths)} papers.")
+    print(f"Processed: {len(paper_paths) - len(failed_paths)} / {len(paper_paths)} papers.")
     print(f"This took: {time.time() - starttime} seconds.")
     
     

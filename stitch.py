@@ -39,7 +39,8 @@ def process_include_tag(line, path):
             return content
     else:
         if not line.strip().startswith('%'):
-            print(f"RAW FILE NOT FOUND: {raw_file_path}")
+            # print(f"RAW FILE NOT FOUND: {raw_file_path}")
+            pass
         return line
 
 def is_standalone(file):
@@ -81,7 +82,7 @@ def stitch_tex_files(path):
     # Identify the main .tex file
     main_file_path = identify_main_tex(tex_files)
     if not main_file_path:
-        raise FileNotFoundError("Main .tex file not found in the directory")
+        raise FileNotFoundError("Main.tex file not found in the directory")
 
     main_content = read_tex_file(main_file_path)
     processed_lines = []
