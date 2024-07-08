@@ -7,8 +7,8 @@ import multiprocessing as mp
 import json
 
 
-INPUT_PATH = "test/"
-OUTPUT_PATH = "test/"
+INPUT_PATH = "test/evelyn_dataset/"
+OUTPUT_PATH = "test/evelyn_dataset/"
 NUM_PROCESSES = 16
 
 
@@ -60,6 +60,8 @@ if __name__ == "__main__":
         results = pool.map(wrapper, paper_files)
 
     failed_paper_files = [paper_file for paper_file in results if paper_file != None]
+    for paper in failed_paper_files:
+        print(paper)
     print(
         f"Processed: {len(paper_files) - len(failed_paper_files)} / {len(paper_files)} papers."
     )
