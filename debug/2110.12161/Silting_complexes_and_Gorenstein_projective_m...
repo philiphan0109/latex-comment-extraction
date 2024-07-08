@@ -1,0 +1,1275 @@
+\UseRawInputEncoding
+\documentclass[11pt]{amsart}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{amscd}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,mathrsfs,xypic}
+\usepackage[a4paper,margin=3cm]{geometry}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{tikz}
+%\addtolength{\textwidth}{2cm}
+%\addtolength{\textheight}{3cm}
+%\addtolength{\oddsidemargin}{-0,9cm}
+%\addtolength{\evensidemargin}{-0,9cm}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{sub}[thm]{}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{exm}[thm]{Example}
+\newtheorem{fr}[thm]{Final Remark}
+\newtheorem{exml}[thm]{Example-Lemma}
+\newtheorem{facts}[thm]{Facts}
+\newtheorem{mainthm}[thm]{Main Theorem}
+\newtheorem{klem}[thm]{Key Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{ackn}[thm]{acknowledgements}
+\numberwithin{equation}{section}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\To}{\longrightarrow}
+\newcommand{\BX}{\mathbf{B}(X)}
+\newcommand{\A}{\mathscr A}
+\newcommand{\la}{\Lambda}
+\newcommand{\lxr}{\longrightarrow}
+\newcommand{\s}{\hfill\blacksquare}
+\renewcommand{\baselinestretch}{1.20}
+\def\drawell#1#2#3#4{
+\draw[draw=black,fill=gray,fill opacity=#4,line width=1pt]
+(#1,0) circle [x radius=#2, y radius=#3];}
+\DeclareMathOperator*{\Mod}{\mathsf{Mod}-\!}
+
+
+\begin{document}
+%\linenumbers
+
+
+
+
+%\setprotcode\font
+%    {\it \setprotcode\font}
+%    {\bf \setprotcode\font}
+%    {\bf \it \setprotcode\font}
+%    \pdfprotrudechars=1
+
+\title[]{Silting complexes and Gorenstein projective modules}
+
+\author[]{Nan Gao$^{*}$, Jing Ma, Chi-Heng Zhang\\
+\ \ \ \\
+\textit{D\MakeLowercase{edicated to} P\MakeLowercase{u} Z\MakeLowercase{hang on the occasion of his 60th birthday}}
+}
+\address{Department of Mathematics, Shanghai University, Shanghai 200444, PR China}
+\thanks{2020 Mathematics Subject Classification. 18G80, 16S90, 16G10, 16E10.}
+\thanks{The first author is the corresponding author.}
+\email{nangao@shu.edu.cn, majingmmmm@shu.edu.cn, zchmath@shu.edu.cn}
+\thanks{Supported by the National Natural Science Foundation of China (Grant No. 11771272 and 11871326).}
+
+\date{\today}
+
+
+\keywords{}
+
+\subjclass[2010]{}
+
+\begin{abstract}\ We introduce Gorenstein silting modules (resp. complexes), and give the relation with the usual
+silting modules (resp. complexes). We show that Gorenstein silting modules are the module-theoretic counterpart of 2-term Gorenstein silting complexes; and partial Gorenstein silting modules are in bijection with $\tau_{G}$-rigid modules for finite dimensional algebras of finite CM-type. We also give the relation between 2-term Gorenstein silting complexes, t-structures and torsion pair in module categories; and generalise the classical Brenner-Butler theorem to this setting; and characterise the global dimension of endomorphism algebras of 2-term Gorenstein silting complexes over an algebra $A$ by terms of the Gorenstein global dimension of $A$.
+\end{abstract}
+
+\maketitle
+
+\vskip 10pt
+
+\section{\bf Introduction and Preliminaries}
+
+\vskip 5pt
+
+
+Silting complexes were first introduced by Keller and Vossieck \cite{KV} to study $t\mbox{-}$structures in the bounded derived category of representations of Dynkin quivers. They generalize tilting complexes and, thus, finitely generated tilting modules introduced by Auslander and Solberg \cite{AS1}. Hoshino-Kato-Miyachi \cite{HKM, MM} gave the relation between 2-term silting complexes and torsion pair in module categories. Then Buan-Zhou \cite{BZ1} studied 2-term silting complexes in the bounded homotopy categories, and they generalized the classical tilting theorem to the silting situation. After that, they considered the global dimension of endomorphism algebras of 2-term silting complexes in \cite{BZ2}.
+
+
+\vskip 10pt
+
+
+Support $\tau\mbox{-}$tilting modules are the module-theoretic counterpart of 2-term silting complexes. They were introduced over finite dimensional algebras by Adachi-Iyama-Reiten \cite{AIR}, who showed that these modules admit mutation and that there is a mutation-preserving bijection with 2-term silting complexes. Silting modules introduced by Angeleri H\"{u}gel-Marks-Vit\'{o}ria \cite{AMV1} over an arbitrary ring who are intended to generalize tilting modules in a similar fashion as 2-term silting complexes generalize 2-term tilting complexes and also, coincide with support $\tau\mbox{-}$tilting modules for finite dimensional algebras. Adachi-Iyama-Reiten \cite{AIR} showed how 2-term silting complexes relate with silting modules, t-structure, and co-t-structure. In \cite{MS}, they showed that silting modules are in bijection with universal localisations for finite dimensional algebras of finite representation type. Then Angeleri H\"{u}gel-Marks-Vit\'{o}ria \cite{AMV2} constructed the bireflective subcategory associated with a partial silting module and studied silting modules over hereditary rings. Moreover, Aihara \cite{A} gave a necessary condition for silting to be tilting under the self-injective case. Recently, Li-Zhang \cite{LZ} showed the existence of nontrival Gorenstein projective (support) $\tau$-tilting modules except support $\tau$-tilting modules over selfinjective algebras.
+
+\vskip 10pt
+
+The main idea of Gorenstein homological algebra is to replace projective modules by Gorenstein-projective modules. These modules were introduced by Enochs and Jenda \cite{EJ1} as a generalization of finitely generated module of G-dimension zero over a two-sided Noetherian ring, in the sense of Auslander and Bridger \cite{AB}. The subject has been developed to an advanced level, see for example \cite{ABu,AR,Hap,EJ2,Ch,AM,Hol,B1,CFH,BR,J, Chen, GZ, GK, RZ1, RZ2, RZ3}. As the version of  tilting modules in Gorenstein homological algebra, the definition of Gorenstein tilting module was introduced (see \cite{AS1, G1, YLO}). Later Zhang \cite{Z} introduced the notion of Gorenstein star modules, and gave a close relation between Gorenstein star modules and Gorenstein tilting modules.
+
+\vskip 10pt
+
+As the correspondence of algebras of finite representation type in Gorenstein homological algebra, Beligiannis \cite{B2} introduced and studied the algebras of finite Cohen-Macaulay type (resp. finite CM-type for simply). For this class of algebras, Gao \cite{G2} introduced the relative transpose ${\rm Tr}_{G}$ by the term of Gorenstein-projective modules and the corresponding Auslander-Reiten formula.
+
+\vskip 10pt
+
+
+Based on these work, there are the following natural questions:
+
+\vskip 5pt
+
+{\bf Question A:}\  Which class of modules coincides with the above $\tau_{G}$-rigid module?
+
+\vskip 10pt
+
+
+{\bf Question B:}\ What's the correspondence in the bounded homotopy category with respect to the above modules?
+
+\vskip 10pt
+
+
+\begin{tikzpicture}[font=\rmfamily,scale=1]
+\drawell{0}{4}{3}{0};
+\node at (-2,1){\parbox[c]{8em}{{\tiny partial.silting.module}\\
+{\tiny=$\tau\mbox{-}$rigid}}};
+
+\draw[draw=black,line width=1pt,fill=gray,fill opacity=.5]
+(1.45,0) circle [x radius=2.6, y radius=2.4];
+\node at (1,1) {\parbox[c]{8em}{{\tiny silting.module=support}
+\vskip 1pt
+{\tiny $\tau\mbox{-}$tilting.module}}};
+
+
+\draw[draw=black,line width=1pt,fill=white,fill opacity=.5]
+(5,-1.5) circle [x radius=4, y radius=3];
+\node at (5.2,-4.15) {\parbox[c]{8em}{{\tiny $\tau_{G}\mbox{-}$rigid.module=partial}\\
+{\tiny Gorenstein.silting.module}\\}};
+
+\draw[draw=black,line width=1pt,fill=gray,fill opacity=.5]
+(4.1,-1.1) circle [x radius=2.8, y radius=2.33];
+\node at (4.3,-2.7) {\parbox[c]{8em}{{\tiny Gorenstein.silting.module}}};
+
+\draw[draw=black,line width=1pt,fill=blue,fill opacity=.5]
+(3.6,-0.5) circle [x radius=1.5, y radius=1];
+\node at (3.7,-0.5) {\parbox[c]{8em}{{\tiny Gproj.supp.}}};
+\node at (5.5,-1) {\parbox[c]{8em}{{\tiny Gproj.}}};
+\end{tikzpicture}
+
+\vskip 10pt
+
+
+
+
+The answers are given in the paper. We organize the paper as follows. In Section 2, we introduce the Gorenstein silting module and show it is in bijection with the relative rigid module over an algebra of CM-type. We also show the relations among  Gorenstein tilting modules, Gorenstein star modules  and Gorenstein silting modules. In Section 3, we introduce the 2-term Gorenstein silting complex and show that the Gorenstein silting module is its module-theoretic counterpart. We also characterise it by the connection with the t-structure and torsion pair, and show the corresponding Brenner-Butler theorem, and characterise the global dimension of endomorphism algebras of 2-term Gorenstein silting complexes over an algebra $A$ by terms of the Gorenstein dimension of $A$.
+
+\vskip 10pt
+
+
+
+
+
+
+
+First we  give the main definitions in the paper.
+
+\vskip 10pt
+
+{\bf Definition~\ref{Gsmodule}}\ Let $R$ be a Noetherian ring. We say that an $R\mbox{-}$module $T$ is
+
+\vskip 5pt
+
+$\bullet$ \ partial Gorenstein silting if there is a proper Gorenstein-projective presentation $\theta$ of $T$ such that
+
+\vskip 5pt
+
+\ \ (Gs1) $D_{\theta}$ is a relative torsion class (i.e. closed for $G\mbox{-}$epimorphic images, $G\mbox{-}$extensions and coproducts);
+
+\vskip 5pt
+
+\ \ (Gs2) $T$ lies in $D_{\theta}$.
+
+\vskip 5pt
+
+$\bullet$ \ Gorenstein silting if there is a proper Gorenstein-projective presentation $\theta$ of $T$ such that ${\rm Gen}_{G}(T)=D_{\theta}$.
+
+\vskip 10pt
+
+{\bf Definition~\ref{rigid}}\ Let $A$ be a finite dimensional $k\mbox{-}$algebra of finite CM-type with the Gorenstein-projective generator $E$. We say that an $A\mbox{-}$module $M$ is $\tau_{G}\mbox{-}$rigid if ${\rm Hom}_{{\rm A(Gproj)}}$ $((E,M), \tau_{G}M)=0$ for the left ${\rm A(Gproj)}\mbox{-}$module ${\rm Hom}_{A}(E,M)$.
+
+\vskip 10pt
+
+{\bf Definition~\ref{Gscomplex}}\ Let  $G^{\bullet}: G_{1}\stackrel{d^{1}}{\lxr} G_{0}$ be a complex with $G_{i}\in {\rm Gproj}A$ for $i=0,1$. We say that $G^{\bullet}$ is
+
+\vskip 5pt
+
+$\bullet$ \ 2-term partial Gorenstein silting in $K^{b}({\rm Gproj}A)$ if it satisfies the following two conditions:
+
+\vskip 5pt
+
+
+{\rm (i)} $G_{1}\lxr {\rm Im}d^{1}$ and $G_{0}\lxr {\rm Coker}d^{1}$ are right ${\rm Gproj}A$-approximations;
+
+\vskip 5pt
+
+{\rm (ii)} ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\bullet}[1])=0$.
+
+
+\vskip 5pt
+
+$\bullet$ \ 2-term Gorenstein silting in $K^{b}({\rm Gproj}A)$ if it is a  2-term partial Gorenstein silting complex and ${\rm thick}G^{\bullet}=D_{gp}^{b}(A)$.
+
+\vskip 10pt
+
+Our main theorems are as follows:
+
+\vskip 5pt
+
+{\bf Theorem A}\ (Theorem~\ref{properties} and~\ref{equivalence}) \ Let $A$ be a finite dimensional algebra of finite CM-type with the Gorenstein-projective generator $E$. Let $M$ be an $A\mbox{-}$module in ${\rm mod}A$.  Then the following statements hold.
+\begin{enumerate}
+
+\item $M$ is $\tau_{G}\mbox{-}$rigid if and only if ${\rm Hom}_{A}(E, M)$ is a $\tau\mbox{-}$rigid module, where $\tau$ is the Auslander-Reiten translation over ${\rm A(Gproj)}$.
+
+\vskip 5pt
+
+\item $\tau_{G}M\cong \tau{\rm Hom}_{A}(E, M).$
+
+\vskip 5pt
+
+\item $M$ is $\tau_{G}$-rigid if and only if $M$ is  a partial Gorenstein silting $A$-module.
+\end{enumerate}
+
+\vskip 10pt
+
+Let $B={\rm End}_{D_{gp}^{b}(A)}(G^{\bullet})^{op}$. Consider the subcategories of ${\rm mod}B$
+$$\mathcal{X}(G^{\bullet})= {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ \mathcal{F}(G^{\bullet})[1]) \ \ \ and \ \ \ \mathcal{Y}(G^{\bullet})= {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ \mathcal{T}(G^{\bullet})).$$
+
+\vskip 5pt
+
+{\bf Theorem B}\ (Theorem~\ref{torsionpair}, Theorem~\ref{torsioninb} and Theorem~\ref{gldim})\ Let $G^{\bullet}: G_{1}\lxr G_{0}$ be a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$, where $G_{i}\in {\rm Gproj}A$. Then the following statements hold.
+\begin{enumerate}
+
+\item $(\mathcal{T}(G^{\bullet}), \mathcal{F}(G^{\bullet}))$ is a torsion pair for ${\rm mod}A$.
+
+\vskip 5pt
+
+\item $(\mathcal{X}(G^{\bullet}), \mathcal{Y}(G^{\bullet}))$ is a torsion pair in ${\rm mod}B$ and there are equivalences
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -): \mathcal{T}(G^{\bullet})\lxr \mathcal{Y}(G^{\bullet}),$$
+and
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -[1]): \mathcal{F}(G^{\bullet})\lxr \mathcal{X}(G^{\bullet}).$$
+
+\vskip 5pt
+
+\item ${\rm gldim} B\leq {\rm Gdim}A+1$.
+\end{enumerate}
+\vskip 10pt
+
+
+Throughout $A$ is a finite dimensional $k\mbox{-}$algebra over a field $k$, and ${\rm mod}A$ is the category of finitely generated left $A\mbox{-}$modules. A module $G$ of ${\rm mod}A$ is Gorenstein-projective if there is an exact sequence
+$$\cdots \lxr P^{-1}\lxr P^{0}\stackrel{d^{0}}{\lxr} P^{1}\lxr \cdots$$
+of projective modules of ${\rm mod}A$, which stays exact after applying ${\rm Hom}_{A}(-, P)$ for each projective module $P$, such that $G\cong {\rm Ker}d^{0}$ (see \cite{EJ2}). Denote by ${\rm Gproj}A$ and ${\rm proj}A$ the full subcategories of ${\rm mod}A$ consisting of Gorenstein-projective modules and projective modules, respectively.
+
+\vskip 10pt
+
+
+Let $\mathcal{A}$ be an abelian category and $\mathcal{X},\ \mathcal{Y}$ the full additive subcategories of $\mathcal{A}$. Let $M$ be an object of $\mathcal{A}$. Following~\cite{AS2}, a morphism $f:X\lxr M$ with $X\in \mathcal{X}$ is called a right $\mathcal{X}\mbox{-}$approximation of $M$ if any morphism from an object $\mathcal{X}$ to $M$ factors through $f$. $\mathcal{X}$ is called contravariantly finite if any object in $\mathcal{A}$ admits a right $\mathcal{X}\mbox{-}$approximation. A morphism $g:M\lxr Y$ with $Y\in \mathcal{Y}$ is called a left $\mathcal{Y}\mbox{-}$approximation of $M$ if any morphism from $M$ to an object $\mathcal{Y}$ factors through $g$. $\mathcal{Y}$ is called covariantly finite if any object in $\mathcal{A}$ admits a left $\mathcal{Y}\mbox{-}$approximation.
+
+\vskip 10pt
+
+
+Following~\cite{EJ2}, an exact sequence $G_{1}\xrightarrow{d^{1}} G_{0}\lxr M\lxr 0 \ (*)$ is called a proper Gorenstein-projective presentation of $M$ if each $G_{i}$ is Gorenstein-projective and ${\rm Hom}_{A}(G,$ $G_{1})\lxr {\rm Hom}_{A}(G,G_{0}) \lxr {\rm Hom}_{A}(G,T)\lxr 0$ is exact for any Gorenstein-projective module $G$. $(*)$ is minimal if $G_{1}\lxr {\rm Im}d^{1}$ and $G_{0}\lxr M$ are right ${\rm Gproj}A\mbox{-}$approximation.  Moreover, the exact sequence $0\lxr G_{n}\lxr \ldots \lxr G_{1} \lxr G_{0} \rightarrow M \rightarrow 0$  is called a proper Gorenstein-projective resolution of $M$ of length $n$ for some non-negative integer $n$, if each $G_{i}$ is all Gorenstein-projective and $0\lxr {\rm Hom}_{A}(G, G_{n})\lxr \cdots \lxr {\rm Hom}_{A}(G,G_{0}) \lxr {\rm Hom}_{A}(G,M)\lxr 0$ is exact for any Gorenstein-projective module $G$. We say that $M$ has Gorenstein-projective dimension $d$, denoted by ${\rm Gpd}M$, if $d$ is the least, and  the Gorenstein dimension of $A$ is defined as follows:
+$${\rm Gdim}A={\rm sup}\{{\rm Gpd}M|M\in {\rm mod}A\}.$$
+
+
+
+
+\vskip 10pt
+
+
+Now we write $C^{b}(A),\ K^{b}(A)$ and $D^{b}(A)$ for the bounded complex category, bounded homotopy category and bounded derived category of ${\rm mod}A$, respectively. Denote by $K^{b}({\rm Gproj}A)$ (resp. $K^{b}({\rm proj}A)$) the corresponding bounded homotopy category of Gorenstein-projective modules (resp. projective modules).
+
+\vskip 10pt
+
+
+
+\subsection{ Gorenstein derived category}
+\vskip 5pt
+
+A complex $C^{\bullet}\in C^{b}(A)$  is $\mathcal{GP}\mbox{-}$acyclic, if ${\rm Hom}_{A}(G,$ $ C^{\bullet})$ is acyclic for each $G\in {\rm Gproj}A$.  A chain map $f^{\bullet}: X^{\bullet}\lxr Y^{\bullet}$ is a $\mathcal{GP}\mbox{-}$quasi-isomorphism, if ${\rm Hom}_{A}(G, f^{\bullet})$ is a quasi-isomorphism for each $G\in {\rm Gproj}A$, i.e., there are isomorphisms of abelian groups for any $n\in \mathbb{Z}$,
+$$H^{n}{\rm Hom}_{A}(G, f^{\bullet}): H^{n}{\rm Hom}_{A}(G, X^{\bullet})\cong H^{n}{\rm Hom}_{A}(G, Y^{\bullet}).$$
+Put
+$$K^{b}_{gpac}(A):=\{ X^{\bullet}\in K^{b}(A)\mid X^{\bullet} \ is \ \mathcal{GP}\mbox{-}\ acyclic\}.$$
+Then $K^{b}_{gpac}(A)$ is a thick triangulated subcategory of $K^{b}(A)$. Following~\cite{GZ}, we have the following definition:
+$$D_{gp}^{b}(A):=K^{b}(A)/ K^{b}_{gpac}(A),$$
+which is called the bounded Gorenstein derived category.
+
+\vskip 10pt
+
+Following~\cite{AS1}, an exact sequence $0\lxr X^{\bullet}\stackrel{f}{\lxr} Y^{\bullet}\stackrel{g}{\lxr} Z^{\bullet}\lxr 0$ in  $C^{b}(A)$ is $G\mbox{-}$exact if and only if $0\lxr {\rm Hom}_{A}(G, X^{\bullet})\lxr {\rm Hom}_{A}(G, Y^{\bullet})\lxr {\rm Hom}_{A}(G, Z^{\bullet})\lxr 0$ is exact for all $G\in {\rm Gproj}A$. In the module case, $g$ is called a $G$-epimorphism and $X$ is called a $G$-submodule of $Y$. From \cite{GZ}, if the exact sequence $0\lxr X\lxr Y\lxr Z\lxr 0$ in ${\rm mod}A$ is $G\mbox{-}$exact, then $X\lxr Y\lxr Z\lxr X[1]$ is a triangle in $D_{gp}^{b}(A)$.
+
+\vskip 10pt
+
+\subsection{\bf CM-Auslander algebra}
+\vskip 5pt
+
+Recall from \cite{B2} that  $A$ is of finite Cohen-Macaulay type (resp. finite CM-type for simply), if there are only finitely many isomorphism classes of indecomposable finitely generated Gorenstein-projective $A$-modules. Let $\{E_{i} \}_{i=1}^{n}$ be all non-isomorphic finitely generated Gorenstein-projective $A\mbox{-}$modules and $E=\mathop{\oplus}\limits_{i=1}^{n}E_{i}$, and ${\rm A(Gproj)}= {\rm End}_{A}(E)^{op}$. Then $E$ is an $A\mbox{-}{\rm A(Gproj)}\mbox{-}$bimodule, and ${\rm A(Gproj)}$ is called the the Cohen-Macaulay Auslander (resp. CM-Auslander for simply) algebra of $A$.
+
+\vskip 10pt
+
+
+
+\subsection{\bf torsion pair }
+\vskip 5pt
+
+\begin{defn}\ {\rm (\cite{D})}\  A pair $(\mathcal{T}, \mathcal{F})$ of full subcategories of ${\rm mod}A$ is called a torsion pair provided that:
+
+\vskip 5pt
+
+\begin{enumerate}
+\item ${\rm Hom}_{A}(M, N)=0$ for all $M\in \mathcal{T},\ N\in \mathcal{F}$;
+
+\vskip 5pt
+
+\item ${\rm Hom}_{A}(M, -)|_{\mathcal{F}}=0$ implies $M\in \mathcal{T}$;
+
+\vskip 5pt
+
+\item ${\rm Hom}_{A}(-, N)|_{\mathcal{T}}=0$ implies $N\in \mathcal{F}$.
+\end{enumerate}
+\end{defn}
+
+\vskip 10pt
+
+\subsection{\bf t-structure }
+\vskip 5pt
+
+\begin{defn}\ {\rm (\cite{BBD})}\  A pair $(\mathcal{X}, \mathcal{Y})$ of subcategories of the triangulated category $D_{gp}^{b}(A)$ is called a t-structure provided that:
+
+\vskip 5pt
+
+\begin{enumerate}
+\item $\mathcal{X}[1]\subset \mathcal{X}$ and $\mathcal{Y}[-1]\subset \mathcal{Y}$;
+
+\vskip 5pt
+
+\item ${\rm Hom}_{D_{gp}^{b}(A)}(X, Y[-1])=0$ for any $X\in \mathcal{X}$ and $Y\in \mathcal{Y}$;
+
+\vskip 5pt
+
+\item for any $C\in D_{gp}^{b}(A)$, there exists a distinguished triangle
+$$X\lxr C\lxr Y[-1]\lxr X[1]$$
+with $X\in \mathcal{X}$ and $Y\in \mathcal{Y}$.
+\end{enumerate}
+\end{defn}
+
+\vskip 10pt
+
+
+
+
+
+\section{\bf Gorenstein silting modules}
+
+\vskip 5pt
+
+In this section, we introduce and study a class of modules in bijection with the relative rigid module over an algebra of CM-type introduced by Gao, which we call the Gorenstein silting module. We also show the relations among  Gorenstein tilting modules, Gorenstein star modules  and Gorenstein silting modules.
+
+
+\vskip 10pt
+
+
+
+
+\subsection{\bf Gorenstein silting modules} \ In this subsection, we introduce the Gorenstein silting module. Before this, we make some preparation.
+
+\vskip 5pt
+
+Throughout this subsection, let $R$ be a Noetherian ring, and ${\rm Mod}R$ the category of all left $R\mbox{-}$modules. We denote by $Gp(R)$(resp.\ $Gi(R)$) the full subcategory of ${\rm Mod}R$ consisting of Gorenstein-projective (resp. Gorenstein-injective)  modules.
+
+\vskip 5pt
+
+Now we assume that $Gp(R)$ is contravariantly finite in ${\rm Mod}R$. For $R\mbox{-}$modules $M$ and $N$, we compute right derived functors of ${\rm Hom}_{R}(M, N)$ using a Gorenstein-projective resolution of $M$ (\cite{EJ2}, \cite{Hol}). We will denote these derived functors by ${\rm Gext}_{R}^{i}(M, N)$. A short exact sequence $0\lxr M\lxr N\lxr L\lxr 0$ is  $G\mbox{-}$exact if and only if it is in ${\rm Gext}_{R}^{1}(L, M)$.
+
+\vskip 10pt
+
+Let $T$ be an $R$-module. Put
+$${\rm Pres}_{G}(T):=\{M\in {\rm Mod}R|\exists \ a \ G\mbox{-}exact \ sequence \ T_{1}\lxr T_{0}\lxr M\lxr 0$$ $$ \ with \ T_{i}\in {\rm Add}T\},$$
+$${\rm Gen}_{G}(T):=\{M\in {\rm Mod}R|\exists \ a \ G\mbox{-}exact \ sequence \ T_{0}\lxr M\lxr 0 \ with \ T_{0}\in {\rm Add}T\},$$
+and
+$$T^{G\perp}:=\{M\in {\rm Mod}R|{\rm Gext}^{1}_{R}(T, M)=0\},\ \ \ T^{\perp 0}:=\{M\in {\rm Mod}R|{\rm Hom}_{R}(T, M)=0\},$$
+where ${\rm Add}T$ denotes the subcategory of modules consisting of direct summands of direct sums of $T$
+
+\vskip 10pt
+
+For a morphism $\theta: G_{1}\lxr G_{0}$ with $G_{1}$ and $G_{0}$ are Gorenstein-projective modules. We consider the class of $R\mbox{-}$modules
+$$D_{\theta}:=\{X\in {\rm Mod}R\mid {\rm Hom}_{R}(\theta, X) \ {\rm is \ epic}\}.$$
+We first collect some useful propoerties of $D_{\theta}$.
+
+\vskip 10pt
+
+\begin{lem}\
+\label{silting}
+Let $\theta: G_{1}\lxr G_{0}$ with $G_{1}$ and $G_{0}$ are Gorenstein-projective modules, and $T$ the cokernel of $\theta$ such that $\theta$ being the  proper Gorenstein-projective presentation of $T$.
+
+\vskip 5pt
+
+{\rm (i)} $D_{\theta}$ is closed under $G\mbox{-}$epimorphic images, $G\mbox{-}$extensions and direct products.
+
+\vskip 5pt
+
+{\rm (ii)} The class $D_{\theta}$ is contained in $T^{G\perp}$.
+\begin{proof}\ The statement (i) is easy to prove. Now we prove (ii). There exists the following diagram
+\[
+\xymatrix@C=0.5cm{
+ && G_{1}\ar@{->}[rr]^{\theta}    && G_{0} \ar[rr]^{} \ar@{<-_{)}}[dl]_{i} &&T \ar[rr]      &&0\\
+   &&& {\rm Im}\theta \ar@{<<-}[ul]^{\pi}  &&& \\
+}
+\]
+Consider the $G\mbox{-}$exact sequence $0\lxr {\rm Im}\theta\stackrel{i}{\lxr} G_{0}\lxr T\lxr 0$. Applying the functor ${\rm Hom}_{R}(-, X)$ for any $X\in D_{\theta}$, then we get the $G\mbox{-}$exact sequence
+$${\rm Hom}_{R}(G_{0}, X)\stackrel{i^{*}}{\lxr} {\rm Hom}_{R}({\rm Im}\theta, X)\lxr {\rm Gext}_{R}^{1}(T, X)\lxr 0.$$
+We show that $i^{*}$ is surjective. Let $f\in {\rm Hom}_{R}({\rm Im}\theta, X)$. Since $X\in D_{\theta}$, there is a map $g: G_{0}\lxr X$ such that $f\pi= g\theta= gi\pi$. Since $\pi$ is an epimorphism, we have $f= gi$. Hence ${\rm Gext}_{R}^{1}(T, X)=0$, and so $X\in T^{G\perp}$.
+\end{proof}
+\end{lem}
+
+
+\vskip 10pt
+
+\begin{defn}\
+\label{Gsmodule}
+We say that an $R\mbox{-}$module $T$ is
+
+\vskip 5pt
+
+$\bullet$ \ {\bf partial Gorenstein silting} if there is a proper Gorenstein-projective presentation $\theta$ of $T$ such that
+
+\vskip 5pt
+
+\ \ (Gs1) $D_{\theta}$ is a relative torsion class (i.e. closed for $G\mbox{-}$epimorphic images, $G\mbox{-}$extensions and coproducts);
+
+\vskip 5pt
+
+\ \ (Gs2) $T$ lies in $D_{\theta}$.
+
+\vskip 5pt
+
+$\bullet$ \ {\bf Gorenstein silting} if there is a proper Gorenstein-projective presentation $\theta$ of $T$ such that ${\rm Gen}_{G}(T)=D_{\theta}$.
+\end{defn}
+
+\vskip 10pt
+
+
+\begin{prop}\ Let $T$ be an $R$-module with the proper Gorenstein-projective presentation $\theta: G_{1}\to G_{0}$. If $T$ is a partial Gorenstein silting module with respect to $\theta$, and for each $P\in Gp(R)$, there exists a $G\mbox{-}$exact sequence $P\stackrel{\phi}{\lxr} T_{0}\lxr T_{-1}\lxr 0$ with $T_{0}$ and $T_{-1}$ in ${\rm Add}T$ such that $\phi$ is the left $D_{\theta}\mbox{-}$approximation, then $T$ is a Gorenstein silting module.
+\begin{proof}\  Since $T$ is a partial Gorenstein silting module with respect to $\theta$, it is clear that ${\rm Gen}_{G}(T)\subseteq D_{\theta}$. Let $X$ be an object in $D_{\theta}$. Since $Gp(R)$ is contravariantly finite, there is an $R$-module $E\in Gp(R)$ and a $G$-epimorphism $E\lxr X$. By assumption this epimorphism factors through the left $D_{\theta}\mbox{-}$approximation $\phi: E\lxr T_{0}$ via a $G$-epimorphism $g: T_{0}\lxr X$. Thus $X$ lies in ${\rm Gen}_{G}(T)$. This means that $T$ is a Gorenstein silting module.
+\end{proof}
+\end{prop}
+
+\vskip 10pt
+
+
+
+
+\subsection{\bf Connection with Gorenstein tilting (resp.\ star) modules} \ In this subsection, we characterise the relations among Gorenstein silting modules, Gorenstein tilting modules and Gorenstein star modules.
+
+
+\vskip 10pt
+
+
+Throughout, let $R$ be a Noetherian ring such that $Gp(R)$  the contravariantly finite subcategory of ${\rm Mod}R$.
+
+\vskip 10pt
+
+
+\begin{defn}\ {\rm (\cite{AS1, G1, YLO})} \  An $R\mbox{-}$module $T$ is called a Gorenstein tilting module if $T^{G\perp}= {\rm Pres}_{G}(T)$, or equivalently, it satisfies the following three conditions:
+
+\vskip 5pt
+
+(T1) ${\rm Gpd}_{R}T\leq 1$.
+
+\vskip 5pt
+
+(T2) ${\rm Gext}^{1}_{R}(T, T^{(I)})= 0$ for  all sets $I$.
+
+\vskip 5pt
+
+(T3) For any $P\in Gp(R)$, there exists a $G\mbox{-}$exact sequence $0\lxr P\lxr T_{0}\lxr T_{-1}\lxr 0$ with each $T_{i}\in {\rm Add}T$.
+\end{defn}
+
+\vskip 10pt
+
+
+\begin{defn}\ {\rm (\cite{Z})}\  An $R\mbox{-}$module $T$ is called a Gorenstein star module if
+
+\vskip 5pt
+
+{\rm (i)} Any $G\mbox{-}$exact sequence $0\lxr X\lxr T_{0}\lxr Y\lxr 0$ with $T_{0}\in {\rm Add}T$ and $X\in {\rm Gen}_{G}(T)$ is  ${\rm Hom}_{R}(T, -)\mbox{-}$exact.
+
+\vskip 5pt
+
+{\rm (ii)} ${\rm Gen}_{G}(T)={\rm Pres}_{G}T$.
+\end{defn}
+
+\vskip 10pt
+
+
+
+
+\begin{lem}\
+\label{Gorensteinstar}
+{\rm (\cite[Proposition 2.9]{Z})}\ The following statements are equivalent for an $R\mbox{-}$module $T$:
+
+\vskip 5pt
+
+{\rm (i)} $T$ is a Gorenstein star module and ${\rm Gen}_{G}(T)$ is closed under $G\mbox{-}$extension.
+
+\vskip 5pt
+
+{\rm (ii)} ${\rm Gen}_{G}(T)= {\rm Pres}_{G}T\subseteq T^{G\perp}$.
+\end{lem}
+
+\vskip 10pt
+
+
+\begin{prop}\
+\label{relation}
+The following hold.
+\begin{enumerate}
+
+\item \ Each Gorenstein tilting $R$-module is  Gorenstein silting.
+
+\vskip 5pt
+
+\item \ Each Gorenstein silting $R$-module is a Gorenstein star module.
+\end{enumerate}
+\begin{proof}\ (1) Let $T$ be a Gorenstein tilting $R$-module. Then by definition there exists a $G$-exact sequence as follows:
+$$0\lxr G_{1}\stackrel{\theta}{\lxr} G_{0}\lxr T\lxr 0.$$
+
+Let $X\in {\rm Gen}_{G}(T)$. Then there exists an $G$-epimorphism $g: T^{(I)}\lxr X$ such that
+${\rm Hom}_{R}(G, g)$ is $G$-epic. Since ${\rm Gpd}_{R}T\leq 1$ and  ${\rm Gext}^{1}_{R}(T, T^{(I)})= 0$, applying the functor ${\rm Hom}_{R}(T, -)$ to $g$, it follows that ${\rm Gext}^{1}_{R}(T, X)= 0$, and hence $X\in D_{\theta}$.
+
+\vskip 5pt
+
+Let $X\in D_{\theta}$. Then by Lemma~\ref{silting} $X\in T^{G\perp}$. It follows from the definition $T^{G\perp}={\rm Pres}_{G}(T)$ that $X\in {\rm Pres}_{G}(T)$. This implies that $X\in
+{\rm Gen}_{G}(T)$. Therefore, we prove that ${\rm Gen}_{G}(T)=D_{\theta}$, and $T$ is a Gorenstein silting module with respect to $\theta$.
+
+
+\vskip 10pt
+
+(2) Let $T$ be a Gorenstein silting $R$-module with the Gorenstein-projective presentation $\theta: G_{1}\to G_{0}$. Let $X\in {\rm Gen}_{G}(T)$. Then there is the $G$-epimorphic universal map $u: T^{(I)}\lxr X$ for some index set $I$. We will show that $K:= {\rm Ker}u$ lies in $D_{\theta}= {\rm Gen}_{G}(T)$. Pick $f: G_{1}\lxr K$. Since $T^{(I)}$ lies in $D_{\theta}$, we get the following commutative diagram of exact rows
+\[
+\xymatrix{
+ &  G_{1}\ar[r]^{\theta}\ar[d]_{f} &  G_{0}\ar[r]^{\pi}\ar[d]_{g} & T\ar[r]^{}\ar[d]_{h} & 0 \\
+0\ar[r]^{} & K\ar[r]^{v} &  T^{(I)}\ar[r]^{u} & X\ar[r]^{} & 0. }
+\]
+By the universality of $u$, there is the morphism $h': T\lxr  T^{(I)}$ such that $h= uh'$. Then by $ug=h\pi$ we have $u(g-h' \pi)=0$. Hence there is a map $g': G_{0}\lxr K$ such that $g-h' \pi= vg'$, and moreover,  we get from $vf=g\theta$ that $f=g'\theta$. This implies that $K\in D_{\theta}={\rm Gen}_{G}(T)$, and so ${\rm Gen}_{G}(T)\subseteq {\rm Pres}_{G}(T)$. This means that ${\rm Pres}_{G}(T)= {\rm Gen}_{G}(T)\subseteq T^{G\perp }$. Thus  Lemma ~\ref{Gorensteinstar} shows that $T$ is a Gorenstein star module.
+\end{proof}
+\end{prop}
+
+\vskip 10pt
+
+
+Recall that a ring  $R$ is Gorenstein if $R$  is two-sided Noetherian and has finite injective dimension, both as left and right $R\mbox{-}$module.
+
+\vskip 10pt
+
+\begin{thm}\
+\label{star}
+Let $R$ be a 1-Gorenstein ring and $T$ an $R$-module. Then the following are equivalent.
+\begin{enumerate}
+
+\item \ $T$ is a Gorenstein tilting module.
+
+
+\vskip 5pt
+
+\item \ $T$ is a Gorenstein silting module.
+
+\vskip 5pt
+
+\item \ $T$ is a Gorenstein star module and $Gi(R)\subset{\rm Pres}_{G}(T)$.
+\end{enumerate}
+\begin{proof}\ First by \cite[Theorem 3.2]{Z} we know that (1)$\Longleftrightarrow$ (3). The theorem immediately follows from
+Proposition~\ref{relation}.
+\end{proof}
+\end{thm}
+
+\vskip 10pt
+
+
+
+
+
+We finish this section with an important class of examples of (partial) Gorenstein silting modules: $\tau_{G}\mbox{-}$rigid modules over a finite dimensional $k$-algebra, where $\tau_{G}$ was introduced in \cite{G2} for an algebra of finite CM-type.
+
+
+\vskip 10pt
+
+\subsection{\bf Relative rigid modules over algebras of finite CM-type}\ From now on, let $A$ be a finite dimensional  $k\mbox{-}$algebra of finite CM-type over a field $k$ and ${\rm mod}A$ the category of finitely generated left $A$-modules. Use the notation in the introduction.
+Denote by ${\rm A(Gproj)}\mbox{-}{\rm mod}$ the category of finitely generated right ${\rm A(Gproj)}\mbox{-}$modules and ${\rm A(Gproj)}\mbox{-}\underline{{\rm mod}}$ the stable category of ${\rm A(Gproj)}\mbox{-}{\rm mod}$ modulo projective ${\rm A(Gproj)}\mbox{-}$modules. Let $D: {\rm A(Gproj)}\mbox{-}{\rm mod}\lxr {\rm mod}{\rm A(Gproj)}$ be the duality. For Simplicity, we denote the functors ${\rm Hom}_{A}(-,-)$ by $(-,-)$ and ${\rm Hom}_{{\rm A(Gproj)}}(-,-)$ by $_{{\rm A(Gproj)}}(-,-)$.
+
+\vskip 10pt
+
+Let $M$ be an $A\mbox{-}$module in ${\rm mod}A$. Then there is a minimal Gorenstein-projective presentation
+$G_{1}\lxr G_{0}\lxr M\lxr 0$ of $M$. This induces  the following exact sequences
+$$0\lxr (M, E)\lxr (G_{0}, E)\lxr (G_{1}, E)\lxr {\rm Tr}_{G}M\lxr 0$$
+and
+$$0\lxr \tau_{G}M\lxr D(G_{1}, E)\lxr D(G_{0}, E),$$
+with ${\rm Tr}_{G}M\in {\rm A(Gproj)}\mbox{-}{\rm mod}$ and $\tau_{G}M\in {\rm mod}{\rm A(Gproj)}$.
+Recall from \cite{G2} that $${\rm Tr}_{G}: {\rm mod}A/Gp(A)\lxr {\rm A(Gproj)}\mbox{-}\underline{{\rm mod}}$$
+is called the relative transpose  of $A$, and moreover, ${\rm Tr}_{G}$ is a faithful functor.
+
+\vskip 10pt
+
+\begin{defn}\
+\label{rigid}
+We say that an $A\mbox{-}$module $M$ is {\bf $\tau_{G}\mbox{-}$rigid} if ${\rm Hom}_{{\rm A(Gproj)}}((E,M), \tau_{G}M)=0$ for the left ${\rm A(Gproj)}\mbox{-}$module ${\rm Hom}_{A}(E,M)$.
+\end{defn}
+
+\vskip 10pt
+
+Next we provide some properties for $\tau_{G}\mbox{-}$rigid module. For an $A\mbox{-}$module $M$, put
+$$^{\perp_{0}}(\underline{\tau_{G}M}):= \{X\in {\rm mod}{\rm A(Gproj)} \mid \overline{{\rm Hom}}_{{\rm A(Gproj)}}(X, \tau_{G}M)=0 \}.$$
+
+\vskip 10pt
+
+\begin{prop}\
+\label{properties}
+Let $M$ be a finitely generated $A\mbox{-}$module and $$G_{1}\stackrel{f}{\lxr} G_{0}\lxr M\lxr 0  \eqno(*)$$ the minimal proper Gorenstein-projective presentation of $M$. Then the following statements hold.
+\begin{enumerate}
+
+\item $M$ is $\tau_{G}\mbox{-}$rigid if and only if ${\rm Hom}_{A}(f, M)$ is an epimorphism.
+
+
+\vskip 5pt
+
+
+
+\item $M$ is $\tau_{G}\mbox{-}$rigid if and only if ${\rm Hom}_{A}(E, M)$ is a $\tau\mbox{-}$rigid module, where $\tau$ is the Auslander-Reiten translation of ${\rm A(Gproj)}$.
+
+\vskip 5pt
+
+\item $\tau_{G}M\cong \tau(E, M).$
+
+\vskip 5pt
+
+\item Suppose that $M$ is $\tau_{G}\mbox{-}$rigid. Then ${\rm Hom}_{A}(E, {\rm Gen}_{G}M)\subseteq {^{\perp_{0}}(\underline{\tau_{G}M})}$.
+\end{enumerate}
+\begin{proof}\ There is an exact sequence
+$$0\lxr \tau_{G}M\lxr D(G_{1}, E)\lxr D(G_{0}, E).\eqno(**)$$
+Applying ${\rm Hom}_{{\rm A(Gproj)}}(N,-)$ for any ${\rm A(Gproj)}\mbox{-}$module $N$,  we have the following commutative diagram of exact sequences:
+\[
+\xymatrix@C=15pt{
+0\ar[r]^{} & _{{\rm A(Gproj)}}(N, \tau_{G}M)\ar[r]^{} & _{{\rm A(Gproj)}}(N, D(G_{1}, E))\ar[r]^{}\ar[ld]_{\cong} & _{{\rm A(Gproj)}}(N, D(G_{0}, E))\ar[ld]_{\cong}  &  \\
+& D_{{\rm A(Gproj)}}((E, G_{1}), N)\ar[r]^{} & D_{{\rm A(Gproj)}}((E, G_{0}), N)\ar[r]^{} & D_{{\rm A(Gproj)}}((E, M), N)\ar[r]^{} & 0. }
+\]
+Then we get that ${\rm Hom}_{{\rm A(Gproj)}}(N, \tau_{G}M)=0$ if and only if the map
+$${\rm Hom}_{{\rm A(Gproj)}}((E, G_{0}), N)\lxr {\rm Hom}_{{\rm A(Gproj)}}((E, G_{1}), N)$$
+is an epimorphism.
+
+\vskip 5pt
+
+(1) and (2) Applying ${\rm Hom}_{A}(E, -)$ the $(*)$, we can get the projective resolution of $(E, M)$:
+$$(E, G_{1})\stackrel{\sigma}{\lxr} (E, G_{0})\lxr (E, M)\lxr 0.$$
+Then we have from above arguments that ${\rm Hom}_{{\rm A(Gproj)}}((E,M), \tau_{G}M)=0$ if and only if ${\rm Hom}_{{\rm A(Gproj)}}(\sigma,$ $ (E,M))$ is epic if and only if ${\rm Hom}_{A}(f, M)$ is epic. Notice that the statement that ${\rm Hom}_{{\rm A(Gproj)}}(\sigma, (E,M))$ is epic means that ${\rm Hom}_{A}(E,M)$ is a partial silting ${\rm A(Gproj)}\mbox{-}$module, equivalently, ${\rm Hom}_{A}(E,M)$ is $\tau\mbox{-}$rigid.
+
+\vskip 5pt
+
+(3) Consider the exact sequence
+$$0\lxr \tau(E, M)\lxr  D_{{\rm A(Gproj)}}((E, G_{1}), {\rm A(Gproj)})\lxr D_{{\rm A(Gproj)}}((E, G_{0}), {\rm A(Gproj)}).$$
+Then  we get from  above arguments that $\tau_{G}M\cong {\rm Hom}_{{\rm A(Gproj)}}({\rm A(Gproj)}, \tau_{G}M) \cong \tau(E, M)$.
+
+\vskip 5pt
+
+(4) We have proved in (2) that ${\rm Hom}_{A}(E, M)$ is a $\tau\mbox{-}$rigid module. If $Y\in {\rm Gen}_{G}M$, then there is the $G$-exact sequence $M^{(I)}\lxr Y\lxr 0$ for some index set $I$.
+Therefore we have that $(E, {\rm Gen}_{G}M)\subseteq {\rm Gen}(E, M) \subseteq (E, M)^{\perp_{1}}$. Since there is the following isomorphisms
+$$\begin{aligned}
+{\rm Ext}_{{\rm A(Gproj)}}^{1}((E,M),\ X)&\cong D\underline{{\rm Hom}}_{{\rm A(Gproj)}}(\tau^{-1}X,\ (E,M))\\
+&\cong D\overline{{\rm Hom}}_{{\rm A(Gproj)}}(X,\ \tau(E,M))\\
+&\cong D\overline{{\rm Hom}}_{{\rm A(Gproj)}}(X,\ \tau_{G}M),
+\end{aligned}$$
+it follows that $X\in (E, M)^{\perp_{1}}$ if and only if $X\in {^{\perp_{0}}(\underline{\tau_{G}M})}$. Hence ${\rm Hom}_{A}(E, {\rm Gen}_{G}M)$ $\subseteq {^{\perp_{0}}(\underline{\tau_{G}M})}$.
+\end{proof}
+\end{prop}
+
+
+\vskip 10pt
+
+
+\begin{thm}\
+\label{equivalence}
+Let $A$ be a finite dimensional algebra of finite CM-type and $M$ an $A$-module in ${\rm mod}A$. Then $M$ is $\tau_{G}$-rigid if and only if $M$ is  a partial Gorenstein silting $A$-module.
+\begin{proof}\ Let $G_{1}\stackrel{\theta}{\lxr} G_{0}\lxr M\lxr 0$ be the minimal proper Gorenstein-projective presentation of $M$. Since
+$G_{0}$ and $G_{1}$ are finitely generated, it follows that $D_{\theta}$ is closed under coproducts. Then we get from Lemma~\ref{silting}
+that $D_{\theta}$ is a torsion class. On the other hand, we get from Proposition~\ref{properties}(1) that $M$ is $\tau_{G}$-rigid if and only if
+${\rm Hom}_{A}(\theta, M)$ is surjective. The latter implies that $M\in D_{\theta}$. Thus $M$ is $\tau_{G}$-rigid if and only if $M$ is  partial Gorenstein silting.
+\end{proof}
+\end{thm}
+
+\vskip 10pt
+
+
+
+
+
+
+Recall from \cite{DIJ} that an algebra $A$ is called $\tau\mbox{-}$tilting finite if it admits finite number of isomorphism classes of indecomposable $\tau\mbox{-}$rigid modules.
+
+
+\vskip 10pt
+
+\begin{defn} \ An algebra $A$ of finite CM-type is called $\tau_{G}\mbox{-}$tilting finite if it admits finite number of isomorphism classes of indecomposable $\tau_{G}\mbox{-}$rigid modules.
+\end{defn}
+
+
+\vskip 10pt
+
+\begin{cor}\ Let $A$ be an Artin algebra of finite CM-type and ${\rm A(Gproj)}$ the CM-Auslander algebra. If ${\rm A(Gproj)}$ is $\tau\mbox{-}$tilting finite, then $A$ is $\tau_{G}\mbox{-}$tilting finite, and further has finite number of isomorphism classes of indecomposable partial Gorenstein silting modules.
+\begin{proof} \ By Proposition~\ref{properties}(1), we know that an $A$-module $M$ is $\tau_{G}\mbox{-}$rigid if and only if ${\rm Hom}_{A}(E, M)$ is a $\tau\mbox{-}$rigid module. This implies the result by Theorem~\ref{equivalence}.
+\end{proof}
+\end{cor}
+
+\vskip 10pt
+
+
+
+
+
+
+
+
+
+\section{\bf 2-term Gorenstein silting complexes}
+
+\vskip 5pt
+
+In this section, we introduce the notion of the 2-term Gorenstein silting complex, which is in bijection  with the Gorenstein silting module.
+Then we characterise it by the connection with the t-structure and torsion pair. We also characterise the global dimension of endomorphism algebras of 2-term Gorenstein silting complexes over an algebra $A$ by terms of the Gorenstein dimension of $A$. Throughout, we denote by $A$ a finite dimensional $k$-algebra over a field $k$.
+
+
+\vskip 10pt
+
+
+\subsection{2-term Gorenstein silting complexes}\ In this subsection, we  introduce the definition of 2-term Gorenstein silting complexes, and show the links with t-structures and torsion pairs. The Brenner-Butler theorem  is given.
+\vskip 10pt
+
+\begin{defn}\
+\label{Gscomplex}
+Let  $G^{\bullet}: G_{1}\stackrel{d^{1}}{\lxr} G_{0}$ be a complex in $D_{gp}^{b}(A)$ with $G_{i}\in {\rm Gproj}A$ for $i=0,1$. We say that $G^{\bullet}$ is
+
+\vskip 5pt
+
+$\bullet$ \ {\bf 2-term partial Gorenstein silting} if it satisfies the following two conditions:
+
+\vskip 5pt
+
+
+{\rm (i)} $G_{1}\lxr {\rm Im}d^{1}$ and $G_{0}\lxr {\rm Coker}d^{1}$ are right ${\rm Gproj}A$-approximations;
+
+\vskip 5pt
+
+{\rm (ii)} ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\bullet}[1])=0$;
+
+
+\vskip 5pt
+
+$\bullet$ \ {\bf 2-term Gorenstein silting} in $K^{b}({\rm Gproj}A)$ if it is a  2-term partial Gorenstein silting complex and ${\rm thick}G^{\bullet}= K^{b}({\rm Gproj}A)$.
+\end{defn}
+
+\vskip 10pt
+
+
+
+
+
+Let $G^{\bullet}: G_{1}\lxr G_{0}$ be a 2-term Gorenstein silting complex in  $K^{b}({\rm Gproj}A)$. Consider the subcategories of $D_{gp}^{b}(A)$:
+$$D^{\leq 0}_{gp}(G^{\bullet})=\{X^{\bullet}\in D_{gp}^{b}(A)\mid {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X^{\bullet}[i])=0, \ for \ i>0\}$$
+and
+$$D^{\geq 0}_{gp}(G^{\bullet})=\{X^{\bullet}\in D_{gp}^{b}(A)\mid {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X^{\bullet}[i])=0, \ for \ i<0\},$$
+and the  subcategories of ${\rm mod}A:$
+$$\mathcal{T}(G^{\bullet})=\{X\in {\rm mod}A\mid {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X[1])=0\}$$
+and
+$$\mathcal{F}(G^{\bullet})=\{Y\in {\rm mod}A\mid {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, Y)=0\}.$$
+Then we have the following facts.
+
+\vskip 10pt
+
+\begin{lem}\
+
+\begin{enumerate}
+
+\item $(D^{\leq 0}_{gp}(G^{\bullet}),\ D^{\geq 0}_{gp}(G^{\bullet}))$ is a t-strucute in $D_{gp}^{b}(A)$.
+
+
+\vskip 5pt
+
+\item $\mathcal{T}(G^{\bullet})=D^{\leq 0}_{gp}(G^{\bullet})\cap {\rm mod}A$ and $\mathcal{F}(G^{\bullet})=D^{\geq 1}_{gp}(G^{\bullet})\cap {\rm mod}A$.
+\end{enumerate}
+\end{lem}
+\begin{proof}\ The proof of (1) can be found in \cite[Theorem 1.3]{HKM}. (2) can be obtained by definitions.
+\end{proof}
+
+\vskip 10pt
+
+Next we consider the relation between 2-term Gorenstein silting complexes, t-structures and  torsion pairs in module categories. A key lemma is given below.
+
+
+\vskip 10pt
+
+\begin{lem}\
+\label{exactseq}\
+For any $X^{\bullet}\in D_{gp}^{b}(A)$ and $n\in \mathbb{Z}$, we have a functorial exact sequence
+$$0\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ H^{n-1}(X^{\bullet})[1])\to {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ X^{\bullet}[n])$$
+$$\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ H^{n}(X^{\bullet}))\lxr 0.$$
+\end{lem}
+\begin{proof}\ For $X^{\bullet}[n]\in D_{gp}^{b}(A)$, applying ${\rm Hom}_{D_{gp}^{b}(A)}(-, X^{\bullet}[n])$ to a distinguished triangle
+$$G_{1}\stackrel{d^{1}}{\lxr} G_{0}\lxr G^{\bullet}\lxr G_{1}[1],$$
+we have a short exact sequence
+$$0\lxr {\rm Coker}({\rm Hom}_{D_{gp}^{b}(A)}(d^{1},\ X^{\bullet}[n-1]))\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ X^{\bullet}[n])$$
+$$\lxr {\rm Ker}({\rm Hom}_{D_{gp}^{b}(A)}(d^{1},\ X^{\bullet}[n]))\lxr 0.$$
+Since
+$$\begin{aligned}
+{\rm Ker}({\rm Hom}_{D_{gp}^{b}(A)}(d^{1},\ X^{\bullet}[n]))&\cong {\rm Ker}({\rm Hom}_{A}(d^{1},\ H^{n}(X^{\bullet})))\\
+&\cong {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ H^{n}(X^{\bullet})),
+\end{aligned}$$
+and
+$$\begin{aligned}
+{\rm Coker}({\rm Hom}_{D_{gp}^{b}(A)}(d^{1},\ X^{\bullet}[n-1]))&\cong {\rm Coker}({\rm Hom}_{A}(d^{1},\ H^{n-1}(X^{\bullet})))\\
+&\cong {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ H^{n-1}(X^{\bullet})[1]),
+\end{aligned}$$
+we get the desired exact sequence.
+\end{proof}
+
+\vskip 10pt
+
+
+\begin{prop}\
+\label{heart}
+Let $G^{\bullet}$ be a 2-term Gorenstein silting complex in $K^{b}({\rm Gproj}A)$, and  $\mathcal{C}_{gp}(G^{\bullet}):=D_{gp}^{\leq 0}(G^{\bullet})\cap D_{gp}^{\geq 0}(G^{\bullet})$ the heart of the induced t-structure $(D_{gp}^{\leq 0}(G^{\bullet}),\ D_{gp}^{\geq 0}(G^{\bullet}))$. Let $B={\rm End}_{D_{gp}^{b}(A)}(G^{\bullet})^{op}$.
+
+\vskip 5pt
+
+\vskip 5pt
+
+\begin{enumerate}
+\item $\mathcal{C}_{gp}(G^{\bullet})$ is an abelian category and the short exact sequences in $\mathcal{C}_{gp}(G^{\bullet})$ are precisely the triangles in $D_{gp}^{b}(A)$ all of whose vertices are objects in $\mathcal{C}_{gp}(G^{\bullet})$.
+
+\vskip 5pt
+
+\item For a complex $X^{\bullet}$ in $D_{gp}^{b}(A)$, we have that $X^{\bullet}$ is in $\mathcal{C}_{gp}(G^{\bullet})$ if and only if $H^{0}(X^{\bullet})$ is in $\mathcal{T}(G^{\bullet}),\ H^{-1}(X^{\bullet})$ is in $\mathcal{F}(G^{\bullet})$ and $H^{i}(X^{\bullet})=0$ for $i\neq -1,0$.
+
+\vskip 5pt
+
+\item  The functor ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -): \mathcal{C}_{gp}(G^{\bullet})\lxr {\rm mod}B$ is an equivalence of abelian categories.
+
+\vskip 5pt
+
+\item For any $E\in {\rm Gproj}A$, there is a triangle in $D_{gp}^{b}(A)$
+$$E\stackrel{e}{\lxr} G^{\prime\bullet }\stackrel{f}{\lxr} G^{ \prime \prime\bullet}\stackrel{g}{\lxr} E[1] \ \ \ \ \ \ \ \ \ \ \ \ (\triangle_{G^{\bullet}})$$
+with $G^{\prime\bullet }, G^{\prime \prime\bullet }\in {\rm add}G^{\bullet}$.
+
+
+
+\vskip 5pt
+
+
+\item Suppose that $A$ is of finite CM-type with the Gorenstein-projective generator $E$. Then $$Q^{\bullet}: {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\prime \bullet})\xrightarrow{{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, f)} {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\prime \prime \bullet})$$ is a 2-term partial silting complex in $K^{b}({\rm proj} B)$, where $f$ is the map from the triangle $\triangle_{G^{\bullet}}$ of the Gorenstein-projective generator $E$.
+\end{enumerate}
+\end{prop}
+\begin{proof}\ (1)\ The pair $(D_{gp}^{\leq 0}(G^{\bullet}), D_{gp}^{\geq 0}(G^{\bullet}))$ is a t-structure in $D_{gp}^{b}(A)$. Then we come to the conclusion.
+
+\vskip 5pt
+
+(2)\ From Lemma~\ref{exactseq}, we have that
+$$\begin{aligned}
+& \ \ \ \ D_{gp}^{\leq 0}(G^{\bullet})\\
+&=\{X^{\bullet}\in D_{gp}^{b}(A)\mid{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, H^{i}(X^{\bullet}))=0\ {\rm for}\ i>0, \ {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, H^{j}(X^{\bullet})[1])=0\ {\rm for}\ j\geq0 \}\\
+&=\{X^{\bullet}\in D_{gp}^{b}(A)\mid H^{i}(X^{\bullet})=0\ {\rm for}\ i>0\ {\rm and}\ {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ H^{0}(X^{\bullet})[1])=0\}\\
+&=\{X^{\bullet}\in D_{gp}^{b}(A)\mid H^{i}(X^{\bullet})=0\ {\rm for}\ i>0\ {\rm and}\ H^{0}(X^{\bullet})\in \mathcal{T}(G^{\bullet})\},
+\end{aligned}$$
+and
+$$\begin{aligned}
+& \ \ \ \ D_{gp}^{\geq 0}(G^{\bullet})\\
+&=\{X^{\bullet}\in D_{gp}^{b}(A)\mid {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, H^{i}(X^{\bullet}))=0\ {\rm for}\ i<0, \ {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, H^{j}(X^{\bullet})[1])=0\ {\rm for}\ j<-1 \}\\
+&=\{X^{\bullet}\in D_{gp}^{b}(A)\mid H^{i}(X^{\bullet})=0\ {\rm for}\ i<-1\ {\rm and}\ {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ H^{-1}(X^{\bullet}))=0\}\\
+&=\{X^{\bullet}\in D_{gp}^{b}(A)\mid H^{i}(X^{\bullet})=0\ {\rm for}\ i<-1\ {\rm and}\ H^{-1}(X^{\bullet})\in \mathcal{F}(G^{\bullet})\}.
+\end{aligned}$$
+Therefore, we get that $X^{\bullet}\in \mathcal{C}_{gp}(G^{\bullet})$ if and only if $H^{0}(X^{\bullet})\in \mathcal{T}(G^{\bullet}),\ H^{-1}(X^{\bullet})\in \mathcal{F}(G^{\bullet})$ and $H^{i}(X^{\bullet})=0$ for $i\neq -1,0$.
+
+\vskip 5pt
+
+(3)\ The proof can be found in \cite[Theorem 1.3]{HKM}.
+
+\vskip 5pt
+
+(4)\ Let $G^{\prime \prime \bullet}\lxr E[1]$ be a right add$G^{\bullet}$-approximation of $E[1]$. Extend it to a triangle
+$$E\lxr H^{\bullet}\lxr G^{\prime \prime \bullet}\lxr E[1],\eqno(*)$$
+where $H^{\bullet}$ is a 2-term complex in $K^{b}({\rm Gproj}A)$. By applying the functors ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -)$ and ${\rm Hom}_{D_{gp}^{b}(A)}(-, G^{\bullet})$ to the triangle $(*)$, we have that
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, H^{\bullet}[1])=0 \ \ \ and\ \ \ {\rm Hom}_{D_{gp}^{b}(A)}(H^{\bullet}, G^{\bullet}[1])=0.$$
+Applying ${\rm Hom}_{D_{gp}^{b}(A)}(-, H^{\bullet})$ yields ${\rm Hom}_{D_{gp}^{b}(A)}(H^{\bullet}, H^{\bullet}[1])=0$. Hence
+$G^{\bullet}\oplus H^{\bullet}$ is a 2-term partial Gorenstein silting complex in $K^{b}({\rm Gproj}A)$. The triangle $(*)$ shows that $E\in {\rm thick}(G^{\bullet}\oplus H^{\bullet})$ and so $G^{\bullet}\oplus H^{\bullet}$ is a 2-term Gorenstein silting complex. Therefore, we get the desired triangle $\triangle_{G^{\bullet}}$.
+
+
+\vskip 5pt
+
+
+(5) \ Let $\alpha$ be a morphism in ${\rm Hom}_{K^{b}({\rm proj}B)}(Q^{\bullet}, Q^{\bullet}[1])$. Then it has the following form
+\[
+\xymatrix@C=55pt{
+ & {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\prime \bullet})\ar[r]^{{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, f)}\ar[d]^{\alpha} & {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\prime \prime \bullet})  \\
+{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\prime \bullet})\ar[r]^{{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, f)} & {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\prime \prime \bullet}) &, }
+\]
+and there is a morphism $h: G^{\prime \bullet}\lxr G^{\prime \prime \bullet}$ such that $\alpha= {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, h)$. Since ${\rm Hom}_{D_{gp}^{b}(A)}(E,$ $ E[1])=0$, there are unique morphisms $h_{1},\ h_{2}$ such that the following diagram
+\[
+\xymatrix@C=45pt{
+E\ar[r]^{e}\ar[d]^{h_{1}} & G^{\prime \bullet}\ar[r]^{f}\ar[d]^{h}\ar@{-->}[ld]_{h_{4}} & G^{\prime \prime \bullet}\ar[r]^{g}\ar[d]^{h_{2}}\ar@{-->}[ld]_{h_{3}} & E[1]\ar[d]^{h_{1}[1]}  \\
+G^{\prime \bullet}\ar[r]^{f} & G^{\prime \prime \bullet}\ar[r]^{g} & E[1]\ar[r]^{-e[1]} & G^{\prime \bullet}[1]. }
+\]
+is commutative. So there is a morphism $h_{3}$ such that $h_{2}=gh_{3}$, and also,
+$$g(h-h_{3}f)=gh-gh_{3}f=gh-h_{2}f=0.$$
+Hence there is a morphism $h_{4}$ such that $h-h_{3}f=fh_{4}$. Applying ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -)$ to $h-h_{3}f=fh_{4}$ yields
+$$\alpha= {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, h_{3}){\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, f)+ {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, f){\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, h_{4}),$$
+which implies that $\alpha$ regarded as a map in ${\rm Hom}_{K^{b}({\rm proj}B)}(Q^{\bullet}, Q^{\bullet}[1])$ is null-homotopic. Thus, $Q^{\bullet}$ is a 2-term partial silting complex in $K^{b}({\rm proj}B)$.
+\end{proof}
+
+\vskip 10pt
+
+
+
+
+
+Let $X\in {\rm mod}A$. Consider the canonical sequence of $X$:
+$$0\lxr tX\stackrel{i_{X}}{\lxr} X\lxr X/tX\lxr 0,$$
+where $tX=\sum {\rm Im}f$ with $f\in {\rm Hom}_{A}(H^{0}(G^{\bullet}),\ X) $ such that any $g:E\lxr X$ factors through $f$ for any $E\in {\rm Gproj}A$. We collect some properties of $\mathcal{T}(G^{\bullet})$ and $\mathcal{F}(G^{\bullet})$.
+
+\vskip 5pt
+
+\begin{lem}\ The following hold:
+
+\vskip 5pt
+
+\begin{enumerate}
+\item $\mathcal{T}(G^{\bullet})$ is closed under $G$-epimorphic images.
+
+\vskip 5pt
+
+\item $\mathcal{F}(G^{\bullet})$ is closed under $G$-submodules.
+\vskip 5pt
+
+\item For any $X\in {\rm mod}A,\ {\rm Hom}_{A}(H^{0}(G^{\bullet}),\ i_{X})$ is an isomorphism.
+\end{enumerate}
+\end{lem}
+\begin{proof}\ (1)\ \ Let $0\lxr X\lxr Y\lxr Z\lxr 0$ be a $G$-exact sequence in ${\rm mod}A$. Applying ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -)$, we get the following exact sequence
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, Y[1])\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, Z[1])\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X[2]).$$
+Since ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X[2])=0$, then we have that $Y\in \mathcal{T}(G^{\bullet})$ implies $Z\in \mathcal{T}(G^{\bullet})$.
+
+\vskip 5pt
+
+(2)\ \ Let $0\lxr X\lxr Y\lxr Z\lxr 0$ be a $G$-exact sequence in ${\rm mod}A$. Applying ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -)$, we get the following exact sequence
+$$0\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X)\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, Y)\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, Z).$$
+Hence $Y\in \mathcal{F}(G^{\bullet})$ implies $X\in \mathcal{F}(G^{\bullet})$.
+
+\vskip 5pt
+
+(3)\ \ By the definition of $tX$, we immediately obtain the desired isomorphism.
+\end{proof}
+
+\vskip 10pt
+
+\begin{lem}\
+\label{triangle}
+There exists a triangle in  $D_{gp}^{b}(A)$ for a 2-term Gorenstein silting complex $G^{\bullet}$ of the form
+$$H^{-1}(G^{\bullet})[1]\lxr G^{\bullet}\lxr H^{0}(G^{\bullet})\lxr H^{-1}(G^{\bullet})[2].$$
+\begin{proof}\ Let $G^{\prime\bullet}:=0\lxr {\rm Im}d^{1}\lxr G_{0}\lxr 0$. We have a $G$-exact sequence
+$$0\lxr {\rm Ker}d^{1}[1]\lxr G^{\bullet}\lxr G^{\prime\bullet}\lxr 0$$
+in $C^{b}(A)$. Since $G^{\prime\bullet}$ is $\mathcal{GP}$-quasi-isomorphic to
+$H^{0}(G^{\bullet})$, then  $G^{\prime\bullet}\cong H^{0}(G^{\bullet})$ in $D_{gp}^{b}(A)$, we get the desired triangle in $D_{gp}^{b}(A)$ of the form
+$$H^{-1}(G^{\bullet})[1]\lxr G^{\bullet}\lxr H^{0}(G^{\bullet})\lxr H^{-1}(G^{\bullet})[2].$$
+\end{proof}
+\end{lem}
+
+\vskip 10pt
+
+\begin{lem}\
+\label{functorialisomorphism}
+For any $X\in {\rm mod}A$, we have a functorial isomorphism
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X)\cong {\rm Hom}_{A}(H^{0}(G^{\bullet}), X)$$
+and a monomorphism
+$${\rm Hom}_{D_{gp}^{b}(A)}(H^{0}(G^{\bullet}), X[1])\lxr {\rm Hom}_{A}(G^{\bullet}, X[1]).$$
+\begin{proof}\ Applying ${\rm Hom}_{D_{gp}^{b}(A)}(-, X)$ to the triangle in Lemma ~\ref{triangle}
+$$H^{-1}(G^{\bullet})[1]\lxr G^{\bullet}\lxr H^{0}(G^{\bullet})\lxr H^{-1}(G^{\bullet})[2]$$
+and using that there is no non-zero negative extensions between modules, we get the required isomorphism and monomorphism.
+\end{proof}
+\end{lem}
+
+\vskip 10pt
+
+\begin{thm}\
+\label{torsionpair}\ The following are equivalent for a complex $G^{\bullet}: G_{1}\lxr G_{0}$ with $G_{i}\in {\rm Gproj}A$.
+
+\vskip 5pt
+
+\begin{enumerate}
+\item $G^{\bullet}$ is a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$.
+
+\vskip 5pt
+
+\item $\mathcal{T}(G^{\bullet})\cap \mathcal{F}(G^{\bullet})={0}$ and $H^{0}(G^{\bullet})\in \mathcal{T}(G^{\bullet})$.
+
+\vskip 5pt
+
+\item $\mathcal{T}(G^{\bullet})\cap \mathcal{F}(G^{\bullet})={0}$ and $t(X)\in \mathcal{T}(G^{\bullet}), \ X/tX\in \mathcal{F}(G^{\bullet})$ for all $X\in {\rm mod}A$.
+
+\vskip 5pt
+
+\item $(\mathcal{T}(G^{\bullet}), \mathcal{F}(G^{\bullet}))$ is a torsion pair for ${\rm mod}A$.
+\end{enumerate}
+\end{thm}
+\begin{proof}\ ${\rm (1)\Leftrightarrow (2)}$\ ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\bullet}[i])=0$ for all $i>0$ if and only if $H^{0}(G^{\bullet})\in \mathcal{T}(G^{\bullet})$ by Lemma~\ref{exactseq}. For any $X\in \mathcal{T}(G^{\bullet})\cap \mathcal{F}(G^{\bullet}),\ {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X[n])=0$ for all $n\in \mathbb{Z}$ and hence $X=0$. Conversely, let $X^{\bullet}\in D_{gp}^{b}(A)$ with ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X[n])=0$ for all $n\in \mathbb{Z}$. Then by Lemma~\ref{exactseq}, $H^{n}(X^{\bullet})\in \mathcal{T}(G^{\bullet})\cap \mathcal{F}(G^{\bullet})={0}$.
+
+\vskip 5pt
+
+${\rm (2)\Rightarrow (3)}$\ Let $X\in {\rm mod}A$. Since $H^{0}(G^{\bullet})\in \mathcal{T}(G^{\bullet})$, it follows that $tX\in \mathcal{T}(G^{\bullet})$. Next, since  there is an isomorphism by Lemma~\ref{functorialisomorphism}
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X/tX)\cong {\rm Hom}_{A}(H^{0}(G^{\bullet}), X/tX),$$
+and ${\rm Hom}_{A}(H^{0}(G^{\bullet}), i_{X})$ is an isomorphism, it follows that ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X/tX)=0$ and hence $ X/tX\in \mathcal{F}(G^{\bullet})$.
+
+\vskip 5pt
+
+${\rm (3)\Rightarrow (4)}$\ It can be obtained by the definition.
+
+\vskip 5pt
+
+${\rm (4)\Rightarrow (2)}$\ We just need to prove that $H^{0}(G^{\bullet})\in \mathcal{T}(G^{\bullet})$. By Lemma~\ref{functorialisomorphism}
+$$0={\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, \mathcal{F}(G^{\bullet}))\cong {\rm Hom}_{A}(H^{0}(G^{\bullet}), \mathcal{F}(G^{\bullet})),$$
+it follows from $(\mathcal{T}(G^{\bullet}), \mathcal{F}(G^{\bullet}))$ is a torsion pair that $H^{0}(G^{\bullet})\in \mathcal{T}(G^{\bullet})$.
+\end{proof}
+
+\vskip 10pt
+
+\begin{rem}\
+\label{torequi}\
+Note that the torsion pair $(\mathcal{T}(G^{\bullet}), \mathcal{F}(G^{\bullet}))$ coincides with $(D_{\theta}, T^{\perp 0})$ defined in the subsection 2.1.
+\end{rem}
+\begin{proof}\ Let $G^{\bullet}: G_{1}\stackrel{\theta}{\lxr} G_{0}$ be a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$, and $T=H^{0}(G^{\bullet})={\rm Coker}\theta$.  On one hand, consider the distinguished triangle in $D_{gp}^{b}(A)$
+$$G_{1}\stackrel{\theta}{\lxr} G_{0}\lxr G^{\bullet}\lxr G_{1}[1].$$
+Applying the functor ${\rm Hom}_{D_{gp}^{b}(A)}(-, X)$ for any $A\mbox{-}$module $X$, there is the induced exact sequence
+$${\rm Hom}_{D_{gp}^{b}(A)}(G_{0}, X)\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G_{1}, X)\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}[-1], X)\lxr 0.$$
+Since ${\rm Hom}_{D_{gp}^{b}(A)}(G_{i}, X)\cong {\rm Hom}_{A}(G_{i}, X)$ with $i=0,1$, we get that $X\in D_{\theta}$ if and only if ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X[1])=0$ if and only if $X\in \mathcal{T}(G^{\bullet})$.
+
+\vskip 5pt
+
+On the other hand, since
+$${\rm Hom}_{A}(T, X)\cong {\rm Hom}_{D_{gp}^{b}(A)}(T, X)\cong {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X),$$
+we get that $X\in T^{\perp 0}$ if and only if $X\in \mathcal{F}(G^{\bullet})$.
+\end{proof}
+
+\vskip 10pt
+
+
+\begin{prop}\ Let $G^{\bullet}$ be a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$ and $(\mathcal{T}(G^{\bullet}), $ $ \mathcal{F}(G^{\bullet}))$ the torsion pair induced by $G^{\bullet}$.
+
+\vskip 5pt
+
+\begin{enumerate}
+\item For any $X\in {\rm mod}A$,  $X\in {\rm add}H^{0}(G^{\bullet})$ if and only if $X$ is ${\rm Ext}$-projective in $\mathcal{T}(G^{\bullet})$.
+
+\vskip 5pt
+
+\item For any $X\in \mathcal{T}(G^{\bullet})$, there is a $G$-exact sequence $0\lxr L\lxr T_{0}\lxr X\lxr 0$ with $T_{0}\in {\rm add}H^{0}(G^{\bullet})$ and $L\in \mathcal{T}(G^{\bullet})$.
+\end{enumerate}
+\end{prop}
+\begin{proof}\ Assume that $X$ is Ext-projective in $\mathcal{T}(G^{\bullet})$. Since $\mathcal{T}(G^{\bullet})={\rm Fac}H^{0}(G^{\bullet})$, there is a G-exact sequence
+$$0\lxr L\lxr T_{0}\stackrel{\alpha}{\lxr} X\lxr 0,\eqno(**)$$
+where $T_{0}\stackrel{\alpha}{\lxr} X$ is a right ${\rm add}H^{0}(G^{\bullet})\mbox{-}$approximation. Since ${\rm Hom}_{A}(H^{0}(G^{\bullet}),\ \alpha)$ is an epimorphism, we have that ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, \alpha)$ is an epimorphism. Applying ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -)$ to $(**)$, we have an exact sequence
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, T_{0}) \xrightarrow{{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, \alpha)} {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X)\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, L[1])\lxr 0.$$
+Then ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, L[1])=0$ which implies that $L$ is in $\mathcal{T}(G^{\bullet})$. Thus, by assumption, the sequence $(**)$ splits, and hence $X$ is in ${\rm add}H^{0}(G^{\bullet})$.
+
+\vskip 5pt
+
+By the monomorphism in Lemma~\ref{functorialisomorphism}, we have that ${\rm add}H^{0}(G^{\bullet})$ is Ext-projective in $\mathcal{T}(G^{\bullet})$.
+\end{proof}
+
+\vskip 10pt
+
+\begin{thm}\ Suppose that $A$ is a Gorenstein algebra of finite CM-type with the Gorenstein projective generator $G$, and ${\rm A(Gproj)}={\rm End}_{A}(E)^{\rm op}$. Let $G^{\bullet}: G_{1}\stackrel{\theta}{\lxr} G_{0}$ be a 2-term complex in $D_{gp}^{b}(A)$, and $T=H^{0}(G^{\bullet})={\rm Coker}\theta$. Then the following statements are equivalent.
+
+\vskip 5pt
+
+\begin{enumerate}
+\item $T$ is a Gorenstein silting module with respect to $\theta$ in ${\rm mod}A$.
+
+\vskip 5pt
+
+\item $G^{\bullet}: G_{1}\stackrel{\theta}{\lxr} G_{0}$ is a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$.
+\end{enumerate}
+\end{thm}
+\begin{proof}\ First, we claim that $T$ is a partial Gorenstein silting module with respect to $\theta$ if and only if $G^{\bullet}$ is a 2-term partial Gorenstein silting complex.
+
+\vskip 5pt
+
+Assume that $T$ is a partial Gorenstein silting module. By definition we know that ${\rm Hom}_{A}(\theta, T)$ is an epimorphism. Then we get that ${\rm Hom}_{{\rm A(Gproj)}}((E,\theta), (E, T))$ is an epimorphism from the proof of Proposition ~\ref{properties}(1). Let $\sigma:= {\rm Hom}_{A}(E, \theta)$. By the following diagram,
+\[
+\xymatrix@C=1.5cm{
+&  {\rm Hom}_{A}(E, G_{1}) \ar[r]^{\sigma} \ar[dr]^{f} \ar@{-->}[d]^{h} \ar@{-->}[dl]^{s_{1}}  &  {\rm Hom}_{A}(E, G_{0}) \ar@{-->}[d]^{g} \ar@{-->}[dl]^{s_{0}} \\
+{\rm Hom}_{A}(E, G_{1}) \ar[r]_{\sigma}  &  {\rm Hom}_{A}(E, G_{0}) \ar[r]_{\pi} & {\rm Hom}_{A}(E, T) \\
+}
+\]
+there exists a morphism $g:{\rm Hom}_{A}(E, G_{0})\lxr {\rm Hom}_{A}(E, T)$, such that $f=g\sigma$. Since ${\rm Hom}_{A}(G, G_{1})$ is projective, there exists a morphism $$h: {\rm Hom}_{A}(E, G_{1})\lxr {\rm Hom}_{A}(E, G_{0}),$$
+such that $f=\pi h$. Similarly since ${\rm Hom}_{A}(E, G_{0})$ is projective, there exists a morphism
+$$s_{0}: {\rm Hom}_{A}(E, G_{0})\lxr {\rm Hom}_{A}(E, G_{0}),$$
+such that $g=\pi s_{0}$. Therefore $\pi h=\pi s_{0}\sigma$, i.e., $\pi (h-s_{0}\sigma)=0$. It follows that there is
+$$s_{1}: {\rm Hom}_{A}(E, G_{1})\lxr {\rm Hom}_{A}(E, G_{1}),$$
+such that $h-s_{0}\sigma=\sigma s_{1}$, which shows that $h$ is null-homotopic. This implies that ${\rm Hom}_{{\rm A(Gproj)}}((E, G^{\bullet}),\ (E, G^{\bullet})[1])=0$. Therefore, we get that ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\bullet}[1])=0$. This implies that $G^{\bullet}$ is a 2-term partial Gorenstein silting complex.
+
+\vskip 5pt
+
+Conversely, if $G^{\bullet}$ is a 2-term partial Gorenstein silting complex, then by the diagram above, we have that $h=s_{0}\sigma+\sigma s_{1}$. Then $f=\pi h=\pi s_{0}\sigma+\pi \sigma s_{1}=(\pi s_{0})\sigma$, which means that ${\rm Hom}_{{\rm A(Gproj)}}((E,\theta),\ (E, T))$ is an epimorphism. Therefore ${\rm Hom}_{A}(\theta, T)$ is an epimorphism, and so $T\in D_{\theta}$. This implies that $T$ is a partial Gorenstein silting module with respect to $\theta$.
+
+\vskip 5pt
+
+(1)$\Rightarrow$(2)\ By Theorem ~\ref{torsionpair}, we prove that $\mathcal{T}(G^{\bullet})\cap \mathcal{F}(G^{\bullet})={0}$ and $H^{0}(G^{\bullet})\in \mathcal{T}(G^{\bullet})$. From Remark ~\ref{torequi}, we have $T=H^{0}(G^{\bullet})\in D_{\theta}= \mathcal{T}(G^{\bullet})$. Let $X\in \mathcal{T}(G^{\bullet})\cap \mathcal{F}(G^{\bullet})= D_{\theta}\cap T^{\perp 0}= {\rm Gen}_{G}(T)\cap T^{\perp 0}$. Then there is a $G\mbox{-}$epimorphism $T_{0}\lxr X\lxr 0$ with $T_{0}\in {\rm Add}T$, and ${\rm Hom}_{A}(T,X)=0$. Therefore we can get from the induced exact sequence $0\lxr (X, X)\lxr (T_{0}, X)$ that $X=0$. Thus $G^{\bullet}: G_{1}\stackrel{\theta}{\lxr} G_{0}$ is a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$.
+
+\vskip 5pt
+
+(2)$\Rightarrow$(1)\ By the above claim, we see that $T$ is a partial Gorenstein silting module, and so ${\rm Gen}_{G}(T)\subseteq D_{\theta}$. From Proposition 3.9, for any $X\in D_{\theta}=\mathcal{T}(G^{\bullet})$, there is a $G$-exact sequence $$0\lxr L\lxr T_{0}\lxr X\lxr 0$$
+with $T_{0}\in {\rm add}H^{0}(G^{\bullet})={\rm add}T$ and $L\in \mathcal{T}(G^{\bullet})$. Then we get that $X\in {\rm Gen}_{G}(T)$. Therefore $T$ is a Gorenstein silting module with respect to $\theta$ in ${\rm mod}A$.
+\end{proof}
+
+\vskip 10pt
+
+
+Let $B={\rm End}_{D_{gp}^{b}(A)}(G^{\bullet})^{op}$. Consider the subcategories of ${\rm mod}B$
+$$\mathcal{X}(G^{\bullet})= {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ \mathcal{F}(G^{\bullet})[1]) \ \ \ and \ \ \ \mathcal{Y}(G^{\bullet})= {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet},\ \mathcal{T}(G^{\bullet})).$$
+Then we can draw the Brenner-Butler theorem in this setting.
+
+\vskip 5pt
+
+\begin{thm}\
+\label{torsioninb}\ Let $G^{\bullet}$ be a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$. Then $(\mathcal{X}(G^{\bullet}), \mathcal{Y}(G^{\bullet}))$ is a torsion pair in ${\rm mod}B$ and there are equivalences
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -): \mathcal{T}(G^{\bullet})\lxr \mathcal{Y}(G^{\bullet}),$$
+and
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, -[1]): \mathcal{F}(G^{\bullet})\lxr \mathcal{X}(G^{\bullet}).$$
+The equivalences send $G$-exact sequences with terms in $\mathcal{T}(G^{\bullet})$ (resp. $\mathcal{F}(G^{\bullet})$) to short exact sequences in ${\rm mod}B$.
+\end{thm}
+\begin{proof}\ This follows from Proposition ~\ref{heart} (1) and (3), using that $\mathcal{T}(G^{\bullet})\cup \mathcal{F}(G^{\bullet})\subset \mathcal{C}_{gp}(G^{\bullet})$.
+\end{proof}
+
+\vskip 10pt
+
+
+We finish this section with an interesting property of the 2-term Gorenstein silting complex over a finite dimensional Gorenstein algebra $A$ of finite CM-type with the Gorenstein-projective generator $E$.
+
+\vskip 10pt
+
+
+
+
+Let $G^{\bullet}: G_{1}\stackrel{d^{1}}{\lxr} G_{0}$ be the 2-term complex over ${\rm Gproj}A$, and set
+$$P^{\bullet}: {\rm Hom}_{A}(E, G_{1})\lxr {\rm Hom}_{A}(E, G_{0}).$$
+
+
+\vskip 5pt
+
+
+\begin{prop}\ Suppose that $A$ is a Gorenstein algebra. Then  $G^{\bullet}$ is a 2-term Gorenstein silting complex in
+$D_{gp}^{b}(A)$ if and only if $P^{\bullet}$ is a 2-term silting complex in $D^{b}({\rm A(Gproj)})$.
+\end{prop}
+\begin{proof}\ Since ${\rm Hom}_{A}(E, -)$ is a fully faithful functor, we have that
+$${\rm Hom}_{D^{b}({\rm A(Gproj)})}(P^{\bullet},\ P^{\bullet}[1])\cong {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\bullet}[1]).$$
+On the other hand, from \cite{GZ}, there is a triangle-equivalence $D_{gp}^{b}(A)\cong D^{b}({\rm A(Gproj)})$ induced by ${\rm Hom}_{A}(E, -)$. This completes the proof.
+\end{proof}
+
+\vskip 10pt
+
+
+
+\subsection{\bf On global dimension} \  In this subsection, we compare the global dimension between $A$ and $B$, where  $G^{\bullet}$ is a 2-term Gorenstein silting complex in $D_{gp}^{b}(A)$, and  $B={\rm End}_{D_{gp}^{b}(A)}(G^{\bullet})^{op}$.
+
+
+\vskip 10pt
+
+
+Recall from \cite{IY}, for full subcategories $\mathcal{X}$ and $\mathcal{Y}$ of $D^{b}_{gp}(A)$, denote $$\mathcal{X}\ast \mathcal{Y}:=\{Z\in D^{b}_{gp}(A)\mid {\rm there\ exists\ a\ triangle}\ X\lxr Z\lxr Y\lxr X[1]$$
+$${\rm in}\ D^{b}_{gp}(A)\ {\rm with}\ X\in \mathcal{X}\ {\rm and}\ Y\in \mathcal{Y}\}.$$
+By the octahedral axiom, we have that $(\mathcal{X}\ast \mathcal{Y})\ast \mathcal{Z}=\mathcal{X}\ast(\mathcal{Y}\ast \mathcal{Z})$. Call $\mathcal{X}$ extension closed if $\mathcal{X}\ast \mathcal{X}=\mathcal{X}$. Now fix ${\rm GP}={\rm add}G^{\bullet}$ and ${\rm GP_{c}}={\rm GP}\cap \mathcal{C}_{gp}(G^{\bullet})$.
+
+\vskip 10pt
+
+
+\begin{lem}\
+\label{c1}
+$\mathcal{C}_{gp}(G^{\bullet})\subset {\rm GP}\ast {\rm GP}[1]\ast \cdots \ast {\rm GP}[d+1]$ for some non-negative integer $d$.
+\end{lem}
+\begin{proof}\ Note that
+$$\mathcal{C}_{gp}(G^{\bullet})\subset D_{gp}^{\leq 0}(G^{\bullet})\subset {\rm GP}\ast {\rm GP}[1]\ast \cdots \ast {\rm GP}[l-1]\ast {\rm GP}[l]$$
+for some $l>0$. For any $X^{\bullet}\in \mathcal{C}_{gp}(G^{\bullet})$, we have $H^{i}(X^{\bullet})=0$ for $i\neq -1,0$. Taking a projective resolution $P^{\bullet}$ of  $X^{\bullet}$, then there exists some non-negative integer $d$ such that $H^{i}(P^{\bullet})=0$ for $i>0$ or $i<-d-1$. Therefore
+$${\rm Hom}_{D_{gp}^{b}(A)}(X^{\bullet},\ G^{\bullet}[i])\cong {\rm Hom}_{D_{gp}^{b}(A)}(P^{\bullet},\ G^{\bullet}[i])=0,\ i\geq d+2,$$
+which implies that $X^{\bullet}\in {\rm GP}\ast {\rm GP}[1]\ast \cdots \ast {\rm GP}[d+1]$.
+\end{proof}
+
+\vskip 10pt
+
+\begin{lem}\
+\label{c2}
+For the complex $X^{\bullet}\in \mathcal{C}_{gp}(G^{\bullet})\cap ({\rm GP_{c}}\ast {\rm GP_{c}}[1]\ast \cdots \ast {\rm GP_{c}}[m])$ for some $m\geq 0$, we have ${\rm pd}{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X^{\bullet})_{B}\leq m$.
+\end{lem}
+\begin{proof}\ Let $X_{0}^{\bullet}=X^{\bullet}$. There are triangles
+$$X_{i+1}^{\bullet}\lxr O_{i}^{\bullet}\stackrel{g_{i}}{\lxr} X_{i}^{\bullet}\lxr X_{i+1}^{\bullet}[1],\ \ \ 0\leq i\leq m-1$$
+where $O_{i}^{\bullet}\in {\rm GP_{c}}$ and $X_{i}^{\bullet}\in {\rm GP_{c}}\ast {\rm GP_{c}}[1]\ast \cdots \ast {\rm GP_{c}}[m-i]$. Since ${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, G^{\bullet}[i])=0$ for all $i>0$, we have that $g_{i}$ is a right ${\rm GP}\mbox{-}$approximation of $X_{i}^{\bullet}$. Then we get the following induced exact sequence
+$${\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X_{i+1}^{\bullet})\lxr {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, O_{i}^{\bullet})\xrightarrow{{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, g_{i})} {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X_{i}^{\bullet})\lxr 0.$$
+Then we get that
+$${\rm pd} {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X_{i}^{\bullet})_{B}\leq {\rm pd} {\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X_{i+1}^{\bullet})_{B}+1.$$
+Therefore ${\rm pd}{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X^{\bullet})_{B}\leq {\rm pd}{\rm Hom}_{D_{gp}^{b}(A)}(G^{\bullet}, X_{m}^{\bullet})_{B}+m=m$.
+\end{proof}
+
+\vskip 10pt
+
+\begin{thm}\
+\label{gldim}\ Assume that $A$ has Gorenstein dimension $d$ for some positive integer $d$. Then ${\rm gldim} B\leq d+1$.
+\end{thm}
+\begin{proof}\ If $G^{\bullet}$ is Gorenstein tilting, then $G^{\bullet}\in \mathcal{C}_{gp}(G^{\bullet})$. Therefore we have that ${\rm GP}={\rm GP_{c}}$. It follows from Lemma~\ref{c1} and \ref{c2} that ${\rm gldim} B\leq {\rm Gdim}A+1$.
+\end{proof}
+
+\vskip 20pt
+
+\begin{thebibliography}{99}
+
+
+
+
+
+\bibitem[AIR]{AIR} T.Adachi, O.Iyama, I.Reiten, $\tau$-tilting theory, Compo. Math. 150(2014), 415-467.
+\bibitem[A]{A} T.Aihara, Tilting-connected symmetric algebras, Algebr. Represent. Theor. 16(2013), 837-894.
+\bibitem[AMV1]{AMV1} L.Angeleri H\"ugel, F.Marks, J.Vit\'{o}ria, Silting modules, Int. Math. Res. Not. 4(2016), 1251-1284.
+\bibitem[AMV2]{AMV2} L.Angeleri H\"{u}gel, F.Marks, J.Vit\'{o}ria, silting modules and ring epimorphisms, Adv. Math. 303(2016), 1044-1076.
+\bibitem[AB]{AB} M.Auslander, M.Bridger, Stable Module Theory, Mem. Amer. Math. Soc., vol. 94, Amer. Math. Soc., Providence, RI, 1969.
+\bibitem[ABu]{ABu} M.Auslander, R.O.Buchweitz, The homological theory of maximal Cohen¨CMacaulay approximations, Mem. Soc. Math. Fr.(N.S.) 38(1989), 5-37.
+\bibitem[AR]{AR} M.Auslander, I.Reiten, Applications of contravariantly finite subcategories, Adv. Math. 86 (1991), 111-152.
+\bibitem[AS1]{AS1} M.Auslander, {\O}.Solberg, Relative homology and representation theory I. Relative homology and homologically finite subcategories. Comm. Algebra 21(1993), 2995-3031.
+\bibitem[AS2]{AS2} M.Auslander, S.O.Smal{\o}, Preprojective modules over Artin algebras. J. Algebra 66(1980), 61-122.
+\bibitem[AM]{AM} L.L. Avramov, A.Martsinkovsky, Absolute, relative, and Tate cohomology of modules of finite Gorenstein dimension, Proc. Lond. Math. Soc. 85(2002), 393-440.
+\bibitem[B1]{B1} A.Beligiannis, Cohen¨CMacaulay modules, (co)torsion pairs and virtually Gorenstein algebras, J. Algebra 288(2005), 137-211.
+\bibitem[B2]{B2} A.Beligiannis, On algebras of finite Cohen-Macaulay type, Adv. Math. 226(2011), 1973-2019.
+\bibitem[BBD]{BBD} A.A.Beilinson, J.Bernstein, P.Deligne, Faisceaux pervers(French)(Perverse sheaves), in: Analysis and topology on singular spaces, I(Luminy, 1981), 5-171, in: Ast\'{e}risque, 100, Soc. Math. France, Paris, 1982.
+\bibitem[BR]{BR} A.Beligiannis, I.Reiten, Homological and Homotopical Aspects of Torsion Theories, Mem. Amer. Math. Soc., vol. 188, Amer. Math. Soc., Providence, RI, 2007.
+\bibitem[BZ1]{BZ1} A.B.Buan, Y.Zhou, A silting theorem, J. Pure Appl. Algebra 220(2016), 2748-2770.
+\bibitem[BZ2]{BZ2} A.B.Buan, Y.Zhou, Endomorphism algebras of 2-term silting complexes, Algebr. Represent. Theory 21(2018), 181¨C194.
+\bibitem[Chen]{Chen} X.W.Chen, An Auslander-type result for Gorenstein-projective modules, Adv. Math. 218 (2008), 2043-2050.
+\bibitem[Ch]{Ch} L.W.Christensen, Gorenstein Dimensions, Lecture Notes in Math., vol. 1747, Springer-Verlag, 2000.
+\bibitem[CFH]{CFH} L.W.Christensen, A.Frankild, H.Holm, On Gorenstein projective, injective and flat dimensions-a functorial description with applications, J. Algebra 302(2006), 231-279.
+\bibitem[D]{D} S.E.Dickson, A torsion theory for abelian categories, Trans. Amer. Math. Soc. 121(1996), 223-235.
+\bibitem[DIJ]{DIJ} L.Demonet, O.Iyama, G.Jasso, $\tau$-tilting finite algebras, bricks and $g$-vectors, Int. Math. Res. Not. 3(2019), 852-892.
+\bibitem[EJ1]{EJ1} E.E.Enochs, O.M.G.Jenda, Gorenstein injective and projective modules, Math. Z. 220(1995), 611-633.
+\bibitem[EJ2]{EJ2} E.E.Enochs, O.M.G.Jenda, Relative homological algebra, Volume 1 (Second revised and extended edition), De Gruyter Expositions in Mathematics, 30, Walter de Gruyter GmbH and Co. KG, Berlin, 2011.
+\bibitem[G1]{G1} N.Gao, Gorenstein derived categories and the relate researches, PhD thesis, 2008.
+\bibitem[G2]{G2} N.Gao, The relative transpose over Cohen-Macaulay finite Artin algebras, Chin. Ann. Math. 30(2009), 231-238.
+\bibitem[GK]{GK} N.Gao, S.Koenig, Grade, dominant dimension and Gorenstein algebras. J. Algebra 427(2015), 118-141.
+\bibitem[GZ]{GZ} N.Gao, P.Zhang, Gorenstein derived categories, J. Algebra 323(2010), 2041-2057.
+\bibitem[Hap]{Hap} D.Happel, On Gorenstein algebras, in: Representation Theory of Finite Groups and Finite-Dimensional Algebras, in: Progr. Math., vol. 95, Birkhaeuser, Basel, 1991, pp. 389-404.
+\bibitem[Hol]{Hol} H.Holm, Gorenstein homological dimensions, J. Pure Appl. Algebra 189(2004), 167-193.
+\bibitem[HKM]{HKM} M.Hoshino, Y.Kato, J.Miyachi, On t-structures and torsion theories induced by compact objects, J. Pure Appl. Algebra 167(2002), 15-35.
+\bibitem[IY]{IY} O.Iyama, Y.Yoshino, Mutation in triangulated categories and rigid Cohen-Macaulay modules, Invent. Math. 172(2008), 117-168.
+\bibitem[J]{J} P.J{\o}rgensen, Existence of Gorenstein projective resolutions and Tate cohomology, J. Eur. Math. Soc. (JEMS) 9(2007), 59-76.
+\bibitem[KV]{KV} B.Keller, D.Vossieck, Aisles in derived categories, Bull. Soc. Math. Belg. S\'{e}r. A 40(1988), 239-253.
+\bibitem[KZ]{KZ}F.Kong, P.Zhang, From CM-finite to CM-free, J. Pure Appl. Algebra 220(2016), 782-801.
+\bibitem[LZ]{LZ}Z.W.Li, X.J.Zhang, A construction of Gorenstein projective $\tau$-titling modules, arXiv:2109.11758, 2021.
+\bibitem[MM]{MM} L.Mart¨ªnez, O.Mendoza, Relative Torsion Classes, relative tilting and relative silting modules, arXiv:2103.09217, 2021.
+\bibitem[MS]{MS} F.Marks, J.Stovicek, Torsion classes, wide subcategories and localisations, Bull. London Math. Soc. 49(2017), 405-416.
+\bibitem[N]{N} A.Neeman, The Grothendieck duality theorem via Bousfield's techniques and Brown representability, J. Amer. Math. Soc. 9(1996), 205-236.
+\bibitem[RZ1]{RZ1} C.M.Ringel, P.Zhang, Gorenstein-projective and semi-Gorenstein-projective modules, Algebra Number Theory 14(2020), 1-36.
+\bibitem[RZ2]{RZ2} C.M.Ringel, P.Zhang, Gorenstein-projective and semi-Gorenstein-projective modules II,  J. Pure Appl. Algebra 224(2020), 106248, 23 pp.
+\bibitem[RZ3]{RZ3} C.M.Ringel, P.Zhang, On modules $M$ such that both $M$ and $M^{*}$ are semi-Gorenstein-projective, Algebr. Represent. Theory 24 (2021), 1125-1140.
+\bibitem[YLO]{YLO} L.Yan, W.Q.Li, B.Y.Ouyang, Gorenstin cotilting and tilting modules, Comm. Algebra 44(2016), 591-603.
+\bibitem[Z]{Z} P.Y.Zhang, Gorenstin star Modules and Gorenstein tilting modules, Czech. Math. J. 71(2021), 403-416.
+\end{thebibliography}
+\end{document}
