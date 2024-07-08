@@ -95,7 +95,6 @@ def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
 
     main_file = identify_main_tex(tex_files, debug)
     if not main_file:
-        print(tex_files)
         if len(tex_files) == 1:
             return read_tex_file(tex_files[0])
         else:

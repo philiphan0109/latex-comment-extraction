@@ -7,11 +7,8 @@ import multiprocessing as mp
 import json
 
 
-# INPUT_PATH = "test_set/"
-# OUTPUT_PATH = "test_set/"
-
-INPUT_PATH = "debug/"
-OUTPUT_PATH = "debug/"
+INPUT_PATH = "test_set/"
+OUTPUT_PATH = "test_set/"
 NUM_PROCESSES = 16
 
 
@@ -47,7 +44,6 @@ def wrapper(path) -> str | None:
         process_paper(path)
         return None
     except Exception as e:
-        print(e)
         return path
 
 
