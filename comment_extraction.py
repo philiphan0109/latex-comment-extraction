@@ -6,7 +6,7 @@ from nltk.tokenize import word_tokenize
 
 def extract_comments(full_text: str) -> dict:
     comments = {}
-
+    
     current_index = 0
     current_section = "None"
     current_subsection = "None"
