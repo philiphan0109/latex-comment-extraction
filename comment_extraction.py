@@ -3,32 +3,48 @@ from nltk.tokenize import word_tokenize
 
 
 # TODO: remove %'s from comments
+
 def extract_comments(full_text: str) -> dict:
     comments = {}
-
+    
     current_index = 0
     current_section = "None"
     current_subsection = "None"
+    current_subsubsection = "None"
     comments[current_section] = {}
-    comments[current_section][current_subsection] = []
+    comments[current_section][current_subsection] = {}
+    comments[current_section][current_subsection][current_subsubsection] = []
     is_comment = False
     start_index = end_index = -1
 
     def change_section(new_section: str) -> None:
-        nonlocal current_section, current_subsection, comments, is_comment
+        nonlocal current_section, current_subsection, current_subsubsection, comments, is_comment
         current_section = new_section
         current_subsection = "None"
+        current_subsubsection = "None"
         if current_section not in comments:
             comments[current_section] = {}
         if current_subsection not in comments[current_section]:
-            comments[current_section][current_subsection] = []
+            comments[current_section][current_subsection] = {}
+        if current_subsubsection not in comments[current_section][current_subsection]:
+            comments[current_section][current_subsection][current_subsubsection] = []
         is_comment = False
 
     def change_subsection(new_subsection: str) -> None:
-        nonlocal current_subsection, is_comment
+        nonlocal current_subsection, current_subsubsection, is_comment
         current_subsection = new_subsection
+        current_subsubsection = "None"
         if current_subsection not in comments[current_section]:
-            comments[current_section][current_subsection] = []
+            comments[current_section][current_subsection] = {}
+        if current_subsubsection not in comments[current_section][current_subsection]:
+            comments[current_section][current_subsection][current_subsubsection] = []
+        is_comment = False
+
+    def change_subsubsection(new_subsubsection: str) -> None:
+        nonlocal current_subsubsection, is_comment
+        current_subsubsection = new_subsubsection
+        if current_subsubsection not in comments[current_section][current_subsection]:
+            comments[current_section][current_subsection][current_subsubsection] = []
         is_comment = False
 
     lines = full_text.split("\n")
@@ -41,7 +57,7 @@ def extract_comments(full_text: str) -> dict:
             end_index = current_index + len(line)
         else:
             if is_comment:
-                comments[current_section][current_subsection].append(
+                comments[current_section][current_subsection][current_subsubsection].append(
                     (start_index, end_index, full_text[start_index:end_index])
                 )
                 is_comment = False
@@ -50,7 +66,7 @@ def extract_comments(full_text: str) -> dict:
             if end_of_line_comment:
                 start_index = current_index + end_of_line_comment.start()
                 end_index = current_index + len(line)
-                comments[current_section][current_subsection].append(
+                comments[current_section][current_subsection][current_subsubsection].append(
                     (start_index, end_index, full_text[start_index:end_index])
                 )
 
@@ -70,13 +86,18 @@ def extract_comments(full_text: str) -> dict:
             end = line.find("}")
             change_subsection(line[start:end])
 
+        # Subsubsection
+        if "\\subsubsection{" in line:
+            start = line.find("{") + 1
+            end = line.find("}")
+            change_subsubsection(line[start:end])
+
         current_index += len(line) + 1
 
     if is_comment:
-        comments[current_section][current_subsection].append((start_index, end_index))
+        comments[current_section][current_subsection][current_subsubsection].append((start_index, end_index))
 
     return comments
-
 
 def extract_comment_indices(path):
     comment_indices = []
