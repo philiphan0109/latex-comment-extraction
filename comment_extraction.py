@@ -33,7 +33,6 @@ def extract_comments(full_text: str) -> dict:
 
     lines = full_text.split("\n")
     for line in lines:
-        print(line)
         # Comment
         if line.lstrip().startswith("%"):
             if not is_comment:
