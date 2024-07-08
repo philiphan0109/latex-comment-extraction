@@ -6,8 +6,6 @@ from nltk.tokenize import word_tokenize
 # Download NLTK data files (only need to do this once)
 # nltk.download('punkt')
 
-dir_path = "paper/"
-
 import re
 
 def extract_comments(path):
@@ -64,6 +62,10 @@ def extract_comments(path):
 
     return comments_by_section
 
+def extract_comment_tree(path):
+    comments = extract_comments(path)
+    
+    return
 
 def extract_comment_indices(path):
     comment_indices = []
