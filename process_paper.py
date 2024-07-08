@@ -7,8 +7,8 @@ import multiprocessing as mp
 import json
 
 
-INPUT_PATH = "test/"
-OUTPUT_PATH = "test/"
+INPUT_PATH = "test_set/"
+OUTPUT_PATH = "test_set/"
 NUM_PROCESSES = 16
 
 
@@ -19,7 +19,7 @@ def process_paper(paper_file: str) -> None:
     full_text_path = os.path.join(OUTPUT_PATH, paper_id, "full_text.tex")
     with open(full_text_path, "w") as file:
         file.write(full_text)
-    
+
     comments = extract_comments(full_text)
     comments_path = os.path.join(OUTPUT_PATH, paper_id, "comments.json")
     with open(comments_path, "w") as file:
@@ -60,6 +60,8 @@ if __name__ == "__main__":
         results = pool.map(wrapper, paper_files)
 
     failed_paper_files = [paper_file for paper_file in results if paper_file != None]
+    for paper in failed_paper_files:
+        print(paper)
     print(
         f"Processed: {len(paper_files) - len(failed_paper_files)} / {len(paper_files)} papers."
     )
