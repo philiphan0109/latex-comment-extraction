@@ -7,44 +7,37 @@ import multiprocessing as mp
 import json
 
 
-INPUT_PATH = "test/"
-OUTPUT_PATH = "test/"
+INPUT_PATH = "/data/evelyn_papers"
+OUTPUT_PATH = "/data/evelyn_processed"
 NUM_PROCESSES = 16
 
 
 def process_paper(paper_file: str) -> None:
     paper_id = os.path.basename(paper_file)
 
-    # full_text = stitch_tex_files(paper_file)
-    # full_text_path = os.path.join(OUTPUT_PATH, paper_id, "full_text.tex")
-    # with open(full_text_path, "w") as file:
-    #     file.write(full_text)
+    full_text = stitch_tex_files(paper_file)
+    full_text_path = os.path.join(OUTPUT_PATH, paper_id, "full_text.tex")
+    with open(full_text_path, "w") as file:
+        file.write(full_text)
 
-    # comments = extract_comments(full_text_path)
-    # comments_path = os.path.join(OUTPUT_PATH, paper_id, "comments.json")
-    # with open(comments_path, "w") as file:
-    #     json.dump(comments, file)
-    
-    full_paper = stitch_tex_files(paper_file)
-    full_paper_path = os.path.join(paper_file, 'FULL_PAPER.tex')
-    with open(full_paper_path, 'w', encoding="utf-8") as output_file:
-        output_file.write(full_paper)
+    comments = extract_comments(full_text_path)
+    comments_path = os.path.join(OUTPUT_PATH, paper_id, "comments.json")
+    with open(comments_path, "w") as file:
+        json.dump(comments, file)
 
-    with open(full_paper_path, "r", encoding="utf-8", errors="replace") as text_file:
-        text = text_file.read()
-    
-    results = extract_comments(full_paper_path)
-    output_path = os.path.join(paper_file, "a.txt")
-    with open(output_path, "w", encoding="utf-8") as file:
-        for section, comments in results.items():
-            file.write(f"Section: {section}\n")
-            for start_idx, end_idx in comments:
-                context = 0
-                start_context_idx = max(start_idx - context, 0)
-                end_context_idx = min(end_idx + context, len(text))
-                comment_text = text[start_context_idx:end_context_idx]
-                file.write(f"  Comment Indices: ({start_context_idx}, {end_context_idx})\n")
-                file.write(f"  Comment Text: \n {comment_text.strip()}\n\n")
+    # with open(output_path, "w", encoding="utf-8") as file:
+    #     for section, comments in results.items():
+    #         file.write(f"Section: {section}\n")
+    #         for start_idx, end_idx in comments:
+    #             context = 0
+    #             start_context_idx = max(start_idx - context, 0)
+    #             end_context_idx = min(end_idx + context, len(text))
+    #             comment_text = text[start_context_idx:end_context_idx]
+    #             file.write(
+    #                 f"  Comment Indices: ({start_context_idx}, {end_context_idx})\n"
+    #             )
+    #             file.write(f"  Comment Text: \n {comment_text.strip()}\n\n")
+
 
 def wrapper(path) -> str | None:
     try:
@@ -56,26 +49,23 @@ def wrapper(path) -> str | None:
 
 if __name__ == "__main__":
     # MP Testing
-    # start_time = time.time()
-    # paper_files = [
-    #     os.path.join(INPUT_PATH, paper_file) for paper_file in os.listdir(INPUT_PATH)
-    # ]
-    # random.shuffle(paper_files)
-    # paper_files = paper_files[:1000]
+    start_time = time.time()
+    paper_files = [
+        os.path.join(INPUT_PATH, paper_file) for paper_file in os.listdir(INPUT_PATH)
+    ]
+    random.shuffle(paper_files)
+    paper_files = paper_files[:1000]
 
-    # with mp.Pool(NUM_PROCESSES) as pool:
-    #     results = pool.map(wrapper, paper_files)
+    with mp.Pool(NUM_PROCESSES) as pool:
+        results = pool.map(wrapper, paper_files)
 
-    # failed_paper_files = [paper_file for paper_file in results if paper_file != None]
-    # print(
-    #     f"Processed: {len(paper_files) - len(failed_paper_files)} / {len(paper_files)} papers."
-    # )
-    # print(f"This took: {time.time() - start_time} seconds.")
+    failed_paper_files = [paper_file for paper_file in results if paper_file != None]
+    print(
+        f"Processed: {len(paper_files) - len(failed_paper_files)} / {len(paper_files)} papers."
+    )
+    print(f"This took: {time.time() - start_time} seconds.")
 
     # Local Testing
-    test_path = "test/"
-    process_paper(test_path)
-    
     # starttime = time.time()
     # test_path = "test_set/"
     # counter = 1000
