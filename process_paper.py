@@ -46,7 +46,8 @@ def wrapper(path) -> str | None:
     try:
         process_paper(path)
         return None
-    except Exception:
+    except Exception as e:
+        print(e)
         return path
 
 

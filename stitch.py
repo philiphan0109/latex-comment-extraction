@@ -90,11 +90,12 @@ def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
     tex_files = []
     for root, _, files in os.walk(tex_dir):
         for file in files:
-            if file.lower().endswith(".tex"):
+            if file.lower().endswith(".tex") and file.lower().find("full_text") == -1:
                 tex_files.append(os.path.join(root, file))
 
     main_file = identify_main_tex(tex_files, debug)
     if not main_file:
+        print(tex_files)
         if len(tex_files) == 1:
             return read_tex_file(tex_files[0])
         else:
