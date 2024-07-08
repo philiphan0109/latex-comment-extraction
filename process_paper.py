@@ -19,7 +19,7 @@ def process_paper(paper_file: str) -> None:
     full_text_path = os.path.join(OUTPUT_PATH, paper_id, "full_text.tex")
     with open(full_text_path, "w") as file:
         file.write(full_text)
-
+    
     comments = extract_comments(full_text)
     comments_path = os.path.join(OUTPUT_PATH, paper_id, "comments.json")
     with open(comments_path, "w") as file:
