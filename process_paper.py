@@ -7,8 +7,8 @@ import multiprocessing as mp
 import json
 
 
-INPUT_PATH = "/data/evelyn_papers"
-OUTPUT_PATH = "/data/evelyn_processed"
+INPUT_PATH = "test/"
+OUTPUT_PATH = "test/"
 NUM_PROCESSES = 16
 
 
