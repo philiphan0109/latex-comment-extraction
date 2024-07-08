@@ -1,96 +1,101 @@
 import os
 import re
 
-dir_path = "paper/"
 
-def read_tex_file(file_path):
-    with open(file_path, 'r', encoding="utf-8", errors="replace") as file:
+def read_tex_file(tex_file: str) -> str:
+    with open(tex_file, "r", errors="replace") as file:
         return file.read()
 
-def find_include_tag(line):
-    """Find \input or \include tags within a line."""
-    pattern = r'\\(input|include)\{([^}]+)\}'
+
+# Finds \input or \include tags within a line
+def find_include_tag(line: str) -> str | None:
+    pattern = r"\\(input|include)\{([^}]+)\}"
     match = re.search(pattern, line)
-    return match.groups() if match else None
+    return match.groups()[1] if match else None
 
-def convert_to_comment(content):
-    lines = content.splitlines()
-    commented_content = '\n'.join([f'% {line}' for line in lines])
-    return commented_content
 
-def process_include_tag(line, path):
-    tag, filename = find_include_tag(line)
-    raw_file_path = filename
-    if not filename.endswith('.tex'):
-        filename += '.tex'
-    file_path = os.path.join(path, filename)
-    raw_file_path = os.path.join(path, filename)
-    if os.path.exists(file_path):
-        content = read_tex_file(file_path)
-        if line.strip().startswith('%'):
-            return convert_to_comment(content)
-        else:
-            return content
-    elif os.path.exists(raw_file_path):
-        content = read_tex_file(raw_file_path)
-        if line.strip().startswith('%'):
-            return convert_to_comment(content)
-        else:
-            return content
-    else:
-        if not line.strip().startswith('%'):
-            # print(f"RAW FILE NOT FOUND: {raw_file_path}")
-            pass
+def convert_to_comment(text: str) -> str:
+    lines = text.splitlines()
+    return "\n".join([f"% {line}" for line in lines])
+
+
+def process_line(line, tex_dir) -> str:
+    include_path = find_include_tag(line)
+    if not include_path:
         return line
 
-def is_standalone(file):
-    with open(file, 'r', encoding="utf-8", errors="replace") as f:
-        content = f.read()
-        return '\\begin{document}' in content and '\\end{document}' in content
+    if not include_path.endswith(".tex"):
+        include_path += ".tex"
+    include_path = os.path.join(tex_dir, include_path)
 
-def contains_main_document_elements(content):
-    return any(cmd in content for cmd in ['\\title', '\\author', '\\maketitle', '\\tableofcontents', '\\begin{abstract}'])
+    if os.path.exists(include_path):
+        include_text = read_tex_file(include_path)
+        if line.strip().startswith("%"):
+            return convert_to_comment(include_text)
+        else:
+            return include_text
+    else:
+        if line.strip().startswith("%"):
+            return line
+        else:
+            # print(f"RAW FILE NOT FOUND: {raw_file_path}")
+            return line
 
-def identify_main_tex(files):
+
+def is_document(text: str) -> bool:
+    return bool(re.search(r"\\begin *{document}", text)) and bool(
+        re.search(r"\\end *{document}", text)
+    )
+
+
+def contains_main_document_elements(text: str) -> bool:
+    return any(
+        cmd in text.lower()
+        for cmd in [
+            "\\title",
+            "\\author",
+            "\\maketitle",
+            "\\tableofcontents",
+            "\\begin{abstract}",
+        ]
+    )
+
+
+def identify_main_tex(tex_files: list, debug: bool = False) -> str | None:
     main_candidates = []
-    supplement_files = []
+    # supplement_files = []
 
-    for file in files:
-        if is_standalone(file):
-            with open(file, 'r', encoding="utf-8", errors="replace") as f:
-                content = f.read()
-                if re.search(r'\bsupplement\b', file.lower()):  
-                    supplement_files.append(file)
-                else:
-                    main_candidates.append(file)
-    
-    if main_candidates:
-        for file in main_candidates:
-            with open(file, 'r', encoding="utf-8", errors="replace") as f:
-                content = f.read()
-                if contains_main_document_elements(content):
-                    return file
+    if debug and not tex_files:
+        print("No .tex files")
+
+    for tex_file in tex_files:
+        with open(tex_file, "r", errors="replace") as file:
+            text = file.read()
+
+        if is_document(text):
+            main_candidates.append(tex_file)
+            if contains_main_document_elements(text):
+                return tex_file
+
+    if debug and not main_candidates:
+        print("No main candidates")
+
     return main_candidates[0] if main_candidates else None
 
-def stitch_tex_files(path):
+
+def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
+    if debug:
+        print(os.path.basename(tex_dir))
     tex_files = []
-    for root, _, files in os.walk(path):
-
+    for root, _, files in os.walk(tex_dir):
         for file in files:
-            if file.endswith('.tex'):
+            if file.lower().endswith(".tex"):
                 tex_files.append(os.path.join(root, file))
-    # Identify the main .tex file
-    main_file_path = identify_main_tex(tex_files)
-    if not main_file_path:
-        raise FileNotFoundError("Main.tex file not found in the directory")
 
-    main_content = read_tex_file(main_file_path)
-    processed_lines = []
+    main_file = identify_main_tex(tex_files, debug)
+    if not main_file:
+        raise FileNotFoundError("No main.tex file")
 
-    for line in main_content.splitlines():
-        if find_include_tag(line):
-            processed_lines.append(process_include_tag(line, path))
-        else:
-            processed_lines.append(line)
-
-    return '\n'.join(processed_lines)
+    main_text = read_tex_file(main_file)
+    processed_lines = [process_line(line, tex_dir) for line in main_text.splitlines()]
+    return "\n".join(processed_lines)

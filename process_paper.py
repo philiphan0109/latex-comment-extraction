@@ -1,6 +1,6 @@
 import os
 from stitch import stitch_tex_files
-from comment_extraction import extract_comments
+from comment_extraction_old import extract_comments
 import time
 import multiprocessing as mp
 
