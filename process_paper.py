@@ -7,8 +7,11 @@ import multiprocessing as mp
 import json
 
 
-INPUT_PATH = "test_set/"
-OUTPUT_PATH = "test_set/"
+# INPUT_PATH = "test_set/"
+# OUTPUT_PATH = "test_set/"
+
+INPUT_PATH = "debug/"
+OUTPUT_PATH = "debug/"
 NUM_PROCESSES = 16
 
 
