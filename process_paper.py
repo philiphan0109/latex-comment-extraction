@@ -1,20 +1,32 @@
 import os
+import random
 from stitch import stitch_tex_files
-from comment_extraction_old import extract_comments
+from comment_extraction import extract_comments
 import time
 import multiprocessing as mp
+import json
 
-# given a directory of .tex files this function will:
-# 1) generate a new .tex file named FULL_PAPER.tex
-# 2) extract the comments from the full paper
 
-def read_tex_file(file_path):
-    with open(file_path, 'r', encoding="utf-8", errors="replace") as file:
-        return file.read()
+INPUT_PATH = "test/"
+OUTPUT_PATH = "test/"
+NUM_PROCESSES = 16
 
-def process_paper(path):
-    full_paper = stitch_tex_files(path)
-    full_paper_path = os.path.join(path, 'FULL_PAPER.tex')
+
+def process_paper(paper_file: str) -> None:
+    paper_id = os.path.basename(paper_file)
+
+    # full_text = stitch_tex_files(paper_file)
+    # full_text_path = os.path.join(OUTPUT_PATH, paper_id, "full_text.tex")
+    # with open(full_text_path, "w") as file:
+    #     file.write(full_text)
+
+    # comments = extract_comments(full_text_path)
+    # comments_path = os.path.join(OUTPUT_PATH, paper_id, "comments.json")
+    # with open(comments_path, "w") as file:
+    #     json.dump(comments, file)
+    
+    full_paper = stitch_tex_files(paper_file)
+    full_paper_path = os.path.join(paper_file, 'FULL_PAPER.tex')
     with open(full_paper_path, 'w', encoding="utf-8") as output_file:
         output_file.write(full_paper)
 
@@ -22,7 +34,7 @@ def process_paper(path):
         text = text_file.read()
     
     results = extract_comments(full_paper_path)
-    output_path = os.path.join(path, "a.txt")
+    output_path = os.path.join(paper_file, "a.txt")
     with open(output_path, "w", encoding="utf-8") as file:
         for section, comments in results.items():
             file.write(f"Section: {section}\n")
@@ -34,29 +46,32 @@ def process_paper(path):
                 file.write(f"  Comment Indices: ({start_context_idx}, {end_context_idx})\n")
                 file.write(f"  Comment Text: \n {comment_text.strip()}\n\n")
 
-def wrapper(path):
+def wrapper(path) -> str | None:
     try:
         process_paper(path)
         return None
-    except Exception as e:
+    except Exception:
         return path
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     # MP Testing
-    # starttime = time.time()
-    # test_path = "test_set/"
-    # paper_paths = [os.path.join(test_path, paper_path) for paper_path in os.listdir(test_path)]
-    
-    # num_processes = 8 # filler
-    
-    # with mp.Pool(num_processes) as pool:
-    #     results = pool.map(wrapper, paper_paths)
-    
-    # failed_paths = [paper for paper in results if paper != None]
-    # print(f"Processed: {len(paper_paths) - len(failed_paths)} / {len(paper_paths)} papers.")
-    # print(f"This took: {time.time() - starttime} seconds.")
-    
-    
+    # start_time = time.time()
+    # paper_files = [
+    #     os.path.join(INPUT_PATH, paper_file) for paper_file in os.listdir(INPUT_PATH)
+    # ]
+    # random.shuffle(paper_files)
+    # paper_files = paper_files[:1000]
+
+    # with mp.Pool(NUM_PROCESSES) as pool:
+    #     results = pool.map(wrapper, paper_files)
+
+    # failed_paper_files = [paper_file for paper_file in results if paper_file != None]
+    # print(
+    #     f"Processed: {len(paper_files) - len(failed_paper_files)} / {len(paper_files)} papers."
+    # )
+    # print(f"This took: {time.time() - start_time} seconds.")
+
     # Local Testing
     test_path = "test/"
     process_paper(test_path)
