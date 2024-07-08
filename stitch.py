@@ -7,7 +7,6 @@ def read_tex_file(tex_file: str) -> str:
         return file.read()
 
 
-# Finds \input or \include tags within a line
 def find_include_tag(line: str) -> str | None:
     pattern = r"\\(input|include)\{([^}]+)\}"
     match = re.search(pattern, line)
@@ -63,7 +62,6 @@ def contains_main_document_elements(text: str) -> bool:
 
 def identify_main_tex(tex_files: list, debug: bool = False) -> str | None:
     main_candidates = []
-    # supplement_files = []
 
     if debug and not tex_files:
         print("No .tex files")
@@ -76,6 +74,9 @@ def identify_main_tex(tex_files: list, debug: bool = False) -> str | None:
             main_candidates.append(tex_file)
             if contains_main_document_elements(text):
                 return tex_file
+
+    if not main_candidates and len(tex_files) == 1:
+        return tex_files[0]
 
     if debug and not main_candidates:
         print("No main candidates")
@@ -94,7 +95,10 @@ def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
 
     main_file = identify_main_tex(tex_files, debug)
     if not main_file:
-        raise FileNotFoundError("No main.tex file")
+        if len(tex_files) == 1:
+            return read_tex_file(tex_files[0])
+        else:
+            raise FileNotFoundError("No main.tex file")
 
     main_text = read_tex_file(main_file)
     processed_lines = [process_line(line, tex_dir) for line in main_text.splitlines()]
