@@ -1,5 +1,5 @@
 import re
-from nltk.tokenize import word_tokenize
+# from nltk.tokenize import word_tokenize
 
 
 # TODO: remove %'s from comments
@@ -153,33 +153,33 @@ def extract_comment_indices(path):
     return comment_indices
 
 
-def extract_comment_statistics(path):
-    comment_indices = extract_comment_indices(path)
-    comments = {}
+# def extract_comment_statistics(path):
+#     comment_indices = extract_comment_indices(path)
+#     comments = {}
 
-    with open(path, "r", errors="replace") as file:
-        full_paper = file.read()
+#     with open(path, "r", errors="replace") as file:
+#         full_paper = file.read()
 
-    for start, end in comment_indices:
-        comment = full_paper[start:end]
-        comment = comment.split("\n")
-        comments[start] = comment
+#     for start, end in comment_indices:
+#         comment = full_paper[start:end]
+#         comment = comment.split("\n")
+#         comments[start] = comment
 
-    comment_statistics = {}
-    for index, comment in comments.items():
-        for i in range(len(comment)):
-            comment[i] = comment[i][1:].strip()
-        comment_text = " ".join(comment)
-        char_length = len(comment_text)
-        words = word_tokenize(comment_text)
-        words = [word for word in words if word.isalnum()]
-        word_count = len(words)
-        comment_statistics[index] = {
-            "char_length": char_length,
-            "word_count": word_count,
-        }
+#     comment_statistics = {}
+#     for index, comment in comments.items():
+#         for i in range(len(comment)):
+#             comment[i] = comment[i][1:].strip()
+#         comment_text = " ".join(comment)
+#         char_length = len(comment_text)
+#         words = word_tokenize(comment_text)
+#         words = [word for word in words if word.isalnum()]
+#         word_count = len(words)
+#         comment_statistics[index] = {
+#             "char_length": char_length,
+#             "word_count": word_count,
+#         }
 
-    return comment_statistics
+#     return comment_statistics
 
 
 # if __name__ == "__main__":
