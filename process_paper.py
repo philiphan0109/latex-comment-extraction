@@ -6,11 +6,9 @@ import time
 import multiprocessing as mp
 import json
 
-
 INPUT_PATH = "test_set/"
 OUTPUT_PATH = "test_set/"
 NUM_PROCESSES = 16
-
 
 def process_paper(paper_file: str) -> None:
     paper_id = os.path.basename(paper_file)

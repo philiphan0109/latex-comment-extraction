@@ -91,6 +91,8 @@ def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
     for root, _, files in os.walk(tex_dir):
         for file in files:
             if (file.lower().endswith(".tex") or file.lower().endswith("...")) and file.lower().find("full_text") == -1:
+                if(file.lower().endswith("...")):
+                    print("Weird File Extension: ", tex_dir)
                 tex_files.append(os.path.join(root, file))
 
     main_file = identify_main_tex(tex_files, debug)
