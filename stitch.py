@@ -1,7 +1,6 @@
 import os
 import re
 
-
 def read_tex_file(tex_file: str) -> str:
     with open(tex_file, "r", errors="replace") as file:
         return file.read()
