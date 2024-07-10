@@ -54,3 +54,7 @@ How to use the functions:
    version = 3
    papers_version = query_by_version(metadata, version)
 """
+
+
+if __name__ == "__main__":
+    pass
