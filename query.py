@@ -13,7 +13,7 @@ def load_all_metadata(directory_path):
     return metadata_list
 
 def query_by_year(metadata, year):
-    results = [paper for paper in metadata if paper['published'].startswith(str(year))]
+    results = [paper["id"] for paper in metadata if paper['published'].startswith(str(year))]
     return results
 
 def query_by_category(metadata, category):
@@ -27,10 +27,6 @@ def query_by_author(metadata, author):
 def query_by_version(metadata, version):
     results = [paper for paper in metadata if paper['url'].endswith(f'v{version}')]
     return results
-
-metadata = load_all_metadata('test_set/')
-papers_2017 = query_by_year(metadata, 2017)
-print(papers_2017)
 
 """
 How to use the functions:
@@ -57,4 +53,6 @@ How to use the functions:
 
 
 if __name__ == "__main__":
-    pass
+    metadata = load_all_metadata('test_set/')
+    papers_2017 = query_by_year(metadata, 2018)
+    print(papers_2017)
