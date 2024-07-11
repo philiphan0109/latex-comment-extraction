@@ -27,7 +27,6 @@ def process_line(line, tex_dir) -> str:
     include_path = os.path.join(tex_dir, include_path)
 
     if os.path.exists(include_path):
-        include_text = read_tex_file(include_path)
         if line.strip().startswith("%"):
             return convert_to_comment(process_file(include_path, tex_dir))
         else:
