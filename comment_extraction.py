@@ -2,8 +2,6 @@ import re
 # from nltk.tokenize import word_tokenize
 
 
-# TODO: remove %'s from comments
-
 def extract_comments(full_text: str) -> dict:
     comments = {}
     
@@ -15,6 +13,7 @@ def extract_comments(full_text: str) -> dict:
     comments[current_section][current_subsection] = {}
     comments[current_section][current_subsection][current_subsubsection] = []
     is_comment = False
+    current_comment = ""
     start_index = end_index = -1
 
     def change_section(new_section: str) -> None:
@@ -71,26 +70,23 @@ def extract_comments(full_text: str) -> dict:
                 )
 
         # Section
-        if "\\section{" in line:
-            start = line.find("{") + 1
-            end = line.find("}")
-            change_section(line[start:end])
-        elif "\\begin{abstract}" in line:
+        match = re.search(r"\\section\*? *\{(.+?)\}", line)
+        if match:
+            change_section(match.group(1))
+        elif re.search(r"\\begin *{abstract}", line):
             change_section("Abstract")
-        elif "\\end{abstract}" in line:
+        elif re.search(r"\\end *{abstract}", line):
             change_section("None")
 
         # Subsection
-        if "\\subsection{" in line:
-            start = line.find("{") + 1
-            end = line.find("}")
-            change_subsection(line[start:end])
+        match = re.search(r"\\subsection\*? *\{(.+?)\}", line)
+        if match:
+            change_subsection(match.group(1))
 
         # Subsubsection
-        if "\\subsubsection{" in line:
-            start = line.find("{") + 1
-            end = line.find("}")
-            change_subsubsection(line[start:end])
+        match = re.search(r"\\subsubsection\*? *\{(.+?)\}", line)
+        if match:
+            change_subsubsection(match.group(1))
 
         current_index += len(line) + 1
 
@@ -99,58 +95,58 @@ def extract_comments(full_text: str) -> dict:
 
     return comments
 
-def extract_comment_indices(path):
-    comment_indices = []
+# def extract_comment_indices(path):
+#     comment_indices = []
 
-    with open(path, "r", errors="replace") as file:
-        full_text = file.read()
+#     with open(path, "r", errors="replace") as file:
+#         full_text = file.read()
 
-    current_index = 0
-    comment_start_index = -1
-    comment_end_index = -1
-    current_comment = False
+#     current_index = 0
+#     comment_start_index = -1
+#     comment_end_index = -1
+#     current_comment = False
 
-    lines = full_text.split("\n")
-    for line in lines:
-        if line.startswith("%"):
-            if not current_comment:
-                comment_start_index = current_index
-                current_comment = True
-            comment_end_index = current_index + len(line)
-        else:
-            end_of_line_comment = re.search(r"(?<!\\)%.*$", line)
-            if end_of_line_comment:
-                comment_start_index = current_index + end_of_line_comment.start()
-                comment_end_index = current_index + len(line)
-                comment_indices.append(
-                    (
-                        comment_start_index,
-                        comment_end_index,
-                        full_text[comment_start_index:comment_end_index],
-                    )
-                )
-            if current_comment:
-                comment_indices.append(
-                    (
-                        comment_start_index,
-                        comment_end_index,
-                        full_text[comment_start_index:comment_end_index],
-                    )
-                )
-                current_comment = False
-        current_index += len(line) + 1
+#     lines = full_text.split("\n")
+#     for line in lines:
+#         if line.startswith("%"):
+#             if not current_comment:
+#                 comment_start_index = current_index
+#                 current_comment = True
+#             comment_end_index = current_index + len(line)
+#         else:
+#             end_of_line_comment = re.search(r"(?<!\\)%.*$", line)
+#             if end_of_line_comment:
+#                 comment_start_index = current_index + end_of_line_comment.start()
+#                 comment_end_index = current_index + len(line)
+#                 comment_indices.append(
+#                     (
+#                         comment_start_index,
+#                         comment_end_index,
+#                         full_text[comment_start_index:comment_end_index],
+#                     )
+#                 )
+#             if current_comment:
+#                 comment_indices.append(
+#                     (
+#                         comment_start_index,
+#                         comment_end_index,
+#                         full_text[comment_start_index:comment_end_index],
+#                     )
+#                 )
+#                 current_comment = False
+#         current_index += len(line) + 1
 
-    if current_comment:
-        comment_indices.append(
-            (
-                comment_start_index,
-                comment_end_index,
-                full_text[comment_start_index:comment_end_index],
-            )
-        )
-        current_comment = False
+#     if current_comment:
+#         comment_indices.append(
+#             (
+#                 comment_start_index,
+#                 comment_end_index,
+#                 full_text[comment_start_index:comment_end_index],
+#             )
+#         )
+#         current_comment = False
 
-    return comment_indices
+#     return comment_indices
 
 
 # def extract_comment_statistics(path):

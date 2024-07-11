@@ -29,9 +29,9 @@ def process_line(line, tex_dir) -> str:
     if os.path.exists(include_path):
         include_text = read_tex_file(include_path)
         if line.strip().startswith("%"):
-            return convert_to_comment(include_text)
+            return convert_to_comment(process_file(include_path, tex_dir))
         else:
-            return include_text
+            return process_file(include_path, tex_dir)
     else:
         if line.strip().startswith("%"):
             return line
@@ -83,6 +83,11 @@ def identify_main_tex(tex_files: list, debug: bool = False) -> str | None:
     return main_candidates[0] if main_candidates else None
 
 
+def process_file(tex_file: str, tex_dir: str) -> str:
+    text = read_tex_file(tex_file)
+    return "\n".join([process_line(line, tex_dir) for line in text.splitlines()])
+
+
 def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
     if debug:
         print(os.path.basename(tex_dir))
@@ -101,6 +106,4 @@ def stitch_tex_files(tex_dir: str, debug: bool = False) -> str:
         else:
             raise FileNotFoundError("No main.tex file")
 
-    main_text = read_tex_file(main_file)
-    processed_lines = [process_line(line, tex_dir) for line in main_text.splitlines()]
-    return "\n".join(processed_lines)
+    return process_file(main_file, tex_dir)
