@@ -28,6 +28,7 @@ def extract_comments(full_text: str) -> dict:
         if current_subsubsection not in comments[current_section][current_subsection]:
             comments[current_section][current_subsection][current_subsubsection] = []
         is_comment = False
+        current_comment = ""
 
     def change_subsection(new_subsection: str) -> None:
         nonlocal current_subsection, current_subsubsection, is_comment
@@ -53,7 +54,11 @@ def extract_comments(full_text: str) -> dict:
             if not is_comment:
                 start_index = current_index + line.find("%")
                 is_comment = True
+                current_comment = line[line.find("%") + 1 :]
+            else:
+                current_comment += "\n" + line[line.find("%") + 1 :]
             end_index = current_index + len(line)
+            continue
         else:
             if is_comment:
                 comments[current_section][current_subsection][
@@ -65,9 +70,11 @@ def extract_comments(full_text: str) -> dict:
             if end_of_line_comment:
                 start_index = current_index + end_of_line_comment.start()
                 end_index = current_index + len(line)
+                current_comment = line[end_of_line_comment.start() + 1 :]
                 comments[current_section][current_subsection][current_subsubsection].append(
-                    (start_index, end_index, full_text[start_index:end_index])
+                    (start_index, end_index, current_comment)
                 )
+                is_comment = False
                 
         # Section
         match = re.search(r"\\section\*? *\{(.+?)\}", line)
@@ -92,7 +99,7 @@ def extract_comments(full_text: str) -> dict:
 
     if is_comment:
         comments[current_section][current_subsection][current_subsubsection].append(
-            (start_index, end_index)
+            (start_index, end_index, current_comment)
         )
 
     return comments
