@@ -47,7 +47,6 @@ def extract_comments(full_text: str) -> dict:
             comments[current_section][current_subsection][current_subsubsection] = []
         is_comment = False
 
-
     lines = full_text.split("\n")
     for line in lines:
         # Comment
@@ -60,23 +59,49 @@ def extract_comments(full_text: str) -> dict:
                 current_comment += "\n" + line[line.find("%") + 1 :]
             end_index = current_index + len(line)
             continue
-        else:
-            if is_comment:
+        
+        # Block comment
+        block_comment_start = re.search(r"\\begin *{comment}", line)
+        if block_comment_start:
+            start_index = current_index + block_comment_start.start()
+            end_index = current_index + len(line)
+            current_comment = line[block_comment_start.end() + 1 :].strip()
+            current_comment = "" if current_comment == "\n" else current_comment
+            is_block_comment = True
+            continue
+        if is_block_comment:
+            block_comment_end = re.search(r"\\end *{comment}", line)
+            if block_comment_end:
+                end_index = current_index + block_comment_end.end()
+                current_comment += "\n" + line[: block_comment_end.start()].strip()
                 comments[current_section][current_subsection][
                     current_subsubsection
                 ].append((start_index, end_index, current_comment))
-                is_comment = False
-                
-            end_of_line_comment = re.search(r"(?<!\\)%.*$", line)
-            if end_of_line_comment:
-                start_index = current_index + end_of_line_comment.start()
-                end_index = current_index + len(line)
-                current_comment = line[end_of_line_comment.start() + 1 :]
-                comments[current_section][current_subsection][current_subsubsection].append(
-                    (start_index, end_index, current_comment)
-                )
-                is_comment = False
-                
+                is_block_comment = False
+                continue
+            current_comment += "\n" + line.strip()
+            continue
+        
+        # Not % comment
+        if is_comment:
+            comments[current_section][current_subsection][current_subsubsection].append(
+                (start_index, end_index, current_comment)
+            )
+            is_comment = False
+        
+        # End of line comment
+        end_of_line_comment = re.search(r"(?<!\\)%.*$", line)
+        if end_of_line_comment:
+            start_index = current_index + end_of_line_comment.start()
+            end_index = current_index + len(line)
+            current_comment = (
+                line[end_of_line_comment.start() + 1 :].lstrip(" \t%").rstrip()
+            )
+            comments[current_section][current_subsection][current_subsubsection].append(
+                (start_index, end_index, current_comment)
+            )
+            is_comment = False
+        
         # Section
         match = re.search(r"\\section\*? *\{(.+?)\}", line)
         if match:
