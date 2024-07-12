@@ -13,6 +13,7 @@ def extract_comments(full_text: str) -> dict:
     comments[current_section][current_subsection] = {}
     comments[current_section][current_subsection][current_subsubsection] = []
     is_comment = False
+    is_block_comment = True
     current_comment = ""
     start_index = end_index = -1
 
