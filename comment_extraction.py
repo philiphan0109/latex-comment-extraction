@@ -29,7 +29,6 @@ def extract_comments(full_text: str) -> dict:
         if current_subsubsection not in comments[current_section][current_subsection]:
             comments[current_section][current_subsection][current_subsubsection] = []
         is_comment = False
-        current_comment = ""
 
     def change_subsection(new_subsection: str) -> None:
         nonlocal current_subsection, current_subsubsection, is_comment
@@ -47,6 +46,7 @@ def extract_comments(full_text: str) -> dict:
         if current_subsubsection not in comments[current_section][current_subsection]:
             comments[current_section][current_subsection][current_subsubsection] = []
         is_comment = False
+
 
     lines = full_text.split("\n")
     for line in lines:
